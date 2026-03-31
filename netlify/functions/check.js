@@ -4,23 +4,12 @@ exports.handler = async function(event) {
   try {
     const { food } = JSON.parse(event.body);
 
-    const prompt = `You are a calm, reassuring travel medicine expert helping a traveler in Mexico.
+    const prompt = `You are a travel medicine expert with knowledge of CDC Travelers' Health and WHO food safety guidelines.
 
-Be realistic and encouraging — most food at established restaurants and shops is fine. Don't catastrophize normal tourist food.
+A traveler is in Mexico and wants to know if "${food}" is safe to eat or drink.
 
-Scoring guide:
-- 9-10: Very safe (bottled drinks, cooked restaurant food, packaged items)
-- 7-8: Generally safe with normal care (gelato at a proper shop, cooked street tacos, peelable fruit)
-- 5-6: Worth being selective about where you get it (ceviche, fresh juices, salads)
-- 3-4: Real risk, most travelers should avoid (raw seafood, tap water ice from unknown source)
-- 1-2: Avoid entirely (tap water, raw oysters)
-
-Is "${food}" safe to eat or drink in Mexico?
-
-Reply ONLY with raw JSON, no markdown:
-{"score":<1-10>,"verdict":"SAFE or CAUTION or AVOID","headline":"short sentence","why":"1-2 sentences","tip":"one practical tip","emoji":"<relevant emoji>","sources":["CDC Travelers Health or WHO Food Safety"]}
-
-For sources use whichever of CDC Travelers Health or WHO Food Safety actually applies.`;
+Based on CDC and WHO guidance, give an honest assessment. Reply ONLY with raw JSON, no markdown:
+{"score":<1-10>,"verdict":"SAFE or CAUTION or AVOID","headline":"one honest sentence","why":"1-2 sentences based on CDC/WHO guidance","tip":"one practical tip","emoji":"<relevant emoji>","sources":["list which of CDC Travelers Health or WHO Food Safety applies"]}`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",

@@ -4,16 +4,18 @@ exports.handler = async function(event) {
   try {
     const { food } = JSON.parse(event.body);
 
-    const prompt = `You are a travel medicine expert with knowledge of CDC Travelers' Health and WHO food safety guidelines.
+    const prompt = `You are a travel medicine expert. A tourist is visiting Mexico City or a popular Mexican resort town and wants to know if "${food}" is safe.
 
-A traveler is in Mexico and wants to know if "${food}" is safe to eat or drink.
+Assume they are eating at normal tourist restaurants and shops, not remote villages. Use CDC and WHO traveler guidelines.
 
-Based on CDC and WHO guidance only, reply with raw JSON, no markdown:
-{"verdict":"SAFE or CAUTION or AVOID","headline":"one honest sentence","why":"1-2 sentences based on CDC/WHO guidance","tip":"one practical tip","emoji":"<relevant emoji>","sources":["CDC Travelers Health or WHO Food Safety"]}
+Be practical and realistic — most food at established restaurants is fine. Only flag genuine risks.
 
-SAFE = fine for travelers at reputable establishments
-CAUTION = okay but be selective about where you get it  
-AVOID = CDC/WHO advise travelers to skip this`;
+Reply with ONLY raw JSON:
+{"verdict":"SAFE or CAUTION or AVOID","headline":"one sentence","why":"1-2 sentences","tip":"one tip","emoji":"emoji","sources":["CDC Travelers Health or WHO Food Safety"]}
+
+SAFE = fine at reputable places
+CAUTION = use judgment about where you get it
+AVOID = genuinely skip this`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",

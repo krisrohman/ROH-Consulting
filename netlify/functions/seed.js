@@ -75,6 +75,43 @@ const KPIS = [
   { kpi_name: 'Retail, fees & other',           section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', math_type: 'sum',    goal_direction: 'higher' },
 ];
 
+// Per-KPI narrow / on-track thresholds, applied by category. All KPIs
+// default to on-track = 100 (must hit goal). Narrow floor varies:
+//   - Tight conversion rates:  95  (5% tolerance)
+//   - General % rates:         92  (8% — scorecard default)
+//   - Revenue / spend:         90  (10%)
+//   - Volume counts:           85  (15%)
+const KPI_THRESHOLDS = {
+  // Tight conversion rates
+  'Intro conversion':               { ontrack: 100, narrow: 95 },
+  // General % rates (most of these would hit the default if unset, but
+  // making them explicit lets admins see and tune them)
+  'Lead portal management':         { ontrack: 100, narrow: 92 },
+  'Revenue portal management':      { ontrack: 100, narrow: 92 },
+  'Weekend sales, no zeros':        { ontrack: 100, narrow: 92 },
+  'Workouts per member / week':     { ontrack: 100, narrow: 92 },
+  'HRM usage':                      { ontrack: 100, narrow: 92 },
+  '120-day retention':              { ontrack: 100, narrow: 92 },
+  'Member portal management':       { ontrack: 100, narrow: 92 },
+  'PSA leads, YoY change':          { ontrack: 100, narrow: 92 },
+  'Glassdoor rating':               { ontrack: 100, narrow: 92 },
+  'eNPS score':                     { ontrack: 100, narrow: 92 },
+  'Voluntary turnover':             { ontrack: 100, narrow: 92 },
+  // Revenue / spend / pipeline — 10% tolerance
+  'Cost per booking, Meta':         { ontrack: 100, narrow: 90 },
+  'Cost per lead, Meta':            { ontrack: 100, narrow: 90 },
+  'Systemwide revenue':             { ontrack: 100, narrow: 90 },
+  'Recurring revenue':              { ontrack: 100, narrow: 90 },
+  'Prepaid package revenue':        { ontrack: 100, narrow: 90 },
+  'Retail, fees & other':           { ontrack: 100, narrow: 90 },
+  // Volume counts — 15% tolerance
+  'Net recurring members / studio': { ontrack: 100, narrow: 85 },
+  'Fitness event achievement':      { ontrack: 100, narrow: 85 },
+  'Studio remodels':                { ontrack: 100, narrow: 85 },
+  'Treadmill refreshes':            { ontrack: 100, narrow: 85 },
+  'Internal promotions':            { ontrack: 100, narrow: 85 },
+};
+
 // Settings that describe identity / brand / north star — only set if empty.
 const BASE_SETTINGS = {
   dashboard_title:       'Austin Fitness Group',
@@ -95,7 +132,7 @@ export default async (request) => {
     const body = await request.json().catch(() => ({}));
     const actor = body.actor || 'seed';
     const force = body.force === true;
-    const report = { kpis_added: 0, kpis_skipped: 0, sections_added: 0, sections_skipped: 0, settings_added: 0, targets_merged: 0 };
+    const report = { kpis_added: 0, kpis_skipped: 0, sections_added: 0, sections_skipped: 0, settings_added: 0, targets_merged: 0, thresholds_merged: 0 };
 
     // 0) KPIs — every row the scorecard and sheet expect. In merge mode,
     //    skip KPIs that already have a row (so user edits survive). In
@@ -177,6 +214,28 @@ export default async (request) => {
     }
     await sql`
       INSERT INTO settings (key, value) VALUES ('kpi_targets', ${JSON.stringify(curTargets)})
+      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`;
+
+    // 2b) kpi_thresholds — merge with existing. Any KPI the user has
+    //     already customized is left alone unless force=true.
+    const curThRow = await sql`SELECT value FROM settings WHERE key = 'kpi_thresholds'`;
+    let curTh = {};
+    try {
+      if (curThRow.length) curTh = JSON.parse(curThRow[0].value) || {};
+    } catch (_) { curTh = {}; }
+
+    for (const [name, val] of Object.entries(KPI_THRESHOLDS)) {
+      // Legacy entries might be bare numbers from the single-threshold era;
+      // only "has a value" if it's an object with narrow/ontrack set.
+      const existing = curTh[name];
+      const hasUserEdit = existing && typeof existing === 'object' &&
+                          (existing.narrow != null || existing.ontrack != null);
+      if (hasUserEdit && !force) continue;
+      curTh[name] = val;
+      report.thresholds_merged++;
+    }
+    await sql`
+      INSERT INTO settings (key, value) VALUES ('kpi_thresholds', ${JSON.stringify(curTh)})
       ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`;
 
     // 3) Base settings — only fill in keys that don't exist yet (or force).

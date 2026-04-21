@@ -1135,7 +1135,7 @@
       });
       const payload = await res.json();
       if (!payload.ok) throw new Error(payload.error || 'Seed failed');
-      const summary = `KPIs: ${payload.kpis_added || 0} added, ${payload.kpis_skipped || 0} skipped. Sections: ${payload.sections_added} added, ${payload.sections_skipped} skipped. Targets merged: ${payload.targets_merged}. Settings filled: ${payload.settings_added}.`;
+      const summary = `KPIs: ${payload.kpis_added || 0} added, ${payload.kpis_skipped || 0} skipped. Sections: ${payload.sections_added} added, ${payload.sections_skipped} skipped. Targets merged: ${payload.targets_merged}. Thresholds merged: ${payload.thresholds_merged || 0}. Settings filled: ${payload.settings_added}.`;
       if (resultEl) {
         resultEl.style.display = 'block';
         resultEl.textContent = summary;

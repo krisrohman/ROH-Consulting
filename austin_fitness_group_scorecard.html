@@ -1270,17 +1270,19 @@
   .pill[style*="--teal"]  { background: var(--teal-400)  !important; }
 
   /* Leading metric callout (between section header and driver rows) */
+  /* Lagging outcome callout — quiet inline line, no card chrome.
+     Reads as editorial furniture between the section head and the
+     drivers label, not a boxed UI component. */
   .leading {
     display: grid;
     grid-template-columns: auto 1fr auto auto;
-    gap: 20px;
-    align-items: center;
-    padding: 14px 18px;
-    margin: 12px 0 4px;
-    background: #fff;
-    border: 0.5px solid var(--rule);
-    border-top: 2px solid var(--ink);
-    border-radius: 2px;
+    gap: 24px;
+    align-items: baseline;
+    padding: 14px 0 16px;
+    margin: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
   }
   .leading-tag {
     font-size: 9px;
@@ -1329,9 +1331,8 @@
     color: var(--ink-3);
     text-transform: uppercase;
     font-weight: 500;
-    margin: 20px 0 10px;
-    padding: 0 0 8px;
-    border-bottom: 0.5px solid var(--rule);
+    margin: 8px 0 12px;
+    padding: 0;
   }
 
   /* Colophon */

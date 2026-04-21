@@ -508,13 +508,105 @@
     position: relative;
     background: #eadfc6;
     border-radius: 3px;
-    padding: 40px 44px 36px;
+    padding: 36px 44px 36px;
     margin: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-    column-gap: 40px;
-    row-gap: 22px;
-    align-items: end;
+    grid-template-columns: minmax(0, 1.4fr) minmax(220px, 1fr);
+    column-gap: 48px;
+    row-gap: 8px;
+    align-items: start;
+  }
+  /* Kicker + meta: single header row at the top of the panel */
+  .ns-header {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 0.5px solid rgba(0,0,0,0.18);
+    padding: 0 0 10px;
+    margin: 0 0 6px;
+  }
+  .ns-kicker {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--coral-600);
+    margin: 0;
+  }
+  .ns-meta {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .ns-title {
+    grid-column: 1 / -1;
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 500;
+    line-height: 1.15;
+    margin: 4px 0 26px;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    max-width: 720px;
+  }
+  .ns-hero {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-right: 20px;
+    border-right: 0.5px solid rgba(0,0,0,0.18);
+  }
+  .ns-big {
+    font-family: var(--serif);
+    font-size: 128px;
+    line-height: 0.85;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.045em;
+    font-variant-numeric: tabular-nums;
+    margin: 0;
+  }
+  .ns-hero-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+    margin: 6px 0 0;
+  }
+  .ns-side {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding-left: 4px;
+    border-left: none;
+  }
+  .ns-side-stat-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+    margin: 0 0 6px;
+  }
+  .ns-mid {
+    font-family: var(--serif);
+    font-size: 48px;
+    line-height: 0.95;
+    font-weight: 500;
+    color: var(--ink-2);
+    letter-spacing: -0.025em;
+    font-variant-numeric: tabular-nums;
+    margin: 0;
   }
   .rev-sidebar {
     display: flex;
@@ -600,65 +692,6 @@
     text-transform: uppercase;
     color: var(--ink-3);
     font-weight: 500;
-  }
-  .ns-title {
-    grid-column: 1 / -1;
-    font-family: var(--serif);
-    font-size: 28px;
-    font-weight: 500;
-    line-height: 1.15;
-    margin: 6px 0 16px;
-    color: var(--ink);
-    letter-spacing: -0.015em;
-    max-width: 780px;
-  }
-  .ns-hero {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .ns-big {
-    font-family: var(--serif);
-    font-size: 140px;
-    line-height: 0.85;
-    font-weight: 500;
-    color: var(--ink);
-    letter-spacing: -0.045em;
-    font-variant-numeric: tabular-nums;
-  }
-  .ns-hero-label {
-    font-family: var(--sans);
-    font-size: 10px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    font-weight: 500;
-    margin: 2px 0 0;
-  }
-  .ns-side {
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-    padding-left: 32px;
-    border-left: 0.5px solid rgba(0,0,0,0.18);
-  }
-  .ns-side-stat-label {
-    font-family: var(--sans);
-    font-size: 10px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    font-weight: 500;
-    margin: 0 0 4px;
-  }
-  .ns-mid {
-    font-family: var(--serif);
-    font-size: 44px;
-    line-height: 0.95;
-    font-weight: 500;
-    color: var(--ink-2);
-    letter-spacing: -0.025em;
-    font-variant-numeric: tabular-nums;
   }
   .ns-track-bar {
     position: relative;
@@ -1275,6 +1308,10 @@
        ══════════════════════════════════════════════════ -->
   <div class="ns-feature">
     <section class="ns-panel">
+      <div class="ns-header">
+        <p class="ns-kicker">the north star</p>
+        <span class="ns-meta">year to date &middot; tracking to EOY</span>
+      </div>
       <h2 class="ns-title" id="ns-title">Net recurring members per studio, on average.</h2>
       <div class="ns-hero">
         <div class="ns-big" id="ns-ytd">+17</div>

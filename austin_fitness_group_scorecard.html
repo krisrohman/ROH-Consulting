@@ -2840,34 +2840,35 @@
   }
 
   function updateRibbon(data) {
-    // Count status based on MTD vs Target per KPI.
-    // Respects goal_direction (for turnover/costs, lower is better).
+    // Count status per driver KPI for the CURRENT WEEK (not MTD).
+    // Compares the selected week's actual against the monthly target.
+    // Respects goal_direction (turnover/costs = lower is better).
     let onTrack = 0, narrow = 0, risk = 0;
 
-    // Correct API paths: kpis at top level, actuals/targets under .sheet
     const configs = (data && data.kpis) || [];
-    const actuals = (data && data.sheet && data.sheet.actuals) || [];
+    const weeklyRows = (data && data.sheet && data.sheet.weekly && data.sheet.weekly.rows) || [];
     const targets = (data && data.sheet && data.sheet.targets) || [];
+    const weekCol = 'W' + currentWeekNum;
 
     const configByName = {};
     configs.forEach(c => { configByName[c.kpi_name] = c; });
     const targetByName = {};
-    targets.forEach(t => { targetByName[t.kpi] = t.months[currentMonth]; });
+    targets.forEach(t => { targetByName[t.kpi] = t.months && t.months[currentMonth]; });
 
-    actuals.forEach(a => {
-      // Only count lagging KPIs in the ribbon (leading KPIs are the leading callouts)
-      const cfg = configByName[a.kpi];
+    weeklyRows.forEach(row => {
+      // Only count driver (internally tier=lagging) KPIs; outcome KPIs
+      // (tier=leading) are surfaced through the per-section callouts.
+      const cfg = configByName[row.kpi];
       if (!cfg || cfg.tier === 'leading') return;
 
-      const mtd = a.months[currentMonth];
-      const target = targetByName[a.kpi];
-      if (typeof mtd !== 'number' || typeof target !== 'number' || target === 0) return;
+      const weekVal = row.weeks ? row.weeks[weekCol] : null;
+      const target = targetByName[row.kpi];
+      if (typeof weekVal !== 'number' || typeof target !== 'number' || target === 0) return;
 
       const goalDir = cfg.goal_direction || 'higher';
-      // Normalize ratio so "higher = better" always means >1 is on-track
       const ratio = (goalDir === 'lower')
-        ? (target / Math.max(Math.abs(mtd), 0.0001))  // flip: lower actual = better ratio
-        : (mtd / target);
+        ? (target / Math.max(Math.abs(weekVal), 0.0001))
+        : (weekVal / target);
 
       if (ratio >= 1.0) onTrack++;
       else if (ratio >= 0.92) narrow++;

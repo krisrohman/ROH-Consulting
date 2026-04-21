@@ -151,9 +151,9 @@
   }
 
   .page {
-    max-width: 1180px;
+    max-width: 1440px;
     margin: 20px auto 24px;
-    padding: 1.75rem 2.75rem 2rem;
+    padding: 1.75rem 3rem 2rem;
     background: var(--paper);
     border-top: 4px solid var(--coral-400);
     box-shadow: 0 4px 40px rgba(0,0,0,0.06);
@@ -2038,6 +2038,18 @@
       lookup[c.kpi_name].unit = lookup[c.kpi_name].unit || c.unit;
     });
 
+    // Admin-target fallback: if the Sheet's Targets tab is missing (or a
+    // month cell is blank), parse the admin KPI's target string for a
+    // number and use that. Lets the admin / scorecard be the source of
+    // truth for goals when the Sheet has no dedicated Targets tab.
+    const normTargetsForStatus = buildNormalizedTargetMap(data);
+    Object.keys(lookup).forEach(kpiName => {
+      const d = lookup[kpiName];
+      if (typeof d.target === 'number') return;
+      const parsed = parseAdminTarget(normTargetsForStatus[normalizeKpi(kpiName)]);
+      if (parsed !== null) d.target = parsed;
+    });
+
     // Weekly data (all 52 weeks in Weekly2026, filtered to current month)
     const weeklyData = weeklySrc;
     const allWeekCols = weeklyData.columns || [];
@@ -2225,6 +2237,7 @@
       targets.map(t => [normalizeKpi(t.kpi), t])
     );
     const thresholdMap = buildThresholdMap(data);
+    const adminTargetStringsForOutcomes = buildNormalizedTargetMap(data);
 
     document.querySelectorAll('.leading[data-kpi]').forEach(el => {
       const wksEl = el.querySelector('.wks');
@@ -2266,7 +2279,16 @@
       if (pill) {
         pill.classList.remove('unknown');
         const tgtRow = targetsByKpi[normalizeKpi(row ? row.kpi : (el.dataset.kpi || ''))];
-        const target = tgtRow && tgtRow.months ? tgtRow.months[currentMonth] : null;
+        let target = tgtRow && tgtRow.months ? tgtRow.months[currentMonth] : null;
+        // Fallback: parse admin target string when Sheet Targets tab is
+        // missing (user deleted it + wants goals from admin only).
+        if (typeof target !== 'number') {
+          const parsed = parseAdminTarget(
+            adminTargetStringsForOutcomes[normalizeKpi(row ? row.kpi : '')] ||
+            adminTargetStringsForOutcomes[normalizeKpi(el.dataset.kpi || '')]
+          );
+          if (parsed !== null) target = parsed;
+        }
         const lowerIsBetter = /cost|turnover|cpl|cpb/i.test(row ? row.kpi : '');
         const thr = thresholdMap[normalizeKpi(row ? row.kpi : '')]
                  || thresholdMap[normalizeKpi(el.dataset.kpi || '')] || {};

@@ -1278,13 +1278,12 @@
   .pill[style*="--teal"]  { background: var(--teal-400)  !important; }
 
   /* Leading metric callout (between section header and driver rows) */
-  /* Lagging outcome callout — editorial "feature" panel that echoes the
-     North Star's beige treatment so the reader reads it as the section's
-     headline metric, not just another driver row. Structure mirrors a
-     driver row: [text stack] [big actual] [status dot]. */
+  /* Lagging outcome callout — editorial "feature" panel on beige, same
+     shape as a driver row: [text stack] [weekly strip] [status dot] so
+     the reader compares outcomes and drivers in the same visual frame. */
   .leading {
     display: grid;
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 3fr) auto;
     gap: 28px;
     align-items: center;
     padding: 22px 26px;
@@ -1295,6 +1294,11 @@
   }
   .leading-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .leading-text .row-goal { margin-top: 12px; }
+  .leading .wks { margin-top: 0; }
+  @media (max-width: 1000px) {
+    .leading { grid-template-columns: 1fr; gap: 14px; padding: 18px 20px; }
+    .leading .wks { border-top: 0.5px solid var(--rule); padding-top: 12px; min-width: 0; }
+  }
   .leading-tag {
     font-size: 9px;
     letter-spacing: 0.26em;
@@ -1586,14 +1590,13 @@
   </div>
 
   <!-- Lagging outcome — same layout as Member engagement -->
-  <div class="leading" data-section-key="Member growth">
+  <div class="leading" data-section-key="Member growth" data-kpi="Net recurring members / studio">
     <div class="leading-text">
       <span class="leading-tag">lagging &middot; outcome</span>
       <div class="leading-name">Net recurring members / studio</div>
-      <div class="leading-sub">Net weekly change in recurring members per studio.</div>
       <p class="row-goal">+12 by EOY</p>
     </div>
-    <span class="leading-actual" id="mg-lag-actual" style="color: var(--teal-600);">+3</span>
+    <div class="wks"></div>
     <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
   </div>
 
@@ -1734,14 +1737,13 @@
       <span>Vic · fitness</span>
     </div>
   </div>
-  <div class="leading">
+  <div class="leading" data-kpi="Workouts per member / week">
     <div class="leading-text">
       <span class="leading-tag">lagging · outcome</span>
       <div class="leading-name">Workouts per member, per week</div>
-      <div class="leading-sub">The outcome members feel — driven by HRM usage, retention, and engagement below.</div>
       <p class="row-goal">&gt; 1.5×</p>
     </div>
-    <span class="leading-actual" style="color: var(--teal-600);">1.58×</span>
+    <div class="wks"></div>
     <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
   </div>
 
@@ -1882,14 +1884,13 @@
       <span>Christy · marketing</span>
     </div>
   </div>
-  <div class="leading">
+  <div class="leading" data-kpi="PSA leads, YoY change">
     <div class="leading-text">
       <span class="leading-tag">lagging · outcome</span>
       <div class="leading-name">PSA leads, year-over-year</div>
-      <div class="leading-sub">The top-of-funnel signal — driven by cost efficiency below.</div>
       <p class="row-goal">&gt; +0%</p>
     </div>
-    <span class="leading-actual" style="color: var(--teal-600);">+8.4%</span>
+    <div class="wks"></div>
     <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
   </div>
 
@@ -1968,15 +1969,14 @@
       <span>Scott · finance</span>
     </div>
   </div>
-  <div class="leading">
+  <div class="leading" data-kpi="Studio remodels">
     <div class="leading-text">
       <span class="leading-tag">lagging · outcome</span>
       <div class="leading-name">Capex program completion</div>
-      <div class="leading-sub">Combined studio + treadmill refreshes on annual plan.</div>
       <p class="row-goal">53 total</p>
     </div>
-    <span class="leading-actual" style="color: var(--teal-600);">14 / 53</span>
-    <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">26% · on pace</span>
+    <div class="wks"></div>
+    <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
   </div>
 
   <p class="drivers-label">leading drivers &middot; quarterly milestones</p>
@@ -2054,14 +2054,13 @@
       <span>Deana · people ops</span>
     </div>
   </div>
-  <div class="leading">
+  <div class="leading" data-kpi="Glassdoor rating">
     <div class="leading-text">
       <span class="leading-tag">lagging · outcome</span>
       <div class="leading-name">Glassdoor rating</div>
-      <div class="leading-sub">Employer-brand outcome — driven by growth and culture inputs below.</div>
       <p class="row-goal">&gt; 3.5</p>
     </div>
-    <span class="leading-actual" style="color: var(--teal-600);">3.7</span>
+    <div class="wks"></div>
     <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
   </div>
 
@@ -2657,7 +2656,59 @@
 
     updateRibbon(data);
     renderRevenueCards(data);
+    renderLaggingWeekly(data);
     if (data.settings) applySettings(data.settings);
+  }
+
+  // Lagging outcome callouts mirror the driver rows' weekly strip.
+  // Each .leading element with a data-kpi attribute looks up its KPI
+  // in the sheet's weekly data and renders a window of weeks around
+  // the current selected week.
+  function renderLaggingWeekly(data) {
+    const weekly = (data && data.sheet && data.sheet.weekly) || {};
+    const cols = weekly.columns || [];
+    const rows = weekly.rows || [];
+    if (!cols.length || !rows.length) return;
+
+    // Show a 5-week window centered on the current ISO week so the
+    // selected week sits in the middle (or right of center when early in year).
+    const allCols = cols.slice();
+    let centerIdx = allCols.indexOf('W' + currentWeekNum);
+    if (centerIdx < 0) centerIdx = allCols.length - 1;
+    const start = Math.max(0, Math.min(allCols.length - 5, centerIdx - 2));
+    const weekWindow = allCols.slice(start, start + 5);
+
+    const rowsByKpi = Object.fromEntries(rows.map(r => [normalizeKpi(r.kpi), r]));
+
+    document.querySelectorAll('.leading[data-kpi]').forEach(el => {
+      const wksEl = el.querySelector('.wks');
+      if (!wksEl) return;
+      const kpi = normalizeKpi(el.dataset.kpi || '');
+      const row = rowsByKpi[kpi];
+      if (!row) {
+        wksEl.innerHTML = weekWindow.map(col => `
+          <div class="wk ${col === 'W' + currentWeekNum ? 'current' : ''}">
+            <p class="wk-label">${col.toLowerCase()}</p>
+            <p class="wk-val empty"><span class="empty">—</span></p>
+          </div>
+        `).join('');
+        return;
+      }
+      const unit = (row.config && row.config.unit) || 'count';
+      wksEl.innerHTML = weekWindow.map(col => {
+        const isCurrent = col === 'W' + currentWeekNum;
+        const val = row.weeks ? row.weeks[col] : null;
+        const display = (val !== undefined && val !== null && val !== '')
+          ? formatVal(val, unit)
+          : '<span class="empty">—</span>';
+        return `
+          <div class="wk ${isCurrent ? 'current' : ''}">
+            <p class="wk-label">${col.toLowerCase()}</p>
+            <p class="wk-val ${val === undefined || val === null ? 'empty' : ''}">${display}</p>
+          </div>
+        `;
+      }).join('');
+    });
   }
 
   // Revenue snapshot cards (4 cards below North Star): match each card's

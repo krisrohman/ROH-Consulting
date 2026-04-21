@@ -2420,6 +2420,15 @@
 (function hydrateSections(){
   fetch('/api/dashboard').then(r=>r.json()).then(d=>{
     if (!d || !d.sections) return;
+    // Build the same normalized-target map renderDashboard uses so the
+    // admin KPI target wins over section.leading_description for outcomes.
+    const rawTargets = (d.settings && d.settings.kpi_targets) || {};
+    let tmap = {};
+    try { tmap = typeof rawTargets === 'string' ? (JSON.parse(rawTargets) || {}) : (rawTargets || {}); } catch(_) { tmap = {}; }
+    const normTargets = {};
+    for (const [k, v] of Object.entries(tmap)) {
+      if (v != null && String(v).trim() !== '') normTargets[normalizeKpi(k)] = String(v);
+    }
     let laggingChanged = false;
     d.sections.forEach(s => {
       const key = s.section_key || s.display_name;
@@ -2436,30 +2445,33 @@
       if (leading) {
         const lname = leading.querySelector('.leading-name');
         const goalEl = leading.querySelector('.row-goal');
-        // Outcome KPI name on the callout — prefer admin's display_label,
-        // fall back to the raw KPI name.
         if (lname) {
           const newName = s.leading_display_label || s.leading_kpi_name;
           if (newName) lname.textContent = newName;
         }
-        // Goal text on the callout — admin's leading_description field
-        // (repurposed from a sub-tagline to the goal string).
-        if (goalEl && s.leading_description) {
-          goalEl.textContent = s.leading_description;
+        // Goal text precedence for the outcome panel:
+        //   1. Per-KPI target in admin (settings.kpi_targets) — the field
+        //      the user actually edits when they update a KPI's goal.
+        //   2. Section's leading_description — legacy fallback.
+        // Without (1), editing a target in the admin KPI list silently did
+        // nothing for outcome rows because hydrateSections overwrote with (2).
+        if (goalEl) {
+          const kpiKey = normalizeKpi(s.leading_kpi_name || '');
+          const adminTarget = normTargets[kpiKey];
+          if (adminTarget) {
+            goalEl.textContent = adminTarget;
+          } else if (s.leading_description) {
+            goalEl.textContent = s.leading_description;
+          }
         }
-        // Keep the weekly-strip lookup key in sync with admin's chosen KPI
         if (s.leading_kpi_name) {
           leading.setAttribute('data-kpi', s.leading_kpi_name);
           laggingChanged = true;
         }
       }
     });
-    // Always re-render weekly strips after hydration, using THIS fetch's
-    // data. Avoids a race with syncSheet where window.__kpiData might not
-    // be set yet, and ensures any data-kpi changes take effect.
     try { renderLaggingWeekly(d); } catch(_) {}
     try { renderRevenueCards(d); } catch(_) {}
-    // Also update window.__kpiData so subsequent renders have the freshest data
     if (!window.__kpiData || !window.__kpiData.sheet) window.__kpiData = d;
   }).catch(e => console.warn('Section hydration failed:', e));
 })();

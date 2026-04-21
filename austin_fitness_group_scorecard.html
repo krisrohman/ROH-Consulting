@@ -2272,6 +2272,24 @@
     }
   });
 
+  // Derive the first week-number of a given month from the sheet's actual
+  // columns/months arrays. Avoids an off-by-one hardcoded map that assumed
+  // every month has 4 weeks (months vary between 4 and 5 ISO weeks).
+  function firstWeekOfMonth(month) {
+    const weekly = (window.__kpiData && window.__kpiData.sheet && window.__kpiData.sheet.weekly) || null;
+    if (weekly && weekly.months && weekly.columns) {
+      const idx = weekly.months.findIndex(m => m === month);
+      if (idx >= 0) {
+        const match = String(weekly.columns[idx] || '').match(/W(\d+)/);
+        if (match) return parseInt(match[1], 10);
+      }
+    }
+    // Fallback mapping (correct week counts: 5/4/4/5/4/4/5/4/4/5/4/4)
+    return { Jan: 1, Feb: 6, Mar: 10, Apr: 14, May: 19,
+             Jun: 23, Jul: 27, Aug: 32, Sep: 36,
+             Oct: 40, Nov: 45, Dec: 49 }[month] || null;
+  }
+
   function selectMonth(item, label, weekRange) {
     item.parentElement.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('selected'));
     item.classList.add('selected');
@@ -2279,12 +2297,10 @@
     currentMonthLabel = label;
     currentMonth = label.slice(0, 3);
     item.closest('.dropdown-menu').classList.remove('open');
-    // Snap week to first week of selected month (based on fixed month-to-week mapping)
-    const firstWeekOfMonth = { Jan: 1, Feb: 5, Mar: 9, Apr: 14, May: 18,
-                               Jun: 22, Jul: 26, Aug: 31, Sep: 35,
-                               Oct: 40, Nov: 44, Dec: 48 };
-    if (firstWeekOfMonth[currentMonth]) {
-      currentWeekNum = firstWeekOfMonth[currentMonth];
+    // Snap week to the actual first week of the selected month (from sheet data)
+    const firstWk = firstWeekOfMonth(currentMonth);
+    if (firstWk) {
+      currentWeekNum = firstWk;
       document.getElementById('week-label').textContent = 'W' + currentWeekNum;
     }
     rebuildHeroWeekStrip();
@@ -2299,11 +2315,8 @@
   function rebuildHeroWeekStrip() {
     const strip = document.getElementById('hero-weeks');
     if (!strip) return;
-    const firstWeekOfMonth = { Jan: 1, Feb: 5, Mar: 9, Apr: 14, May: 18,
-                               Jun: 22, Jul: 26, Aug: 31, Sep: 35,
-                               Oct: 40, Nov: 44, Dec: 48 };
     // Show 4 weeks starting from first week of current month
-    const start = firstWeekOfMonth[currentMonth] || currentWeekNum;
+    const start = firstWeekOfMonth(currentMonth) || currentWeekNum;
     const weeks = [start, start + 1, start + 2, start + 3];
     strip.innerHTML = weeks.map((wn, i) => {
       const cls = wn === currentWeekNum ? 'hero-week current' : 'hero-week';
@@ -2558,11 +2571,9 @@
       lookup[row.kpi].weekly = row.weeks;
     });
 
-    const firstWeekOfMonth = { Jan: 1, Feb: 5, Mar: 9, Apr: 14, May: 18,
-                               Jun: 22, Jul: 26, Aug: 31, Sep: 35,
-                               Oct: 40, Nov: 44, Dec: 48 };
     const totalWeeks = weeklyCols.length || 4;
-    const weekInMonth = Math.max(1, currentWeekNum - (firstWeekOfMonth[currentMonth] || 1) + 1);
+    const firstWkOfCurrent = firstWeekOfMonth(currentMonth) || 1;
+    const weekInMonth = Math.max(1, currentWeekNum - firstWkOfCurrent + 1);
 
     // Parse hidden-KPI list (set by admin, stored in settings.hidden_kpis
      // as a JSON array of KPI names). These rows are completely removed from

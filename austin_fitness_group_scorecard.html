@@ -151,15 +151,12 @@
   }
 
   .page {
-    max-width: calc(100vw - 48px);
-    margin: 20px auto 24px;
-    padding: 1.75rem 3rem 2rem;
+    max-width: none;
+    margin: 12px 16px 24px;
+    padding: 1.5rem 2.25rem 2rem;
     background: var(--paper);
     border-top: 4px solid var(--coral-400);
     box-shadow: 0 4px 40px rgba(0,0,0,0.06);
-  }
-  @media (min-width: 1800px) {
-    .page { max-width: 1760px; }
   }
 
   /* Control bar */
@@ -1199,17 +1196,12 @@
         <span class="verdict-num ribbon-num" style="color: var(--red-600);">0</span>
       </div>
     </div>
-    <div class="hero-weeks" id="hero-weeks"></div>
   </section>
 
   <!-- ══════════════════════════════════════════════════
        4. NORTH STAR — the dominant metric
        ══════════════════════════════════════════════════ -->
   <section class="ns-panel">
-    <div class="ns-head">
-      <span class="ns-kicker">the north star</span>
-      <span class="ns-meta">year to date &middot; tracking to EOY</span>
-    </div>
     <h2 class="ns-title" id="ns-title">Net recurring members per studio, on average.</h2>
     <div class="ns-hero">
       <div class="ns-big" id="ns-ytd">+17</div>
@@ -1234,7 +1226,6 @@
   <section class="rev-strap">
     <div class="rev-strap-head">
       <span class="strap-kicker">revenue &middot; month to date</span>
-      <span class="strap-meta">vs plan</span>
     </div>
     <div class="revenue-row" id="revenue-row">
       <div class="rev-card" data-kpi="Systemwide revenue">

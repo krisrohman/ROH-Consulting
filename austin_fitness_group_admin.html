@@ -40,15 +40,12 @@
     line-height: 1.5; -webkit-font-smoothing: antialiased;
   }
   .page {
-    max-width: calc(100vw - 48px);
-    margin: 20px auto 32px;
-    padding: 1.75rem 2rem 2.5rem;
+    max-width: none;
+    margin: 12px 16px 24px;
+    padding: 1.5rem 1.5rem 2rem;
     background: var(--paper);
     border-top: 4px solid var(--coral-400);
     box-shadow: 0 4px 40px rgba(0,0,0,0.06);
-  }
-  @media (min-width: 1800px) {
-    .page { max-width: 1760px; }
   }
 
   /* Top bar with switcher */
@@ -158,6 +155,26 @@
   #kpis-list-panel .panel-body,
   #view-kpis .panel-body { overflow-x: auto; }
   .kpi-row-header, .kpi-row { min-width: 1100px; }
+
+  /* Advanced-off mode: hide Unit, Math, Scope, Goal dir columns.
+     Default (no advanced-on on view) is simple. */
+  #view-kpis:not(.advanced-on) .kpi-row .adv,
+  #view-kpis:not(.advanced-on) .kpi-row-header .adv {
+    display: none;
+  }
+  #view-kpis:not(.advanced-on) .kpi-row-header,
+  #view-kpis:not(.advanced-on) .kpi-row {
+    grid-template-columns: 32px minmax(220px, 2.6fr) minmax(0, 1fr) 86px 58px 58px minmax(0, 0.7fr) 28px 28px;
+    min-width: 780px;
+  }
+  /* Advanced toggle chip */
+  .kpi-toolbar {
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: 8px; padding: 0 0 8px;
+    font-size: 12px; color: var(--ink-3);
+  }
+  .kpi-toolbar label { cursor: pointer; user-select: none; }
+  .kpi-toolbar input { vertical-align: middle; margin-right: 6px; }
 
   /* Sheet sync banner — shown when admin config doesn't match Google Sheet */
   .sheet-sync-banner {
@@ -664,14 +681,20 @@
           <div class="panel-body">
             <!-- Sheet sync banner -->
             <div id="sheet-sync-banner" class="sheet-sync-banner" style="display:none;"></div>
+            <div class="kpi-toolbar">
+              <label>
+                <input type="checkbox" id="advanced-toggle" onchange="toggleAdvanced(this.checked)" />
+                Show advanced columns (Unit / Math / Scope / Goal dir)
+              </label>
+            </div>
             <div class="kpi-row-header">
               <span style="text-align:center;">↕</span>
               <span>KPI name</span>
               <span>Section</span>
-              <span>Unit</span>
-              <span>Math</span>
-              <span title="Target scope: monthly = target applies per month. annual = annual target pro-rated by weeks-elapsed / 52.">Scope</span>
-              <span>Goal dir</span>
+              <span class="adv">Unit</span>
+              <span class="adv">Math</span>
+              <span class="adv" title="Target scope: monthly = target applies per month. annual = annual target pro-rated by weeks-elapsed / 52.">Scope</span>
+              <span class="adv">Goal dir</span>
               <span>Target</span>
               <span title="Minimum % of goal required for on-track. 100 = must hit goal. 95 = 95%+ is on-track. Default 100.">On-track %</span>
               <span title="Minimum % of goal for narrow. Below this = at-risk. Must be ≤ On-track. Default 92.">Narrow %</span>
@@ -1516,19 +1539,19 @@
         <select class="inline-input" onchange="updateKpi(${idx}, 'section', this.value)">
           ${SECTIONS.map(s => `<option ${s === k.section ? 'selected' : ''}>${escape(s)}</option>`).join('')}
         </select>
-        <select class="inline-input" onchange="updateKpi(${idx}, 'unit', this.value)">
+        <select class="inline-input adv" onchange="updateKpi(${idx}, 'unit', this.value)">
           ${UNITS.map(u => `<option ${u === k.unit ? 'selected' : ''}>${escape(u)}</option>`).join('')}
         </select>
-        <select class="inline-input" onchange="updateKpi(${idx}, 'math_type', this.value)" title="How weekly values roll up to month/YTD">
+        <select class="inline-input adv" onchange="updateKpi(${idx}, 'math_type', this.value)" title="How weekly values roll up to month/YTD">
           <option value="avg"    ${mathType === 'avg'    ? 'selected' : ''}>avg</option>
           <option value="sum"    ${mathType === 'sum'    ? 'selected' : ''}>sum</option>
           <option value="latest" ${mathType === 'latest' ? 'selected' : ''}>latest</option>
         </select>
-        <select class="inline-input" onchange="updateKpi(${idx}, 'target_scope', this.value)" title="Monthly = target applies per month (e.g. 80% adoption). Annual = target is yearly and pro-rates by weeks-elapsed.">
+        <select class="inline-input adv" onchange="updateKpi(${idx}, 'target_scope', this.value)" title="Monthly = target applies per month (e.g. 80% adoption). Annual = target is yearly and pro-rates by weeks-elapsed.">
           <option value="monthly" ${(k.target_scope || 'monthly') === 'monthly' ? 'selected' : ''}>monthly</option>
           <option value="annual"  ${(k.target_scope || 'monthly') === 'annual'  ? 'selected' : ''}>annual</option>
         </select>
-        <select class="inline-input" onchange="updateKpi(${idx}, 'goal_direction', this.value)" title="Higher is better, or lower is better">
+        <select class="inline-input adv" onchange="updateKpi(${idx}, 'goal_direction', this.value)" title="Higher is better, or lower is better">
           <option value="higher" ${goalDir === 'higher' ? 'selected' : ''}>higher ↑</option>
           <option value="lower"  ${goalDir === 'lower'  ? 'selected' : ''}>lower ↓</option>
         </select>
@@ -1617,6 +1640,25 @@
     markDirty();
     renderKpis();
   }
+
+  // Toggle visibility of advanced columns (Unit / Math / Scope / Goal dir).
+  // Preference persists across sessions so power users don't have to
+  // re-enable it every visit.
+  function toggleAdvanced(on) {
+    const view = document.getElementById('view-kpis');
+    if (!view) return;
+    view.classList.toggle('advanced-on', !!on);
+    try { localStorage.setItem('afg_admin_advanced_cols', on ? '1' : '0'); } catch (_) {}
+  }
+  (function initAdvancedToggle(){
+    try {
+      const saved = localStorage.getItem('afg_admin_advanced_cols') === '1';
+      document.addEventListener('DOMContentLoaded', () => {
+        const cb = document.getElementById('advanced-toggle');
+        if (cb) { cb.checked = saved; toggleAdvanced(saved); }
+      });
+    } catch (_) {}
+  })();
 
   // Reorder a KPI by one position. delta = -1 (up) or +1 (down).
   // The DB persists order via sort_order on save, so the new position

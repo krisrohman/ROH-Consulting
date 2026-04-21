@@ -845,12 +845,13 @@
     font-family: var(--serif);
     font-style: italic;
     font-size: 14px;
-    color: var(--coral-700);
+    color: var(--coral-400);
     margin: 2px 0 0;
     display: block;
     letter-spacing: -0.005em;
     line-height: 1.25;
   }
+  .leading .row-goal .pct { color: inherit; }
   .leading .row-goal::before {
     content: 'Goal · ';
     font-family: var(--sans);
@@ -919,7 +920,7 @@
     font-family: var(--serif);
     font-style: italic;
     font-size: 12px;
-    color: var(--coral-700);
+    color: var(--coral-400);
     margin: 4px 0 0;
     display: block;
     line-height: 1.2;
@@ -936,7 +937,7 @@
     color: var(--ink-3);
     font-weight: 500;
   }
-  .row .row-goal .pct { font-size: 11px; color: var(--coral-400); }
+  .row .row-goal .pct { font-size: 11px; color: inherit; }
 
   /* Hide the 4-col compare block — it's a data carrier for the JS */
   .compare { display: none; }

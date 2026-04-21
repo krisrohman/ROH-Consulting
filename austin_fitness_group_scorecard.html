@@ -832,6 +832,25 @@
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
   }
+  .rev-target {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink-2);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+    margin: 10px 0 auto;
+  }
+  .rev-target::before {
+    content: 'Target ';
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+    margin-right: 6px;
+  }
   .rev-compare {
     font-size: 12px;
     color: var(--ink-3);
@@ -1510,25 +1529,25 @@
     <div class="rev-card">
       <p class="rev-label">Systemwide revenue</p>
       <div class="rev-value">$2,016</div>
-      <p class="rev-compare">PY $3,083 &middot; Bgt $3,140</p>
+      <p class="rev-target">$3,140</p>
       <span class="rev-status ontrack">On track</span>
     </div>
     <div class="rev-card miss">
       <p class="rev-label">Recurring revenue</p>
       <div class="rev-value">$1,840</div>
-      <p class="rev-compare">PY $2,882 &middot; Bgt $2,895</p>
+      <p class="rev-target">$2,895</p>
       <span class="rev-status miss">Narrow miss</span>
     </div>
     <div class="rev-card">
       <p class="rev-label">Prepaid package rev</p>
       <div class="rev-value">$83</div>
-      <p class="rev-compare">PY $55 &middot; Bgt $109</p>
-      <p class="rev-proj">Proj $130</p>
+      <p class="rev-target">$109</p>
+      <span class="rev-status ontrack">On track</span>
     </div>
     <div class="rev-card">
       <p class="rev-label">Retail, fees &amp; other</p>
       <div class="rev-value">$93</div>
-      <p class="rev-compare">PY $146 &middot; Bgt $136</p>
+      <p class="rev-target">$136</p>
       <span class="rev-status ontrack">On track</span>
     </div>
   </div>

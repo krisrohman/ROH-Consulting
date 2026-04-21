@@ -673,6 +673,82 @@
     font-weight: 500;
     margin: 6px 0 0;
   }
+  /* Revenue snapshot cards — sit just below the North Star */
+  .revenue-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    margin: 0 0 2.5rem;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .rev-card {
+    background: var(--paper);
+    padding: 20px 22px 18px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-height: 168px;
+  }
+  .rev-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--teal-400);
+  }
+  .rev-card.miss::before { background: var(--amber-400); }
+  .rev-card.over::before { background: var(--red-400); }
+  .rev-label {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--ink-3);
+    margin: 0 0 10px;
+  }
+  .rev-value {
+    font-family: var(--serif);
+    font-size: 42px;
+    line-height: 1;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .rev-compare {
+    font-size: 12px;
+    color: var(--ink-3);
+    font-family: var(--serif);
+    margin: 8px 0 auto;
+  }
+  .rev-status {
+    display: inline-block;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    align-self: flex-start;
+    font-weight: 500;
+    font-family: var(--sans, Inter, system-ui);
+    margin-top: 12px;
+  }
+  .rev-status.ontrack { background: var(--teal-50); color: var(--teal-800); }
+  .rev-status.miss { background: var(--amber-50); color: var(--amber-800); }
+  .rev-proj {
+    color: var(--teal-600);
+    font-weight: 500;
+    font-family: var(--serif);
+    margin: 12px 0 0;
+    font-size: 13px;
+  }
+  @media (max-width: 900px) {
+    .revenue-row { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .revenue-row { grid-template-columns: 1fr; }
+  }
+
   .over-pill {
     display: inline-block;
     font-size: 10px;
@@ -1264,6 +1340,34 @@
     </div>
   </div>
 
+  <!-- Revenue snapshot — sits directly below the North Star -->
+  <div class="revenue-row" id="revenue-row">
+    <div class="rev-card">
+      <p class="rev-label">Systemwide revenue</p>
+      <div class="rev-value">$2,016</div>
+      <p class="rev-compare">PY $3,083 &middot; Bgt $3,140</p>
+      <span class="rev-status ontrack">On track</span>
+    </div>
+    <div class="rev-card miss">
+      <p class="rev-label">Recurring revenue</p>
+      <div class="rev-value">$1,840</div>
+      <p class="rev-compare">PY $2,882 &middot; Bgt $2,895</p>
+      <span class="rev-status miss">Narrow miss</span>
+    </div>
+    <div class="rev-card">
+      <p class="rev-label">Prepaid package rev</p>
+      <div class="rev-value">$83</div>
+      <p class="rev-compare">PY $55 &middot; Bgt $109</p>
+      <p class="rev-proj">Proj $130</p>
+    </div>
+    <div class="rev-card">
+      <p class="rev-label">Retail, fees &amp; other</p>
+      <div class="rev-value">$93</div>
+      <p class="rev-compare">PY $146 &middot; Bgt $136</p>
+      <span class="rev-status ontrack">On track</span>
+    </div>
+  </div>
+
   <!-- Section 01 — Member Growth -->
   <div class="section-head" data-section-key="Member growth">
     <div class="section-num">01</div>
@@ -1276,7 +1380,7 @@
     </div>
   </div>
 
-  <p class="drivers-label">lagging drivers &middot; weekly</p>
+  <p class="drivers-label">leading drivers &middot; weekly</p>
 
   <div class="row">
     <div>
@@ -1415,7 +1519,7 @@
     </div>
   </div>
   <div class="leading">
-    <span class="leading-tag">leading · outcome</span>
+    <span class="leading-tag">lagging · outcome</span>
     <div>
       <div class="leading-name">Workouts per member, per week</div>
       <div class="leading-sub">The outcome members feel — driven by HRM usage, retention, and engagement below.</div>
@@ -1427,7 +1531,7 @@
     <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
   </div>
 
-  <p class="drivers-label">lagging drivers &middot; weekly</p>
+  <p class="drivers-label">leading drivers &middot; weekly</p>
 
   <div class="row">
     <div>
@@ -1566,7 +1670,7 @@
     </div>
   </div>
   <div class="leading">
-    <span class="leading-tag">leading · outcome</span>
+    <span class="leading-tag">lagging · outcome</span>
     <div>
       <div class="leading-name">PSA leads, year-over-year</div>
       <div class="leading-sub">The top-of-funnel signal — driven by cost efficiency below.</div>
@@ -1578,7 +1682,7 @@
     <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
   </div>
 
-  <p class="drivers-label">lagging drivers &middot; paid media</p>
+  <p class="drivers-label">leading drivers &middot; paid media</p>
 
   <div class="row">
     <div>
@@ -1655,7 +1759,7 @@
     </div>
   </div>
   <div class="leading">
-    <span class="leading-tag">leading · outcome</span>
+    <span class="leading-tag">lagging · outcome</span>
     <div>
       <div class="leading-name">Capex program completion</div>
       <div class="leading-sub">Combined studio + treadmill refreshes on annual plan.</div>
@@ -1667,7 +1771,7 @@
     <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">26% · on pace</span>
   </div>
 
-  <p class="drivers-label">lagging drivers &middot; quarterly milestones</p>
+  <p class="drivers-label">leading drivers &middot; quarterly milestones</p>
 
   <div class="row">
     <div>
@@ -1744,7 +1848,7 @@
     </div>
   </div>
   <div class="leading">
-    <span class="leading-tag">leading · outcome</span>
+    <span class="leading-tag">lagging · outcome</span>
     <div>
       <div class="leading-name">Glassdoor rating</div>
       <div class="leading-sub">Employer-brand outcome — driven by growth and culture inputs below.</div>
@@ -1756,7 +1860,7 @@
     <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
   </div>
 
-  <p class="drivers-label">lagging drivers &middot; monthly / ytd</p>
+  <p class="drivers-label">leading drivers &middot; monthly / ytd</p>
 
   <div class="row">
     <div>

@@ -1153,9 +1153,9 @@
           <option value="lower"  ${goalDir === 'lower'  ? 'selected' : ''}>lower ↓</option>
         </select>
         <input class="inline-input" value="${escape(k.owner)}" maxlength="60" onchange="updateKpi(${idx}, 'owner', this.value)" />
-        <div class="tier-toggle ${k.tier === 'leading' ? 'leading' : ''}" onclick="toggleTier(${idx})">
-          <span class="lead">leading</span>
-          <span class="lag">lagging</span>
+        <div class="tier-toggle ${k.tier === 'leading' ? 'leading' : ''}" onclick="toggleTier(${idx})" title="Toggle: outcomes (lagging) vs drivers (leading)">
+          <span class="lead">lagging</span>
+          <span class="lag">leading</span>
         </div>
         <div class="row-actions">
           <button class="icon-btn danger" onclick="removeKpi(${idx})" title="Remove">

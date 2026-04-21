@@ -466,6 +466,56 @@
     display: none;
   }
   .field-hint.show { display: block; }
+
+  /* =========================================================
+     Responsive — admin
+     - Tablet (<=960px): narrower padding, stack nav above content,
+       wrap the topbar, let the KPI table scroll horizontally
+     - Phone (<=640px): tighter padding, smaller typography,
+       single-column field layouts, full-width inputs
+     ========================================================= */
+  @media (max-width: 960px) {
+    .page { padding: 1.25rem 1rem 4rem; margin: 12px auto 24px; }
+    .topbar { flex-wrap: wrap; gap: 12px; }
+    .view-switcher { order: 2; width: 100%; justify-content: center; display: flex; overflow-x: auto; }
+    .layout { grid-template-columns: 1fr; gap: 20px; }
+    .sidenav {
+      position: static; flex-direction: row; gap: 0;
+      overflow-x: auto; padding-bottom: 4px;
+      border-bottom: 0.5px solid var(--rule);
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+    }
+    .sidenav-section { display: none; }
+    .sidenav a { flex: 0 0 auto; white-space: nowrap; padding: 8px 14px; }
+    .sidenav-dot { display: none; }
+    /* KPI table stays readable by scrolling horizontally */
+    .panel-body { overflow-x: auto; }
+    .kpi-row-header, .kpi-row { min-width: 860px; }
+    .panel-header { flex-wrap: wrap; gap: 10px; }
+    .field-grid { grid-template-columns: 1fr; }
+    .field-label { padding: 0; }
+    .field-control { flex-wrap: wrap; }
+  }
+  @media (max-width: 640px) {
+    .page { padding: 1rem 0.875rem 4.5rem; border-top-width: 3px; }
+    .ptitle { font-size: 22px; }
+    .panel-title { font-size: 16px; }
+    .view-switcher a { padding: 6px 12px; font-size: 11px; }
+    .savebar {
+      position: fixed; left: 12px; right: 12px; bottom: 12px;
+      margin-top: 0; border-radius: 14px; padding: 10px 12px;
+      flex-wrap: wrap; gap: 8px;
+    }
+    .savebar-status { flex: 1 1 100%; }
+    .toast-container { bottom: 110px; right: 12px; left: 12px; }
+    .toast { min-width: 0; max-width: none; width: 100%; }
+    /* Access panel: make the invite row stack */
+    #view-access .panel-body > div[style*="gap: 8px"][style*="flex-end"] {
+      flex-direction: column; align-items: stretch;
+    }
+    #view-access .panel-body > div[style*="gap: 8px"][style*="flex-end"] > * { width: 100% !important; }
+  }
 </style>
 </head>
 <body>

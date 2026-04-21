@@ -1176,7 +1176,7 @@
     .controls { flex-direction: column; align-items: stretch; gap: 12px; }
     .controls-right { flex-wrap: wrap; }
     /* North star + ribbon stay horizontal, just shrink numbers */
-    .ns-grid { grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .ns-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
     .ns-big { font-size: 48px; letter-spacing: -0.02em; }
     .ribbon-num { font-size: 40px; }
     .row { grid-template-columns: 1fr; gap: 16px; }
@@ -1191,7 +1191,7 @@
     .hero-sync-note { font-size: 11px; }
     /* North star — stay horizontal, further shrink */
     .north-star { padding: 1.5rem 0; margin: 1.5rem 0; }
-    .ns-grid { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .ns-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
     .ns-big { font-size: 32px; line-height: 1; letter-spacing: -0.03em; }
     .ns-headline { font-size: 18px; line-height: 1.25; margin-bottom: 20px; }
     .ns-label { font-size: 9px; letter-spacing: 0.12em; }
@@ -1216,6 +1216,14 @@
     .pill { font-size: 10px; padding: 3px 8px; }
     /* Dropdowns: allow scroll inside long menus (e.g., month list) */
     .dropdown-menu { max-height: 60vh; overflow-y: auto; }
+    /* Revenue cards: tighter on phone */
+    .rev-card { padding: 16px 16px 14px; min-height: 0; }
+    .rev-value { font-size: 30px; }
+    .rev-label { font-size: 9px; }
+    /* Masthead top: stack cleanly on narrow viewports */
+    .masthead-top { flex-wrap: wrap; gap: 10px; }
+    .masthead-top-right { flex-wrap: wrap; row-gap: 8px; }
+    .hero-controls { flex-wrap: wrap; }
   }
 </style>
 </head>

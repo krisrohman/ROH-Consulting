@@ -226,14 +226,16 @@
   }
   .kpi-row-header, .kpi-row {
     display: grid;
-    grid-template-columns: 38px minmax(0, 1.5fr) minmax(0, 1fr) 70px 70px 86px 100px minmax(0, 0.85fr) 92px 32px 32px;
+    grid-template-columns: 38px minmax(260px, 2.4fr) minmax(0, 1fr) 70px 70px 86px 100px minmax(0, 0.85fr) 92px 32px 32px;
     gap: 8px;
     align-items: center;
     padding: 10px 14px;
   }
-  /* Name input: elide instead of wrapping / pushing siblings */
+  /* Name input: full-width, no truncation — user wants the whole name visible. */
   .kpi-row > .inline-input:nth-child(2) {
-    text-overflow: ellipsis;
+    text-overflow: clip;
+    white-space: nowrap;
+    overflow: visible;
   }
   /* Reorder column — two compact chevrons stacked */
   .kpi-reorder {
@@ -546,7 +548,7 @@
     .sidenav-dot { display: none; }
     /* KPI table stays readable by scrolling horizontally */
     .panel-body { overflow-x: auto; }
-    .kpi-row-header, .kpi-row { min-width: 860px; }
+    .kpi-row-header, .kpi-row { min-width: 1040px; }
     .panel-header { flex-wrap: wrap; gap: 10px; }
     .field-grid { grid-template-columns: 1fr; }
     .field-label { padding: 0; }

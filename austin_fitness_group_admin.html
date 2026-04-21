@@ -147,6 +147,13 @@
   .panel-body {
     padding: 16px 24px;
   }
+  /* KPI table is wider than most viewports now that each row has 13
+     columns (reorder, name, section, unit, math, goal-dir, target,
+     on-track %, narrow %, owner, tier, hide, delete). Give the table
+     a scrollable window so the trash/hide icons never get clipped. */
+  #kpis-list-panel .panel-body,
+  #view-kpis .panel-body { overflow-x: auto; }
+  .kpi-row-header, .kpi-row { min-width: 1180px; }
 
   /* Sheet sync banner — shown when admin config doesn't match Google Sheet */
   .sheet-sync-banner {

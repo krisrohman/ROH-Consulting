@@ -1287,16 +1287,29 @@
     grid-template-columns: minmax(0, 1.2fr) minmax(0, 3fr) auto;
     gap: 28px;
     align-items: center;
-    padding: 22px 26px;
+    padding: 22px 0;
     margin: 6px 0 10px;
     background: #f4ede0;
     border: none;
     border-radius: 2px;
+    /* Pull the beige panel out to the page's horizontal padding so the
+       inner text aligns with driver rows below, while the beige still
+       reads as a full-width feature panel. */
+    padding-left: 2.75rem;
+    padding-right: 2.75rem;
+    margin-left: -2.75rem;
+    margin-right: -2.75rem;
   }
   /* Collapse the middle column when we don't have weekly data to show
      so the callout doesn't leave a big blank gap in the middle. */
   .leading.no-weekly { grid-template-columns: 1fr auto; }
   .leading.no-weekly .wks { display: none; }
+  @media (max-width: 900px) {
+    .leading { margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; }
+  }
+  @media (max-width: 640px) {
+    .leading { margin-left: -1rem; margin-right: -1rem; padding-left: 1rem; padding-right: 1rem; }
+  }
   .leading-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .leading-text .row-goal { margin-top: 12px; }
   .leading .wks { margin-top: 0; }
@@ -1307,7 +1320,7 @@
   .leading-tag {
     font-size: 9px;
     letter-spacing: 0.26em;
-    color: var(--coral-600);
+    color: var(--ink-3);
     text-transform: uppercase;
     font-weight: 500;
     white-space: nowrap;
@@ -2799,14 +2812,35 @@
     });
   }
 
-  // Normalize KPI names for lookups: trim, lower, decode a few HTML entities
-  // so "Retail, fees &amp; other" matches "Retail, fees & other" from the sheet.
+  // Normalize KPI names for lookups: strip HTML entities, commas, slashes
+  // and dashes so 'Workouts per member, per week' matches 'Workouts per
+  // member / week', 'Retail, fees &amp; other' matches 'Retail, fees & other',
+  // etc.
   function normalizeKpi(s) {
     return String(s || '')
       .replace(/&amp;/g, '&')
+      .replace(/[,\/\\\-]/g, ' ')
       .replace(/\s+/g, ' ')
       .trim()
       .toLowerCase();
+  }
+
+  // Word-set overlap: returns true if a and b share a reasonable fraction
+  // of their significant words. Handles name drift between admin and sheet
+  // (different punctuation, word order, minor rephrasing).
+  function fuzzyMatchKpi(a, b) {
+    const normA = normalizeKpi(a);
+    const normB = normalizeKpi(b);
+    if (!normA || !normB) return false;
+    if (normA === normB) return true;
+    if (normA.includes(normB) || normB.includes(normA)) return true;
+    const toWords = s => new Set(s.split(' ').filter(w => w.length >= 2));
+    const wa = toWords(normA);
+    const wb = toWords(normB);
+    if (wa.size === 0 || wb.size === 0) return false;
+    let overlap = 0;
+    wa.forEach(w => { if (wb.has(w)) overlap++; });
+    return overlap / Math.min(wa.size, wb.size) >= 0.6;
   }
 
   function applySettings(settings) {

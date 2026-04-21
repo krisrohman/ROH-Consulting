@@ -425,11 +425,13 @@
   }
   .verdict-line {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
     margin: 0;
     align-items: baseline;
   }
+  .verdict-cell.v-unknown .verdict-num,
+  .verdict-cell.v-unknown .verdict-label { color: var(--ink-3); }
   .verdict-cell {
     display: flex;
     align-items: baseline;
@@ -1181,22 +1183,23 @@
        3. VERDICT — the real hero: status at a glance
        ══════════════════════════════════════════════════ -->
   <section class="verdict" role="list" aria-label="KPI status summary">
-    <p class="verdict-kicker">the state of play &middot; week <span class="verdict-wk">16</span></p>
+    <p class="verdict-kicker">the state of play &middot; week <span class="verdict-wk">16</span> &middot; <span id="verdict-total">0</span> drivers tracked</p>
     <div class="verdict-line ribbon">
       <div class="verdict-cell v-ok ribbon-cell cell-ok" role="listitem">
         <span class="verdict-label ribbon-label" style="color: var(--teal-600);">on pace</span>
-        <span class="verdict-num ribbon-num" style="color: var(--teal-600);">9</span>
-        <span class="verdict-sub ribbon-sub">drivers meeting the mark</span>
+        <span class="verdict-num ribbon-num" style="color: var(--teal-600);">0</span>
       </div>
       <div class="verdict-cell v-narrow ribbon-cell cell-narrow" role="listitem">
         <span class="verdict-label ribbon-label" style="color: var(--amber-600);">narrow</span>
-        <span class="verdict-num ribbon-num" style="color: var(--amber-600);">4</span>
-        <span class="verdict-sub ribbon-sub">close, but not there</span>
+        <span class="verdict-num ribbon-num" style="color: var(--amber-600);">0</span>
       </div>
       <div class="verdict-cell v-risk ribbon-cell cell-risk" role="listitem">
         <span class="verdict-label ribbon-label" style="color: var(--red-600);">at risk</span>
-        <span class="verdict-num ribbon-num" style="color: var(--red-600);">1</span>
-        <span class="verdict-sub ribbon-sub">requires intervention</span>
+        <span class="verdict-num ribbon-num" style="color: var(--red-600);">0</span>
+      </div>
+      <div class="verdict-cell v-unknown ribbon-cell" role="listitem">
+        <span class="verdict-label ribbon-label" style="color: var(--ink-3);">not measured</span>
+        <span class="verdict-num ribbon-num" style="color: var(--ink-3);">0</span>
       </div>
     </div>
     <div class="hero-weeks" id="hero-weeks"></div>
@@ -1939,10 +1942,17 @@
       const pctOfTarget = Math.max(0, (ytd / nsTarget) * 100);
       trackFill.style.width = Math.min(100, pctOfTarget).toFixed(0) + '%';
       if (trackMeta) {
+        // Projection — admin-editable (settings.north_star_projection).
+        // Shown as '· projected N by EOY' when set.
+        const projRaw = settings.north_star_projection;
+        const proj = (projRaw !== undefined && projRaw !== null && String(projRaw).trim() !== '')
+          ? Number(projRaw) : null;
+        const projTail = (typeof proj === 'number' && !Number.isNaN(proj))
+          ? ` · projected ${fmt(Math.round(proj))} by EOY` : '';
         if (pctOfTarget >= 100) {
-          trackMeta.textContent = `YTD is ${pctOfTarget.toFixed(0)}% of EOY target — exceeded`;
+          trackMeta.textContent = `YTD is ${pctOfTarget.toFixed(0)}% of EOY target — exceeded${projTail}`;
         } else {
-          trackMeta.textContent = `Tracking ${pctOfTarget.toFixed(0)}% of EOY target`;
+          trackMeta.textContent = `Tracking ${pctOfTarget.toFixed(0)}% of EOY target${projTail}`;
         }
       }
     }
@@ -2444,7 +2454,7 @@
     // pro-rates sum-type targets to pace. Matches via normalizeKpi so
     // sheet/admin name drift (punctuation, case, &amp; vs &) doesn't drop
     // KPIs silently from the tally.
-    let onTrack = 0, narrow = 0, risk = 0;
+    let onTrack = 0, narrow = 0, risk = 0, unknown = 0;
 
     const sheet = (data && data.sheet) || {};
     const configs    = data.kpis    || data.config   || [];
@@ -2521,16 +2531,19 @@
       if (status === 'on-track') onTrack++;
       else if (status === 'narrow') narrow++;
       else if (status === 'at-risk') risk++;
-      // 'unknown' (no data / no target) → deliberately not counted
+      else unknown++;
     });
 
-    // Verdict cell order in the new markup is: on-track, narrow, at-risk.
+    // Verdict cells: on-track, narrow, at-risk, not-measured
     const ribbonCells = document.querySelectorAll('.ribbon-num');
-    if (ribbonCells.length >= 3) {
+    if (ribbonCells.length >= 4) {
       ribbonCells[0].textContent = onTrack;
       ribbonCells[1].textContent = narrow;
       ribbonCells[2].textContent = risk;
+      ribbonCells[3].textContent = unknown;
     }
+    const totalEl = document.getElementById('verdict-total');
+    if (totalEl) totalEl.textContent = onTrack + narrow + risk + unknown;
   }
 </script>
 

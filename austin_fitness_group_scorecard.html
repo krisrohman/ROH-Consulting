@@ -508,105 +508,116 @@
     position: relative;
     background: #eadfc6;
     border-radius: 3px;
-    padding: 36px 44px 36px;
+    padding: 32px 44px 40px;
     margin: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(220px, 1fr);
-    column-gap: 48px;
-    row-gap: 8px;
-    align-items: start;
+    grid-template-columns: minmax(0, 1.5fr) minmax(220px, 1fr);
+    column-gap: 56px;
+    row-gap: 0;
+    align-items: end;
   }
-  /* Kicker + meta: single header row at the top of the panel */
+  /* Kicker alone at top-left; meta moved into the side column */
   .ns-header {
     grid-column: 1 / -1;
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    border-bottom: 0.5px solid rgba(0,0,0,0.18);
-    padding: 0 0 10px;
-    margin: 0 0 6px;
+    padding: 0 0 6px;
+    margin: 0;
   }
   .ns-kicker {
     font-family: var(--sans);
     font-size: 10px;
-    letter-spacing: 0.32em;
+    letter-spacing: 0.36em;
     text-transform: uppercase;
     font-weight: 600;
     color: var(--coral-600);
     margin: 0;
   }
+  .ns-kicker::before {
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 1px;
+    background: var(--coral-600);
+    vertical-align: middle;
+    margin-right: 12px;
+    transform: translateY(-2px);
+  }
   .ns-meta {
-    font-family: var(--sans);
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 12px;
+    letter-spacing: -0.005em;
+    text-transform: none;
     color: var(--ink-3);
-    font-weight: 500;
+    font-weight: 400;
   }
   .ns-title {
     grid-column: 1 / -1;
     font-family: var(--serif);
-    font-size: 30px;
+    font-size: 32px;
     font-weight: 500;
     line-height: 1.15;
-    margin: 4px 0 26px;
+    margin: 10px 0 36px;
     color: var(--ink);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.022em;
     max-width: 720px;
   }
   .ns-hero {
     grid-column: 1;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding-right: 20px;
-    border-right: 0.5px solid rgba(0,0,0,0.18);
+    gap: 0;
+    padding: 0;
+    border: none;
   }
   .ns-big {
     font-family: var(--serif);
-    font-size: 128px;
-    line-height: 0.85;
+    font-size: 140px;
+    line-height: 0.82;
     font-weight: 500;
     color: var(--ink);
-    letter-spacing: -0.045em;
+    letter-spacing: -0.05em;
     font-variant-numeric: tabular-nums;
     margin: 0;
   }
   .ns-hero-label {
     font-family: var(--sans);
     font-size: 10px;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
     color: var(--ink-3);
     font-weight: 500;
-    margin: 6px 0 0;
+    margin: 14px 0 0;
   }
   .ns-side {
     grid-column: 2;
     display: flex;
     flex-direction: column;
     gap: 28px;
-    padding-left: 4px;
+    padding: 0 0 4px 0;
     border-left: none;
   }
   .ns-side-stat-label {
     font-family: var(--sans);
     font-size: 10px;
-    letter-spacing: 0.26em;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
     color: var(--ink-3);
     font-weight: 500;
-    margin: 0 0 6px;
+    margin: 0 0 8px;
   }
   .ns-mid {
     font-family: var(--serif);
-    font-size: 48px;
-    line-height: 0.95;
+    font-size: 54px;
+    line-height: 0.9;
     font-weight: 500;
-    color: var(--ink-2);
-    letter-spacing: -0.025em;
+    color: var(--ink);
+    letter-spacing: -0.035em;
     font-variant-numeric: tabular-nums;
     margin: 0;
+    opacity: 0.7;
   }
   .rev-sidebar {
     display: flex;
@@ -661,12 +672,21 @@
     text-align: right;
     align-self: center;
   }
+  /* In the revenue sidebar, the status is communicated by the dot alone —
+     no 'On track' / 'Narrow miss' / 'Below target' text. Collapse text
+     to zero width while keeping the ::before dot visible. */
   .rev-sidebar .rev-status {
     grid-column: 2;
     grid-row: 1;
     justify-self: end;
     margin: 0;
-    font-size: 9px;
+    font-size: 0;
+    line-height: 0;
+    gap: 0;
+  }
+  .rev-sidebar .rev-status::before {
+    width: 9px;
+    height: 9px;
   }
   .ns-head {
     grid-column: 1 / -1;
@@ -933,7 +953,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    background: #f4ede0;
+    background: #eadfc6;
     padding: 22px 24px 24px;
     border-radius: 3px;
     border-left: 3px solid var(--coral-400);

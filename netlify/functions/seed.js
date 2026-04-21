@@ -32,8 +32,6 @@ const KPI_TARGETS = {
   'Treadmill refreshes':            '32 / year',
   'Glassdoor rating':               '> 3.5',
   'Internal promotions':            '> 30 / year',
-  'eNPS score':                     '> 40',
-  'Voluntary turnover':             '< 20%',
   'Systemwide revenue':             '> 200',
   'Recurring revenue':              '> 160',
   'Prepaid package revenue':        '> 20',
@@ -66,8 +64,6 @@ const KPIS = [
   // Section: People & culture
   { kpi_name: 'Glassdoor rating',               section: 'People & culture',  unit: 'stars',   owner: 'Deana',   department: 'People ops',  tier: 'leading', math_type: 'latest', goal_direction: 'higher' },
   { kpi_name: 'Internal promotions',            section: 'People & culture',  unit: 'count',   owner: 'Deana',   department: 'People ops',  tier: 'lagging', math_type: 'sum',    goal_direction: 'higher' },
-  { kpi_name: 'eNPS score',                     section: 'People & culture',  unit: 'score',   owner: 'Deana',   department: 'People ops',  tier: 'lagging', math_type: 'latest', goal_direction: 'higher' },
-  { kpi_name: 'Voluntary turnover',             section: 'People & culture',  unit: 'percent', owner: 'Deana',   department: 'People ops',  tier: 'lagging', math_type: 'avg',    goal_direction: 'lower' },
   // Section: Revenue — standalone, rendered in the revenue strap above the pillars
   { kpi_name: 'Systemwide revenue',             section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', math_type: 'sum',    goal_direction: 'higher' },
   { kpi_name: 'Recurring revenue',              section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', math_type: 'sum',    goal_direction: 'higher' },
@@ -95,8 +91,6 @@ const KPI_THRESHOLDS = {
   'Member portal management':       { ontrack: 100, narrow: 92 },
   'PSA leads, YoY change':          { ontrack: 100, narrow: 92 },
   'Glassdoor rating':               { ontrack: 100, narrow: 92 },
-  'eNPS score':                     { ontrack: 100, narrow: 92 },
-  'Voluntary turnover':             { ontrack: 100, narrow: 92 },
   // Revenue / spend / pipeline — 10% tolerance
   'Cost per booking, Meta':         { ontrack: 100, narrow: 90 },
   'Cost per lead, Meta':            { ontrack: 100, narrow: 90 },

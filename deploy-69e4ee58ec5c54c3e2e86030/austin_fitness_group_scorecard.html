@@ -1,0 +1,2446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Austin Fitness Group — Leadership Scorecard · FY 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --ink-2: #555;
+    --ink-3: #8a8a8a;
+    --paper: #fafaf6;
+    --rule: rgba(0,0,0,0.12);
+    --rule-strong: rgba(0,0,0,0.85);
+
+    --coral-50: #FAECE7;
+    --coral-200: #F5C4B3;
+    --coral-400: #D85A30;
+    --coral-600: #993C1D;
+    --coral-800: #712B13;
+    --coral-900: #4A1B0C;
+
+    --teal-50: #E1F5EE;
+    --teal-400: #1D9E75;
+    --teal-600: #0F6E56;
+    --teal-800: #085041;
+
+    --amber-50: #FAEEDA;
+    --amber-400: #BA7517;
+    --amber-600: #854F0B;
+    --amber-800: #633806;
+
+    --red-50: #FCEBEB;
+    --red-400: #E24B4A;
+    --red-600: #A32D2D;
+    --red-800: #791F1F;
+
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    --serif: 'Fraunces', 'Playfair Display', Georgia, serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #efece4;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Top navigation */
+  .top-nav {
+    background: #ffffff;
+    border-bottom: 0.5px solid rgba(0,0,0,0.1);
+    padding: 0 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .nav-logo {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    background: var(--coral-400);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+  }
+  .nav-company {
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .nav-links {
+    display: flex;
+    gap: 2px;
+  }
+  .nav-links a {
+    font-size: 13px;
+    color: var(--ink-2);
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+  .nav-links a:hover {
+    background: rgba(0,0,0,0.04);
+    color: var(--ink);
+  }
+  .nav-links a.active {
+    color: var(--ink);
+    font-weight: 500;
+    background: rgba(0,0,0,0.05);
+  }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .nav-notif {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .nav-notif:hover { background: rgba(0,0,0,0.05); }
+  .nav-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--coral-200);
+    color: var(--coral-800);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .page {
+    max-width: 1180px;
+    margin: 20px auto 24px;
+    padding: 1.75rem 2.75rem 2rem;
+    background: var(--paper);
+    border-top: 4px solid var(--coral-400);
+    box-shadow: 0 4px 40px rgba(0,0,0,0.06);
+  }
+
+  /* Control bar */
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .last-sync {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .last-sync .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal-400);
+    display: inline-block;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .controls-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .dropdown {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 13px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 100px;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .dropdown:hover {
+    border-color: rgba(0,0,0,0.35);
+  }
+  .dropdown.active {
+    border-color: var(--coral-400);
+    border-width: 1.5px;
+    padding: 6.5px 12.5px;
+    box-shadow: 0 0 0 3px rgba(216, 90, 48, 0.12);
+  }
+  .dropdown svg { flex-shrink: 0; opacity: 0.55; width: 11px; height: 11px; }
+
+  /* Dropdown menu */
+  .dropdown-wrap { position: relative; }
+  .dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 180px;
+    background: #fff;
+    border: 0.5px solid var(--rule);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    padding: 4px;
+    z-index: 100;
+    display: none;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+  .dropdown-menu.open { display: block; }
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--ink);
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-weight: 400;
+  }
+  .dropdown-item:hover { background: rgba(0,0,0,0.04); }
+  .dropdown-item.selected {
+    background: var(--coral-50);
+    color: var(--coral-800);
+    font-weight: 500;
+  }
+  .dropdown-item .check {
+    opacity: 0;
+    color: var(--coral-600);
+  }
+  .dropdown-item.selected .check { opacity: 1; }
+  .dropdown-item-meta {
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .dropdown-divider {
+    height: 0.5px;
+    background: var(--rule);
+    margin: 4px 0;
+  }
+  .dropdown-header {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    padding: 8px 12px 4px;
+  }
+  .sync-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 15px;
+    background: var(--coral-400);
+    border: none;
+    border-radius: 100px;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .sync-btn svg { width: 12px; height: 12px; }
+  .sync-btn:hover {
+    background: var(--coral-600);
+  }
+  .sync-btn:active {
+    transform: scale(0.97);
+  }
+  .sync-btn.syncing svg {
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* ═══════════════════════════════════════════════════
+     MASTHEAD — clean editorial layout
+     Structure:
+       Row 1: [Toggle]                     [Date]
+       Row 2: ═══════════════════════════════════════
+       Row 3: LEADERSHIP SCORECARD         VOL·FY·ISSUE
+       Row 4: Austin Fitness Group.    [Apr][Wk][Sync]
+                                       Last synced ·
+       Row 5: High standards. Relentless...
+     ═══════════════════════════════════════════════════ */
+
+  .masthead {
+    padding: 0.25rem 0 0;
+  }
+
+  /* Row 1: Top bar — toggle left, date + controls right */
+  .masthead-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .masthead-top-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .masthead-top-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .masthead-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--coral-600);
+  }
+  .masthead-mark::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--coral-600);
+    border-radius: 50%;
+  }
+  .masthead-date {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+
+  /* View switcher (inside masthead-top-left) */
+  .view-switcher {
+    display: inline-flex;
+    background: #fff;
+    border: 0.5px solid var(--rule);
+    border-radius: 100px;
+    padding: 3px;
+  }
+  .view-switcher a {
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-2);
+    text-decoration: none;
+    border-radius: 100px;
+    transition: all 0.15s ease;
+    font-family: var(--sans);
+    letter-spacing: 0.02em;
+  }
+  .view-switcher a:hover { color: var(--ink); }
+  .view-switcher a.active {
+    background: var(--coral-400);
+    color: #fff;
+  }
+
+  /* Row 2: Editorial double-rule */
+  .masthead-rule {
+    border-top: 2px solid var(--ink);
+    border-bottom: 0.5px solid var(--ink);
+    height: 4px;
+  }
+
+  /* Row 3: Kicker left, issue meta right */
+  .masthead-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0 6px;
+  }
+  .masthead-meta-row .kicker {
+    margin: 0;
+  }
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .hero-meta-val {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .hero-meta-sep {
+    color: var(--ink-3);
+    margin: 0 2px;
+    opacity: 0.6;
+  }
+
+  /* Row 4: Title takes full width */
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 4px 0 0;
+  }
+  .hero-title-col {
+    min-width: 0;
+  }
+  .sync-status-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--ink-3);
+    font-style: italic;
+    font-family: var(--serif);
+    justify-content: flex-end;
+    margin-top: 2px;
+  }
+  .kicker {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--coral-600);
+    margin: 0;
+    text-transform: lowercase;
+    font-weight: 500;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: 96px;
+    font-weight: 500;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    margin: 0;
+    color: var(--ink);
+  }
+  .hero-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* Row 5: Tagline below everything, full width */
+  .hero-tagline {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 20px;
+    color: var(--ink-2);
+    margin: 20px 0 0;
+    padding-bottom: 24px;
+    border-bottom: 0.5px solid var(--rule);
+    letter-spacing: -0.005em;
+    max-width: 640px;
+  }
+
+  /* ─── BREAKPOINT: Tablet (≤ 1024px) ─── */
+  @media (max-width: 1024px) {
+    h1 { font-size: 72px; }
+    .hero-tagline { font-size: 18px; }
+    .masthead-top-right {
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+  }
+
+  /* ─── BREAKPOINT: Mobile (≤ 640px) — everything stacks ─── */
+  @media (max-width: 640px) {
+    .masthead-top {
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-bottom: 12px;
+    }
+    .masthead-top-right {
+      width: 100%;
+      justify-content: flex-start;
+      gap: 10px;
+    }
+    .masthead-date {
+      font-size: 12px;
+      white-space: normal;
+    }
+    .masthead-mark {
+      font-size: 10px;
+    }
+    .view-switcher a { padding: 5px 12px; font-size: 10px; }
+    .masthead-meta-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      padding: 12px 0 4px;
+    }
+    .hero-meta {
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      flex-wrap: wrap;
+    }
+    .hero {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    h1 { font-size: 48px; line-height: 0.96; }
+    .sync-status-line { justify-content: flex-start; }
+    .hero-controls { flex-wrap: wrap; gap: 6px; }
+    .hero-tagline { font-size: 15px; margin-top: 18px; padding-top: 14px; }
+  }
+  .hero-weeks {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+    padding: 6px 4px 0;
+    border-top: 0.5px solid var(--rule);
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .hero-week {
+    font-family: var(--serif);
+    font-size: 13px;
+    color: var(--ink-3);
+    padding: 4px 10px;
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .hero-week.current {
+    color: var(--ink);
+    font-weight: 500;
+    background: var(--coral-50);
+    border-radius: 4px;
+  }
+  .hero-week-sep {
+    color: rgba(0,0,0,0.18);
+    font-size: 11px;
+  }
+  .hero-sync-note {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 12px;
+    color: var(--ink-3);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+  }
+  .hero-sync-note .pulse-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--teal-400);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  /* Status ribbon — inline editorial headline */
+  .ribbon {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-around;
+    gap: 24px;
+    flex-wrap: wrap;
+    border-bottom: 0.5px solid var(--rule);
+    padding: 32px 0;
+    margin: 0 0 2rem;
+  }
+  .ribbon-cell {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 0;
+    border-right: 0;
+  }
+  .ribbon-label {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin: 0;
+  }
+  .ribbon-num {
+    font-family: var(--serif);
+    font-size: 48px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .ribbon-sub {
+    display: none;
+  }
+
+  /* North Star feature */
+  /* North Star — editorial feature */
+  .north-star {
+    margin: 2rem 0 2.5rem;
+    padding: 2rem 2rem;
+    background: #f4ede0;
+    border-radius: 2px;
+  }
+  .ns-headline {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.25;
+    margin: 0 0 28px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    max-width: 720px;
+  }
+  .ns-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .ns-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .ns-big {
+    font-family: var(--serif);
+    font-size: 72px;
+    line-height: 0.95;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+  }
+  .ns-label {
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.22em;
+    text-transform: lowercase;
+    font-weight: 500;
+  }
+  .ns-sub-note {
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin: 6px 0 0;
+  }
+  .over-pill {
+    display: inline-block;
+    font-size: 10px;
+    color: #fff;
+    padding: 3px 8px;
+    background: var(--teal-600);
+    border-radius: 100px;
+    letter-spacing: 0.12em;
+    vertical-align: middle;
+    margin-left: 8px;
+  }
+
+  /* Contents / TOC */
+  .contents {
+    margin: 2.5rem 0 0;
+    padding: 2rem 2.25rem;
+    background: #fff;
+    border: 0.5px solid var(--rule);
+    border-radius: 12px;
+  }
+  .contents-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 1rem;
+    border-bottom: 0.5px solid var(--rule);
+    margin-bottom: 1rem;
+  }
+  .contents-title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink);
+    margin: 0;
+  }
+  .toc-item {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1.4fr) minmax(0, 1.8fr) auto;
+    gap: 20px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 0.5px dashed var(--rule);
+  }
+  .toc-item:last-child { border-bottom: 0; }
+  .toc-num {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--coral-400);
+    letter-spacing: -0.02em;
+  }
+  .toc-name {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .toc-goal {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .toc-owner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .toc-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    font-family: var(--sans);
+  }
+  .toc-owner-meta {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .toc-owner-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  /* Owner badge in section header */
+  .section-owner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .owner-avatar-sm {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  /* Progress bar for annual metrics */
+  .progress-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-left: 0.5px solid var(--rule);
+    padding-left: 24px;
+  }
+  .progress-track {
+    position: relative;
+    height: 8px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    border-radius: 100px;
+  }
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .progress-ytd {
+    font-family: var(--serif);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .section-head {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 24px;
+    align-items: end;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--rule-strong);
+    margin-top: 1.75rem;
+  }
+  .section-num {
+    font-family: var(--serif);
+    font-size: 40px;
+    font-weight: 500;
+    color: var(--coral-400);
+    line-height: 0.8;
+    letter-spacing: -0.03em;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 0 3px;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .section-dek {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-2);
+    margin: 0;
+  }
+  .section-tag {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--ink-3);
+  }
+
+  /* Metric row — MTD / PY / Target / Projection model */
+  .row {
+    padding: 0.95rem 0;
+    border-bottom: 0.5px solid var(--rule);
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 3.8fr) minmax(0, 0.7fr);
+    gap: 24px;
+    align-items: start;
+  }
+  .row > *:first-child { padding-top: 8px; }
+  .row > *:last-child { padding-top: 8px; text-align: right; }
+  .row.terminal { border-bottom: 1px solid var(--rule-strong); }
+  .mname {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 3px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .mdept {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--ink-3);
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  /* Four-column comparison grid */
+  /* Comparison grid — HIDDEN. Weekly strip is the main display now. */
+  .compare { display: none; }
+
+  .compare-col.projection {
+    display: none;
+  }
+  .compare-label {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    font-weight: 500;
+    margin: 0 0 5px;
+  }
+  .compare-val {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .compare-val .pct { font-size: 13px; }
+  .compare-sub {
+    font-size: 9px;
+    color: var(--ink-3);
+    margin-top: 4px;
+    letter-spacing: 0.1em;
+    font-variant-numeric: tabular-nums;
+  }
+  .compare-col.projection .compare-val { color: var(--teal-800); }
+  .compare-col.projection .compare-label { color: var(--teal-600); }
+  .compare-col.projection.warn .compare-val { color: var(--amber-800); }
+  .compare-col.projection.warn .compare-label { color: var(--amber-600); }
+  .compare-col.projection.risk .compare-val { color: var(--red-800); }
+  .compare-col.projection.risk .compare-label { color: var(--red-600); }
+  .compare-col.projection .compare-sub {
+    color: var(--teal-600);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .pill {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    padding: 4px 11px;
+    border-radius: 100px;
+    border: 0.5px solid;
+  }
+
+  /* Weekly strip per metric row — primary display */
+  .wks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+    gap: 0;
+    margin-top: 2px;
+  }
+  .wk {
+    text-align: center;
+    position: relative;
+    padding: 0 24px;
+    border-right: 0.5px solid var(--rule);
+  }
+  .wk:first-child { padding-left: 0; }
+  .wk:last-child { border-right: 0; padding-right: 0; }
+  .wk-label {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin: 0 0 6px;
+  }
+  .wk-val {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .wk-val.empty { color: var(--ink-3); font-weight: 300; }
+  .wk.current .wk-label { color: var(--coral-600); font-weight: 600; }
+  .wk.current .wk-val { color: var(--coral-700); font-weight: 500; }
+
+  /* Right-column: trend percentage + goal subtitle */
+  .row-trend {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+  }
+  .row-trend-label {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    font-family: var(--sans);
+    margin: 0 0 2px;
+  }
+  .trend-pct {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .trend-pct.up   { color: var(--teal-700); }
+  .trend-pct.down { color: var(--red-700); }
+  .trend-pct.flat { color: var(--ink-3); opacity: 0.55; font-weight: 400; }
+  .trend-pct.up.inverted   { color: var(--red-700); }
+  .trend-pct.down.inverted { color: var(--teal-700); }
+  .row-goal {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    font-family: var(--sans);
+  }
+
+  /* Leading metric callout (between section header and driver rows) */
+  .leading {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 20px;
+    align-items: center;
+    padding: 14px 18px;
+    margin: 12px 0 4px;
+    background: #fff;
+    border: 0.5px solid var(--rule);
+    border-left: 3px solid var(--coral-400);
+    border-radius: 6px;
+  }
+  .leading-tag {
+    font-size: 9px;
+    letter-spacing: 0.26em;
+    color: var(--coral-600);
+    text-transform: uppercase;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .leading-name {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .leading-sub {
+    font-size: 10px;
+    color: var(--ink-3);
+    margin-top: 2px;
+    letter-spacing: 0.02em;
+  }
+  .leading-va {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    font-family: var(--serif);
+    font-variant-numeric: tabular-nums;
+  }
+  .leading-target {
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .leading-target strong {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .leading-actual {
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1;
+  }
+  .drivers-label {
+    font-size: 9px;
+    letter-spacing: 0.26em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin: 14px 0 0;
+    padding: 0 0 6px;
+  }
+
+  /* Colophon */
+  .colophon {
+    padding: 2rem 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .colophon-left {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-3);
+    margin: 0;
+  }
+
+  @media (max-width: 900px) {
+    .top-nav { padding: 0 1rem; height: auto; flex-wrap: wrap; gap: 10px; padding-top: 10px; padding-bottom: 10px; }
+    .nav-links { display: none; }
+    .page { padding: 2rem 1.5rem; margin: 0; }
+    .controls { flex-direction: column; align-items: stretch; gap: 12px; }
+    .controls-right { flex-wrap: wrap; }
+    /* North star + ribbon stay horizontal, just shrink numbers */
+    .ns-grid { grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .ns-big { font-size: 48px; letter-spacing: -0.02em; }
+    .ribbon-num { font-size: 40px; }
+    .row { grid-template-columns: 1fr; gap: 16px; }
+    .wks { grid-column: span 1; padding-left: 0; border-left: 0; border-top: 0.5px solid var(--rule); padding-top: 14px; }
+  }
+
+  /* Mobile — phones under 640px */
+  @media (max-width: 640px) {
+    .page { padding: 1.25rem 1rem; }
+    .dropdown-btn { font-size: 14px; padding: 8px 12px; }
+    .sync-btn { font-size: 14px; padding: 8px 14px; }
+    .hero-sync-note { font-size: 11px; }
+    /* North star — stay horizontal, further shrink */
+    .north-star { padding: 1.5rem 0; margin: 1.5rem 0; }
+    .ns-grid { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .ns-big { font-size: 32px; line-height: 1; letter-spacing: -0.03em; }
+    .ns-headline { font-size: 18px; line-height: 1.25; margin-bottom: 20px; }
+    .ns-label { font-size: 9px; letter-spacing: 0.12em; }
+    .ns-sub-note { font-size: 13px; }
+    /* Ribbon — stay horizontal */
+    .ribbon { gap: 8px; padding: 14px 0; flex-direction: row; }
+    .ribbon-cell { padding: 0; border-right: 0; border-bottom: 0; flex: 1; }
+    .ribbon-num { font-size: 28px; }
+    .ribbon-label { font-size: 9px; letter-spacing: 0.12em; }
+    .ribbon-sub { display: none; }
+    /* Section headers */
+    .sec-num { font-size: 44px; }
+    .sec-title { font-size: 22px; }
+    .sec-sub { font-size: 14px; }
+    .sec-owner { font-size: 10px; }
+    /* Metric rows */
+    .mname { font-size: 16px; }
+    .metric-body { gap: 12px; }
+    .cell-label { font-size: 9px; letter-spacing: 0.12em; }
+    .cell-val { font-size: 22px; }
+    .wks { font-size: 11px; }
+    .pill { font-size: 10px; padding: 3px 8px; }
+    /* Dropdowns: allow scroll inside long menus (e.g., month list) */
+    .dropdown-menu { max-height: 60vh; overflow-y: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Masthead -->
+  <div class="masthead">
+    <div class="masthead-top">
+      <div class="masthead-top-left">
+        <div class="view-switcher">
+          <a href="#" class="active">Dashboard</a>
+          <a href="austin_fitness_group_admin.html">Admin</a>
+        </div>
+      </div>
+      <div class="masthead-top-right">
+        <div class="masthead-date" id="masthead-date">Saturday, April 18, 2026</div>
+        <div class="hero-controls">
+          <div class="dropdown-wrap">
+            <button class="dropdown active" onclick="toggleMenu('month-menu', this)">
+              <span id="month-label">Apr 2026</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="dropdown-menu" id="month-menu">
+              <div class="dropdown-header">Fiscal year 2026</div>
+              <div class="dropdown-item" onclick="selectMonth(this, 'Jan 2026')"><span>Jan 2026</span><span class="check">✓</span></div>
+              <div class="dropdown-item" onclick="selectMonth(this, 'Feb 2026')"><span>Feb 2026</span><span class="check">✓</span></div>
+              <div class="dropdown-item" onclick="selectMonth(this, 'Mar 2026')"><span>Mar 2026</span><span class="check">✓</span></div>
+              <div class="dropdown-item selected" onclick="selectMonth(this, 'Apr 2026')"><span>Apr 2026</span><span class="check">✓</span></div>
+              <div class="dropdown-item" onclick="selectMonth(this, 'May 2026')"><span>May 2026</span><span class="check">✓</span></div>
+              <div class="dropdown-item" onclick="selectMonth(this, 'Jun 2026')"><span>Jun 2026</span><span class="check">✓</span></div>
+              <div class="dropdown-item" onclick="selectMonth(this, 'Jul 2026')"><span>Jul 2026</span><span class="check">✓</span></div>
+            <div class="dropdown-item" onclick="selectMonth(this, 'Aug 2026')"><span>Aug 2026</span><span class="check">✓</span></div>
+            <div class="dropdown-item" onclick="selectMonth(this, 'Sep 2026')"><span>Sep 2026</span><span class="check">✓</span></div>
+            <div class="dropdown-item" onclick="selectMonth(this, 'Oct 2026')"><span>Oct 2026</span><span class="check">✓</span></div>
+            <div class="dropdown-item" onclick="selectMonth(this, 'Nov 2026')"><span>Nov 2026</span><span class="check">✓</span></div>
+            <div class="dropdown-item" onclick="selectMonth(this, 'Dec 2026')"><span>Dec 2026</span><span class="check">✓</span></div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item" onclick="selectMonth(this, 'FY 2026 YTD')"><span>Fiscal year to date</span><span class="check">✓</span></div>
+          </div>
+        </div>
+
+        <div class="dropdown-wrap">
+          <button class="dropdown" onclick="toggleMenu('week-menu', this)">
+            <span id="week-label">Week 16</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="dropdown-menu" id="week-menu">
+            <div class="dropdown-header">Loading weeks…</div>
+          </div>
+        </div>
+
+        <button class="sync-btn" id="sync-btn" onclick="syncSheet(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          <span id="sync-label">Sync</span>
+        </button>
+        </div>
+        <div class="sync-status-line">
+          <span class="pulse-dot"></span>
+          <span id="sync-status">Last synced from Google Sheets · Apr 17, 9:05 a.m.</span>
+        </div>
+      </div>
+    </div>
+    <div class="masthead-rule"></div>
+    <div class="masthead-meta-row">
+      <p class="kicker">leadership scorecard</p>
+      <div class="hero-meta">
+        <span class="hero-meta-label">Volume</span>
+        <span class="hero-meta-sep">·</span>
+        <span class="hero-meta-val">FY 2026</span>
+        <span class="hero-meta-sep">·</span>
+        <span class="hero-meta-label">Issue</span>
+        <span class="hero-meta-sep">·</span>
+        <span class="hero-meta-val" id="hero-issue">Week 16</span>
+      </div>
+    </div>
+    <div class="hero">
+      <div class="hero-title-col">
+        <h1>Austin<br>Fitness<br>Group.</h1>
+      </div>
+    </div>
+    <p class="hero-tagline">High standards. Relentless execution. No shortcuts.</p>
+  </div><!-- /masthead -->
+
+  <!-- Status ribbon -->
+  <div class="ribbon">
+    <div class="ribbon-cell">
+      <div class="ribbon-label" style="color: var(--red-600);">at risk</div>
+      <div class="ribbon-num" style="color: var(--red-600);">1</div>
+      <div class="ribbon-sub">requires intervention</div>
+    </div>
+    <div class="ribbon-cell">
+      <div class="ribbon-label" style="color: var(--amber-600);">narrow</div>
+      <div class="ribbon-num" style="color: var(--amber-600);">4</div>
+      <div class="ribbon-sub">close, but not there</div>
+    </div>
+    <div class="ribbon-cell">
+      <div class="ribbon-label" style="color: var(--teal-600);">on track</div>
+      <div class="ribbon-num" style="color: var(--teal-600);">9</div>
+      <div class="ribbon-sub">meeting the mark</div>
+    </div>
+  </div>
+
+  <!-- North Star feature -->
+  <div class="north-star">
+    <p class="kicker" style="margin-bottom: 20px;">the north star</p>
+    <p class="ns-headline" id="ns-title">Net recurring members per studio, on average.</p>
+    <div class="ns-grid">
+      <div class="ns-stat">
+        <div class="ns-big" id="ns-ytd">+17</div>
+        <p class="ns-label">year to date</p>
+      </div>
+      <div class="ns-stat">
+        <div class="ns-big" id="ns-trend">+5</div>
+        <p class="ns-label">4-week change</p>
+      </div>
+      <div class="ns-stat">
+        <div class="ns-big" id="ns-target">+12</div>
+        <p class="ns-label">end-of-year target</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 01 — Member Growth -->
+  <div class="section-head" data-section-key="Member growth">
+    <div class="section-num">01</div>
+    <div>
+      <h2 class="section-title">Member growth</h2>
+      <p class="section-dek">The weekly sales drivers behind the north star.</p>
+    </div>
+    <div class="section-owner">
+      <span>Chris &middot; sales ops</span>
+    </div>
+  </div>
+
+  <p class="drivers-label">lagging drivers &middot; weekly</p>
+
+  <div class="row">
+    <div>
+      <p class="mname">Intro conversion</p>
+      <p class="mdept">sales · conversion</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <p class="compare-label">Month actual</p>
+        <div class="compare-val">42.6%</div>
+        <p class="compare-sub">wk 15 of 17</p>
+      </div>
+      <div class="compare-col">
+        <p class="compare-label">Prior year</p>
+        <div class="compare-val">40.1%</div>
+        <p class="compare-sub">Apr 2025 final</p>
+      </div>
+      <div class="compare-col target">
+        <p class="compare-label">Target</p>
+        <div class="compare-val">40.0%</div>
+        <p class="compare-sub">monthly</p>
+      </div>
+      <div class="compare-col projection">
+        <p class="compare-label">Projection</p>
+        <div class="compare-val">42.4%</div>
+        <p class="compare-sub">projected to beat PY</p>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
+    </div>
+  </div>
+  <div class="row">
+    <div>
+      <p class="mname">Lead portal management</p>
+      <p class="mdept">sales · pipeline hygiene</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <p class="compare-label">Month actual</p>
+        <div class="compare-val">86.2%</div>
+        <p class="compare-sub">wk 15 of 17</p>
+      </div>
+      <div class="compare-col">
+        <p class="compare-label">Prior year</p>
+        <div class="compare-val">84.8%</div>
+        <p class="compare-sub">Apr 2025 final</p>
+      </div>
+      <div class="compare-col target">
+        <p class="compare-label">Target</p>
+        <div class="compare-val">90.0%</div>
+        <p class="compare-sub">monthly</p>
+      </div>
+      <div class="compare-col projection warn">
+        <p class="compare-label">Projection</p>
+        <div class="compare-val">86.5%</div>
+        <p class="compare-sub">projected to miss target</p>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="pill" style="color: var(--amber-800); border-color: var(--amber-400); background: var(--amber-50);">narrow</span>
+    </div>
+  </div>
+  <div class="row">
+    <div>
+      <p class="mname">Revenue portal management</p>
+      <p class="mdept">sales · revenue integrity</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <p class="compare-label">Month actual</p>
+        <div class="compare-val">77.7%</div>
+        <p class="compare-sub">wk 15 of 17</p>
+      </div>
+      <div class="compare-col">
+        <p class="compare-label">Prior year</p>
+        <div class="compare-val">79.2%</div>
+        <p class="compare-sub">Apr 2025 final</p>
+      </div>
+      <div class="compare-col target">
+        <p class="compare-label">Target</p>
+        <div class="compare-val">90.0%</div>
+        <p class="compare-sub">monthly</p>
+      </div>
+      <div class="compare-col projection risk">
+        <p class="compare-label">Projection</p>
+        <div class="compare-val">77.9%</div>
+        <p class="compare-sub">under PY and target</p>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="pill" style="color: var(--red-800); border-color: var(--red-600); background: var(--red-50);">at risk</span>
+    </div>
+  </div>
+  <div class="row terminal">
+    <div>
+      <p class="mname">Weekend sales, no zeros</p>
+      <p class="mdept">sales · coverage</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <p class="compare-label">Month actual</p>
+        <div class="compare-val">95.8%</div>
+        <p class="compare-sub">wk 15 of 17</p>
+      </div>
+      <div class="compare-col">
+        <p class="compare-label">Prior year</p>
+        <div class="compare-val">93.5%</div>
+        <p class="compare-sub">Apr 2025 final</p>
+      </div>
+      <div class="compare-col target">
+        <p class="compare-label">Target</p>
+        <div class="compare-val">100.0%</div>
+        <p class="compare-sub">monthly</p>
+      </div>
+      <div class="compare-col projection warn">
+        <p class="compare-label">Projection</p>
+        <div class="compare-val">95.9%</div>
+        <p class="compare-sub">ahead of PY</p>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="pill" style="color: var(--amber-800); border-color: var(--amber-400); background: var(--amber-50);">narrow</span>
+    </div>
+  </div>
+
+  <!-- Section 02 — Member Engagement -->
+  <div class="section-head">
+    <div class="section-num">02</div>
+    <div>
+      <h2 class="section-title">Member engagement</h2>
+      <p class="section-dek">Exceed 1.5× workouts per member, per week.</p>
+    </div>
+    <div class="section-owner">
+      <span>Vic · fitness</span>
+    </div>
+  </div>
+  <div class="leading">
+    <span class="leading-tag">leading · outcome</span>
+    <div>
+      <div class="leading-name">Workouts per member, per week</div>
+      <div class="leading-sub">The outcome members feel — driven by HRM usage, retention, and engagement below.</div>
+    </div>
+    <div class="leading-va">
+      <span class="leading-target">target <strong>&gt; 1.5×</strong></span>
+      <span class="leading-actual" style="color: var(--teal-600);">1.58×</span>
+    </div>
+    <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
+  </div>
+
+  <p class="drivers-label">lagging drivers &middot; weekly</p>
+
+  <div class="row">
+    <div>
+      <p class="mname">HRM usage</p>
+      <p class="mdept">fitness · tech adoption</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <p class="compare-label">Month actual</p>
+        <div class="compare-val">76.8%</div>
+        <p class="compare-sub">wk 15 of 17</p>
+      </div>
+      <div class="compare-col">
+        <p class="compare-label">Prior year</p>
+        <div class="compare-val">73.2%</div>
+        <p class="compare-sub">Apr 2025 final</p>
+      </div>
+      <div class="compare-col target">
+        <p class="compare-label">Target</p>
+        <div class="compare-val">75.0%</div>
+        <p class="compare-sub">monthly</p>
+      </div>
+      <div class="compare-col projection">
+        <p class="compare-label">Projection</p>
+        <div class="compare-val">76.9%</div>
+        <p class="compare-sub">ahead of PY and target</p>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
+    </div>
+  </div>
+  <div class="row">
+    <div>
+      <p class="mname">120-day retention</p>
+      <p class="mdept">fitness · stickiness</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <p class="compare-label">Month actual</p>
+        <div class="compare-val">71.7%</div>
+        <p class="compare-sub">wk 15 of 17</p>
+      </div>
+      <div class="compare-col">
+        <p class="compare-label">Prior year</p>
+        <div class="compare-val">69.8%</div>
+        <p class="compare-sub">Apr 2025 final</p>
+      </div>
+      <div class="compare-col target">
+        <p class="compare-label">Target</p>
+        <div class="compare-val">70.0%</div>
+        <p class="compare-sub">monthly</p>
+      </div>
+      <div class="compare-col projection">
+        <p class="compare-label">Projection</p>
+        <div class="compare-val">71.8%</div>
+        <p class="compare-sub">ahead of PY and target</p>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
+    </div>
+  </div>
+  <div class="row">
+    <div>
+      <p class="mname">Member portal management</p>
+      <p class="mdept">fitness · engagement</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <p class="compare-label">Month actual</p>
+        <div class="compare-val">83.8%</div>
+        <p class="compare-sub">wk 15 of 17</p>
+      </div>
+      <div class="compare-col">
+        <p class="compare-label">Prior year</p>
+        <div class="compare-val">81.2%</div>
+        <p class="compare-sub">Apr 2025 final</p>
+      </div>
+      <div class="compare-col target">
+        <p class="compare-label">Target</p>
+        <div class="compare-val">90.0%</div>
+        <p class="compare-sub">monthly</p>
+      </div>
+      <div class="compare-col projection warn">
+        <p class="compare-label">Projection</p>
+        <div class="compare-val">84.0%</div>
+        <p class="compare-sub">ahead of PY, under target</p>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="pill" style="color: var(--amber-800); border-color: var(--amber-400); background: var(--amber-50);">narrow</span>
+    </div>
+  </div>
+  <div class="row terminal">
+    <div>
+      <p class="mname">Fitness event achievement</p>
+      <p class="mdept">fitness · community</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <p class="compare-label">Month actual</p>
+        <div class="compare-val">3 of 4</div>
+        <p class="compare-sub">Apr 2026</p>
+      </div>
+      <div class="compare-col">
+        <p class="compare-label">Prior year</p>
+        <div class="compare-val">3 of 4</div>
+        <p class="compare-sub">Apr 2025 final</p>
+      </div>
+      <div class="compare-col target">
+        <p class="compare-label">Target</p>
+        <div class="compare-val">4 / mo</div>
+        <p class="compare-sub">monthly</p>
+      </div>
+      <div class="compare-col projection">
+        <p class="compare-label">Projection</p>
+        <div class="compare-val">4 of 4</div>
+        <p class="compare-sub">on pace to hit target</p>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
+    </div>
+  </div>
+
+  <!-- Section 03 — Brand Awareness -->
+  <div class="section-head" data-section-key="Brand awareness">
+    <div class="section-num">03</div>
+    <div>
+      <h2 class="section-title">Brand awareness</h2>
+      <p class="section-dek">Exceed monthly year-over-year PSA leads.</p>
+    </div>
+    <div class="section-owner">
+      <span>Christy · marketing</span>
+    </div>
+  </div>
+  <div class="leading">
+    <span class="leading-tag">leading · outcome</span>
+    <div>
+      <div class="leading-name">PSA leads, year-over-year</div>
+      <div class="leading-sub">The top-of-funnel signal — driven by cost efficiency below.</div>
+    </div>
+    <div class="leading-va">
+      <span class="leading-target">target <strong>&gt; +0%</strong></span>
+      <span class="leading-actual" style="color: var(--teal-600);">+8.4%</span>
+    </div>
+    <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
+  </div>
+
+  <p class="drivers-label">lagging drivers &middot; paid media</p>
+
+  <div class="row">
+    <div>
+      <p class="mname">Cost per booking, Meta</p>
+      <p class="mdept">marketing · paid social</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <p class="compare-label">Month actual</p>
+        <div class="compare-val">$162</div>
+        <p class="compare-sub">Apr 2026</p>
+      </div>
+      <div class="compare-col">
+        <p class="compare-label">Prior year</p>
+        <div class="compare-val">$178</div>
+        <p class="compare-sub">Apr 2025 final</p>
+      </div>
+      <div class="compare-col target">
+        <p class="compare-label">Target</p>
+        <div class="compare-val">< $170</div>
+        <p class="compare-sub">monthly</p>
+      </div>
+      <div class="compare-col projection">
+        <p class="compare-label">Projection</p>
+        <div class="compare-val">$164</div>
+        <p class="compare-sub">under target and PY</p>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
+    </div>
+  </div>
+  <div class="row terminal">
+    <div>
+      <p class="mname">Cost per lead, Meta</p>
+      <p class="mdept">marketing · paid social</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <p class="compare-label">Month actual</p>
+        <div class="compare-val">$84</div>
+        <p class="compare-sub">Apr 2026</p>
+      </div>
+      <div class="compare-col">
+        <p class="compare-label">Prior year</p>
+        <div class="compare-val">$77</div>
+        <p class="compare-sub">Apr 2025 final</p>
+      </div>
+      <div class="compare-col target">
+        <p class="compare-label">Target</p>
+        <div class="compare-val">< $80</div>
+        <p class="compare-sub">monthly</p>
+      </div>
+      <div class="compare-col projection warn">
+        <p class="compare-label">Projection</p>
+        <div class="compare-val">$84</div>
+        <p class="compare-sub">over target, up vs PY</p>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="pill" style="color: var(--amber-800); border-color: var(--amber-400); background: var(--amber-50);">narrow</span>
+    </div>
+  </div>
+
+  <!-- Section 04 — Studio Refresh -->
+  <div class="section-head" data-section-key="Studio refresh">
+    <div class="section-num">04</div>
+    <div>
+      <h2 class="section-title">Studio refresh</h2>
+      <p class="section-dek">Complete 21 studio remodels and 32 treadmill refreshes on a quarterly cadence.</p>
+    </div>
+    <div class="section-owner">
+      <span>Scott · finance</span>
+    </div>
+  </div>
+  <div class="leading">
+    <span class="leading-tag">leading · outcome</span>
+    <div>
+      <div class="leading-name">Capex program completion</div>
+      <div class="leading-sub">Combined studio + treadmill refreshes on annual plan.</div>
+    </div>
+    <div class="leading-va">
+      <span class="leading-target">target <strong>53 total</strong></span>
+      <span class="leading-actual" style="color: var(--teal-600);">14 / 53</span>
+    </div>
+    <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">26% · on pace</span>
+  </div>
+
+  <p class="drivers-label">lagging drivers &middot; quarterly milestones</p>
+
+  <div class="row">
+    <div>
+      <p class="mname">Studio remodels</p>
+      <p class="mdept">capex · annual plan</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <p class="compare-label">Month actual</p>
+        <div class="compare-val">5 / 21</div>
+        <p class="compare-sub">YTD complete</p>
+      </div>
+      <div class="compare-col">
+        <p class="compare-label">Prior year</p>
+        <div class="compare-val">4 / 21</div>
+        <p class="compare-sub">FY25 same pt</p>
+      </div>
+      <div class="compare-col target">
+        <p class="compare-label">Target</p>
+        <div class="compare-val">21 annual</div>
+        <p class="compare-sub">monthly</p>
+      </div>
+      <div class="compare-col projection">
+        <p class="compare-label">Projection</p>
+        <div class="compare-val">21 / 21</div>
+        <p class="compare-sub">on pace vs plan</p>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
+    </div>
+  </div>
+  <div class="row terminal">
+    <div>
+      <p class="mname">Treadmill refreshes</p>
+      <p class="mdept">capex · annual plan</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <p class="compare-label">Month actual</p>
+        <div class="compare-val">9 / 32</div>
+        <p class="compare-sub">YTD complete</p>
+      </div>
+      <div class="compare-col">
+        <p class="compare-label">Prior year</p>
+        <div class="compare-val">7 / 32</div>
+        <p class="compare-sub">FY25 same pt</p>
+      </div>
+      <div class="compare-col target">
+        <p class="compare-label">Target</p>
+        <div class="compare-val">32 annual</div>
+        <p class="compare-sub">monthly</p>
+      </div>
+      <div class="compare-col projection">
+        <p class="compare-label">Projection</p>
+        <div class="compare-val">32 / 32</div>
+        <p class="compare-sub">ahead of PY pace</p>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
+    </div>
+  </div>
+
+  <!-- Section 05 — People & Culture -->
+  <div class="section-head" data-section-key="People & culture">
+    <div class="section-num">05</div>
+    <div>
+      <h2 class="section-title">People &amp; culture</h2>
+      <p class="section-dek">Exceed a 3.5&#43;&#8202;star Glassdoor rating through internal growth and strong culture.</p>
+    </div>
+    <div class="section-owner">
+      <span>Deana · people ops</span>
+    </div>
+  </div>
+  <div class="leading">
+    <span class="leading-tag">leading · outcome</span>
+    <div>
+      <div class="leading-name">Glassdoor rating</div>
+      <div class="leading-sub">Employer-brand outcome — driven by growth and culture inputs below.</div>
+    </div>
+    <div class="leading-va">
+      <span class="leading-target">target <strong>&gt; 3.5 ★</strong></span>
+      <span class="leading-actual" style="color: var(--teal-600);">3.7 ★</span>
+    </div>
+    <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
+  </div>
+
+  <p class="drivers-label">lagging drivers &middot; monthly / ytd</p>
+
+  <div class="row">
+    <div>
+      <p class="mname">Glassdoor rating</p>
+      <p class="mdept">culture · employer brand</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <p class="compare-label">Month actual</p>
+        <div class="compare-val">3.7 ★</div>
+        <p class="compare-sub">Apr current</p>
+      </div>
+      <div class="compare-col">
+        <p class="compare-label">Prior year</p>
+        <div class="compare-val">3.4 ★</div>
+        <p class="compare-sub">Apr 2025 final</p>
+      </div>
+      <div class="compare-col target">
+        <p class="compare-label">Target</p>
+        <div class="compare-val">> 3.5 ★</div>
+        <p class="compare-sub">monthly</p>
+      </div>
+      <div class="compare-col projection">
+        <p class="compare-label">Projection</p>
+        <div class="compare-val">3.7 ★</div>
+        <p class="compare-sub">above PY and target</p>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
+    </div>
+  </div>
+  <div class="row terminal">
+    <div>
+      <p class="mname">Internal promotions</p>
+      <p class="mdept">culture · growth pipeline</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <p class="compare-label">Month actual</p>
+        <div class="compare-val">8 / 30</div>
+        <p class="compare-sub">YTD total</p>
+      </div>
+      <div class="compare-col">
+        <p class="compare-label">Prior year</p>
+        <div class="compare-val">6 / 30</div>
+        <p class="compare-sub">FY25 same pt</p>
+      </div>
+      <div class="compare-col target">
+        <p class="compare-label">Target</p>
+        <div class="compare-val">> 30 annual</div>
+        <p class="compare-sub">monthly</p>
+      </div>
+      <div class="compare-col projection">
+        <p class="compare-label">Projection</p>
+        <div class="compare-val">32 / 30</div>
+        <p class="compare-sub">on pace to beat target</p>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
+    </div>
+  </div>
+
+  </div>
+
+<script>
+  // ============================================================
+  // CONFIG — API endpoints (relative paths work on Netlify)
+  // ============================================================
+  const API_BASE = ''; // same-origin on Netlify; set to full URL for local dev
+  const API = {
+    dashboard: API_BASE + '/api/dashboard'
+  };
+
+  // Current period state (what the dropdowns are showing)
+  // Auto-detect current month + ISO week from today's date
+  const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function isoWeekNum(d) {
+    const target = new Date(d.valueOf());
+    const dayNr = (d.getDay() + 6) % 7;
+    target.setDate(target.getDate() - dayNr + 3);
+    const firstThursday = target.valueOf();
+    target.setMonth(0, 1);
+    if (target.getDay() !== 4) {
+      target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+    }
+    return 1 + Math.ceil((firstThursday - target) / 604800000);
+  }
+  const _today = new Date();
+  let currentMonth = MONTHS_SHORT[_today.getMonth()];
+  let currentMonthLabel = currentMonth + ' ' + _today.getFullYear();
+  let currentWeekNum = isoWeekNum(_today);
+
+  // Set initial labels + highlight current month in dropdown on first paint
+  document.addEventListener('DOMContentLoaded', () => {
+    const ml = document.getElementById('month-label');
+    if (ml) ml.textContent = currentMonthLabel;
+    const wl = document.getElementById('week-label');
+    if (wl) wl.textContent = 'Week ' + currentWeekNum;
+    // Mark the matching month item as selected, clear default Jan selection
+    document.querySelectorAll('#month-menu .dropdown-item').forEach(el => {
+      el.classList.remove('selected');
+      const onclick = el.getAttribute('onclick') || '';
+      if (onclick.includes("'" + currentMonthLabel + "'")) {
+        el.classList.add('selected');
+      }
+    });
+    // Immediately populate week menu with FAKE_DATA structure so dropdowns work before sync
+    window.__kpiData = window.__kpiData || {
+      actuals: FAKE_DATA.sheet.actuals,
+      priorYear: FAKE_DATA.sheet.priorYear,
+      targets: FAKE_DATA.sheet.targets,
+      weekly: FAKE_DATA.sheet.weekly,
+      config: FAKE_DATA.kpis,
+      settings: FAKE_DATA.settings
+    };
+    repopulateWeekMenu(window.__kpiData);
+    rebuildHeroWeekStrip();
+    renderDashboard(window.__kpiData);
+  });
+
+  // ============================================================
+  // PREVIEW DATA — used when API is unreachable (local preview / before Netlify deploy)
+  // ============================================================
+  const FAKE_DATA = {"ok": true, "kpis": [{"kpi_name": "Net recurring members / studio", "section": "Member growth", "unit": "count", "owner": "Chris", "department": "Sales ops", "tier": "leading", "sort_order": 0}, {"kpi_name": "Intro conversion", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging", "sort_order": 10}, {"kpi_name": "Lead portal management", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging", "sort_order": 20}, {"kpi_name": "Revenue portal management", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging", "sort_order": 30}, {"kpi_name": "Weekend sales, no zeros", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging", "sort_order": 40}, {"kpi_name": "Workouts per member / week", "section": "Member engagement", "unit": "ratio", "owner": "Vic", "department": "Fitness", "tier": "leading", "sort_order": 50}, {"kpi_name": "HRM usage", "section": "Member engagement", "unit": "percent", "owner": "Vic", "department": "Fitness", "tier": "lagging", "sort_order": 60}, {"kpi_name": "120-day retention", "section": "Member engagement", "unit": "percent", "owner": "Vic", "department": "Fitness", "tier": "lagging", "sort_order": 70}, {"kpi_name": "Member portal management", "section": "Member engagement", "unit": "percent", "owner": "Vic", "department": "Fitness", "tier": "lagging", "sort_order": 80}, {"kpi_name": "Fitness event achievement", "section": "Member engagement", "unit": "count", "owner": "Vic", "department": "Fitness", "tier": "lagging", "sort_order": 90}, {"kpi_name": "PSA leads, YoY change", "section": "Brand awareness", "unit": "percent", "owner": "Christy", "department": "Marketing", "tier": "leading", "sort_order": 100}, {"kpi_name": "Cost per booking, Meta", "section": "Brand awareness", "unit": "USD", "owner": "Christy", "department": "Marketing", "tier": "lagging", "sort_order": 110}, {"kpi_name": "Cost per lead, Meta", "section": "Brand awareness", "unit": "USD", "owner": "Christy", "department": "Marketing", "tier": "lagging", "sort_order": 120}, {"kpi_name": "Studio remodels", "section": "Studio refresh", "unit": "count", "owner": "Scott", "department": "Finance", "tier": "lagging", "sort_order": 130}, {"kpi_name": "Treadmill refreshes", "section": "Studio refresh", "unit": "count", "owner": "Scott", "department": "Finance", "tier": "lagging", "sort_order": 140}, {"kpi_name": "Glassdoor rating", "section": "People & culture", "unit": "stars", "owner": "Deana", "department": "People ops", "tier": "leading", "sort_order": 150}, {"kpi_name": "Internal promotions", "section": "People & culture", "unit": "count", "owner": "Deana", "department": "People ops", "tier": "lagging", "sort_order": 160}, {"kpi_name": "eNPS score", "section": "People & culture", "unit": "score", "owner": "Deana", "department": "People ops", "tier": "lagging", "sort_order": 170}, {"kpi_name": "Voluntary turnover", "section": "People & culture", "unit": "percent", "owner": "Deana", "department": "People ops", "tier": "lagging", "sort_order": 180}], "settings": {"dashboard_title": "Austin Fitness Group", "fiscal_year": "FY 2026", "brand_color": "#D85A30", "north_star_kpi": "Net recurring members / studio", "north_star_eoy_target": "12", "north_star_projection": "24"}, "sheet": {"actuals": [{"kpi": "Net recurring members / studio", "months": {"Jan": 1, "Feb": 1, "Mar": 1, "Apr": 2}, "config": {"kpi_name": "Net recurring members / studio", "section": "Member growth", "unit": "count", "owner": "Chris", "department": "Sales ops", "tier": "leading"}}, {"kpi": "Intro conversion", "months": {"Jan": 42.1, "Feb": 42.2, "Mar": 43.0, "Apr": 41.4}, "config": {"kpi_name": "Intro conversion", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging"}}, {"kpi": "Lead portal management", "months": {"Jan": 85.8, "Feb": 84.6, "Mar": 85.2, "Apr": 86.0}, "config": {"kpi_name": "Lead portal management", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging"}}, {"kpi": "Revenue portal management", "months": {"Jan": 78.3, "Feb": 78.2, "Mar": 79.0, "Apr": 77.9}, "config": {"kpi_name": "Revenue portal management", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging"}}, {"kpi": "Weekend sales, no zeros", "months": {"Jan": 94.3, "Feb": 95.2, "Mar": 95.7, "Apr": 93.8}, "config": {"kpi_name": "Weekend sales, no zeros", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging"}}, {"kpi": "Workouts per member / week", "months": {"Jan": 1.56, "Feb": 1.57, "Mar": 1.55, "Apr": 1.55}, "config": {"kpi_name": "Workouts per member / week", "section": "Member engagement", "unit": "ratio", "owner": "Vic", "department": "Fitness", "tier": "leading"}}, {"kpi": "HRM usage", "months": {"Jan": 75.1, "Feb": 74.2, "Mar": 74.2, "Apr": 74.8}, "config": {"kpi_name": "HRM usage", "section": "Member engagement", "unit": "percent", "owner": "Vic", "department": "Fitness", "tier": "lagging"}}, {"kpi": "120-day retention", "months": {"Jan": 71.6, "Feb": 71.2, "Mar": 71.6, "Apr": 71.4}, "config": {"kpi_name": "120-day retention", "section": "Member engagement", "unit": "percent", "owner": "Vic", "department": "Fitness", "tier": "lagging"}}, {"kpi": "Member portal management", "months": {"Jan": 83.1, "Feb": 84.4, "Mar": 82.6, "Apr": 83.2}, "config": {"kpi_name": "Member portal management", "section": "Member engagement", "unit": "percent", "owner": "Vic", "department": "Fitness", "tier": "lagging"}}, {"kpi": "Fitness event achievement", "months": {"Jan": 4, "Feb": 4, "Mar": 4, "Apr": 4}, "config": {"kpi_name": "Fitness event achievement", "section": "Member engagement", "unit": "count", "owner": "Vic", "department": "Fitness", "tier": "lagging"}}, {"kpi": "PSA leads, YoY change", "months": {"Jan": 5.7, "Feb": 4.3, "Mar": 5.8, "Apr": 6.9}, "config": {"kpi_name": "PSA leads, YoY change", "section": "Brand awareness", "unit": "percent", "owner": "Christy", "department": "Marketing", "tier": "leading"}}, {"kpi": "Cost per booking, Meta", "months": {"Jan": 169, "Feb": 168, "Mar": 163, "Apr": 163}, "config": {"kpi_name": "Cost per booking, Meta", "section": "Brand awareness", "unit": "USD", "owner": "Christy", "department": "Marketing", "tier": "lagging"}}, {"kpi": "Cost per lead, Meta", "months": {"Jan": 81, "Feb": 80, "Mar": 81, "Apr": 81}, "config": {"kpi_name": "Cost per lead, Meta", "section": "Brand awareness", "unit": "USD", "owner": "Christy", "department": "Marketing", "tier": "lagging"}}, {"kpi": "Studio remodels", "months": {"Jan": 2, "Feb": 4, "Mar": 6, "Apr": 8}, "config": {"kpi_name": "Studio remodels", "section": "Studio refresh", "unit": "count", "owner": "Scott", "department": "Finance", "tier": "lagging"}}, {"kpi": "Treadmill refreshes", "months": {"Jan": 2, "Feb": 5, "Mar": 8, "Apr": 10}, "config": {"kpi_name": "Treadmill refreshes", "section": "Studio refresh", "unit": "count", "owner": "Scott", "department": "Finance", "tier": "lagging"}}, {"kpi": "Glassdoor rating", "months": {"Jan": 3.6, "Feb": 3.5, "Mar": 3.5, "Apr": 3.6}, "config": {"kpi_name": "Glassdoor rating", "section": "People & culture", "unit": "stars", "owner": "Deana", "department": "People ops", "tier": "leading"}}, {"kpi": "Internal promotions", "months": {"Jan": 3, "Feb": 6, "Mar": 8, "Apr": 10}, "config": {"kpi_name": "Internal promotions", "section": "People & culture", "unit": "count", "owner": "Deana", "department": "People ops", "tier": "lagging"}}, {"kpi": "eNPS score", "months": {"Jan": 37, "Feb": 37, "Mar": 37, "Apr": 40}, "config": {"kpi_name": "eNPS score", "section": "People & culture", "unit": "score", "owner": "Deana", "department": "People ops", "tier": "lagging"}}, {"kpi": "Voluntary turnover", "months": {"Jan": 22.9, "Feb": 21.1, "Mar": 21.4, "Apr": 20.2}, "config": {"kpi_name": "Voluntary turnover", "section": "People & culture", "unit": "percent", "owner": "Deana", "department": "People ops", "tier": "lagging"}}], "priorYear": [{"kpi": "Net recurring members / studio", "months": {"Jan": 1, "Feb": 1, "Mar": 1, "Apr": 2, "May": 2, "Jun": 3, "Jul": 3, "Aug": 3, "Sep": 3, "Oct": 3, "Nov": 4, "Dec": 4}, "config": {"kpi_name": "Net recurring members / studio", "section": "Member growth", "unit": "count", "owner": "Chris", "department": "Sales ops", "tier": "leading"}}, {"kpi": "Intro conversion", "months": {"Jan": 40.4, "Feb": 41.1, "Mar": 42.5, "Apr": 42.5, "May": 42.0, "Jun": 41.7, "Jul": 42.5, "Aug": 40.9, "Sep": 44.6, "Oct": 44.7, "Nov": 44.1, "Dec": 44.0}, "config": {"kpi_name": "Intro conversion", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging"}}, {"kpi": "Lead portal management", "months": {"Jan": 87.4, "Feb": 85.5, "Mar": 84.8, "Apr": 84.8, "May": 87.0, "Jun": 86.3, "Jul": 86.9, "Aug": 86.7, "Sep": 86.1, "Oct": 87.4, "Nov": 85.6, "Dec": 86.2}, "config": {"kpi_name": "Lead portal management", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging"}}, {"kpi": "Revenue portal management", "months": {"Jan": 81.2, "Feb": 79.7, "Mar": 79.8, "Apr": 78.0, "May": 77.7, "Jun": 74.6, "Jul": 74.5, "Aug": 74.0, "Sep": 72.5, "Oct": 72.3, "Nov": 71.1, "Dec": 71.0}, "config": {"kpi_name": "Revenue portal management", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging"}}, {"kpi": "Weekend sales, no zeros", "months": {"Jan": 95.3, "Feb": 94.7, "Mar": 94.7, "Apr": 94.3, "May": 94.4, "Jun": 96.0, "Jul": 95.4, "Aug": 95.3, "Sep": 94.2, "Oct": 95.5, "Nov": 94.2, "Dec": 94.7}, "config": {"kpi_name": "Weekend sales, no zeros", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging"}}, {"kpi": "Workouts per member / week", "months": {"Jan": 1.57, "Feb": 1.56, "Mar": 1.56, "Apr": 1.58, "May": 1.59, "Jun": 1.59, "Jul": 1.57, "Aug": 1.57, "Sep": 1.59, "Oct": 1.59, "Nov": 1.6, "Dec": 1.64}, "config": {"kpi_name": "Workouts per member / week", "section": "Member engagement", "unit": "ratio", "owner": "Vic", "department": "Fitness", "tier": "leading"}}, {"kpi": "HRM usage", "months": {"Jan": 74.9, "Feb": 74.2, "Mar": 75.6, "Apr": 75.5, "May": 77.4, "Jun": 75.4, "Jul": 75.5, "Aug": 76.1, "Sep": 78.9, "Oct": 78.8, "Nov": 80.2, "Dec": 81.6}, "config": {"kpi_name": "HRM usage", "section": "Member engagement", "unit": "percent", "owner": "Vic", "department": "Fitness", "tier": "lagging"}}, {"kpi": "120-day retention", "months": {"Jan": 70.8, "Feb": 70.5, "Mar": 71.9, "Apr": 71.0, "May": 70.3, "Jun": 68.7, "Jul": 68.8, "Aug": 69.7, "Sep": 71.5, "Oct": 70.9, "Nov": 70.2, "Dec": 70.8}, "config": {"kpi_name": "120-day retention", "section": "Member engagement", "unit": "percent", "owner": "Vic", "department": "Fitness", "tier": "lagging"}}, {"kpi": "Member portal management", "months": {"Jan": 84.5, "Feb": 83.1, "Mar": 84.4, "Apr": 84.1, "May": 81.5, "Jun": 83.7, "Jul": 83.5, "Aug": 83.1, "Sep": 82.3, "Oct": 83.4, "Nov": 81.8, "Dec": 82.8}, "config": {"kpi_name": "Member portal management", "section": "Member engagement", "unit": "percent", "owner": "Vic", "department": "Fitness", "tier": "lagging"}}, {"kpi": "Fitness event achievement", "months": {"Jan": 4, "Feb": 4, "Mar": 4, "Apr": 4, "May": 4, "Jun": 4, "Jul": 4, "Aug": 4, "Sep": 4, "Oct": 4, "Nov": 4, "Dec": 4}, "config": {"kpi_name": "Fitness event achievement", "section": "Member engagement", "unit": "count", "owner": "Vic", "department": "Fitness", "tier": "lagging"}}, {"kpi": "PSA leads, YoY change", "months": {"Jan": 5.9, "Feb": 6.0, "Mar": 7.8, "Apr": 7.8, "May": 6.8, "Jun": 8.9, "Jul": 8.7, "Aug": 12.8, "Sep": 13.6, "Oct": 14.3, "Nov": 13.3, "Dec": 13.3}, "config": {"kpi_name": "PSA leads, YoY change", "section": "Brand awareness", "unit": "percent", "owner": "Christy", "department": "Marketing", "tier": "leading"}}, {"kpi": "Cost per booking, Meta", "months": {"Jan": 180, "Feb": 178, "Mar": 163, "Apr": 166, "May": 157, "Jun": 164, "Jul": 161, "Aug": 149, "Sep": 151, "Oct": 149, "Nov": 142, "Dec": 147}, "config": {"kpi_name": "Cost per booking, Meta", "section": "Brand awareness", "unit": "USD", "owner": "Christy", "department": "Marketing", "tier": "lagging"}}, {"kpi": "Cost per lead, Meta", "months": {"Jan": 80, "Feb": 79, "Mar": 82, "Apr": 84, "May": 81, "Jun": 83, "Jul": 87, "Aug": 86, "Sep": 86, "Oct": 87, "Nov": 85, "Dec": 87}, "config": {"kpi_name": "Cost per lead, Meta", "section": "Brand awareness", "unit": "USD", "owner": "Christy", "department": "Marketing", "tier": "lagging"}}, {"kpi": "Studio remodels", "months": {"Jan": 1, "Feb": 3, "Mar": 4, "Apr": 6, "May": 7, "Jun": 9, "Jul": 10, "Aug": 12, "Sep": 14, "Oct": 15, "Nov": 16, "Dec": 18}, "config": {"kpi_name": "Studio remodels", "section": "Studio refresh", "unit": "count", "owner": "Scott", "department": "Finance", "tier": "lagging"}}, {"kpi": "Treadmill refreshes", "months": {"Jan": 2, "Feb": 4, "Mar": 7, "Apr": 9, "May": 12, "Jun": 15, "Jul": 17, "Aug": 19, "Sep": 21, "Oct": 24, "Nov": 26, "Dec": 28}, "config": {"kpi_name": "Treadmill refreshes", "section": "Studio refresh", "unit": "count", "owner": "Scott", "department": "Finance", "tier": "lagging"}}, {"kpi": "Glassdoor rating", "months": {"Jan": 3.5, "Feb": 3.5, "Mar": 3.6, "Apr": 3.5, "May": 3.5, "Jun": 3.6, "Jul": 3.6, "Aug": 3.6, "Sep": 3.6, "Oct": 3.6, "Nov": 3.6, "Dec": 3.6}, "config": {"kpi_name": "Glassdoor rating", "section": "People & culture", "unit": "stars", "owner": "Deana", "department": "People ops", "tier": "leading"}}, {"kpi": "Internal promotions", "months": {"Jan": 2, "Feb": 5, "Mar": 7, "Apr": 9, "May": 12, "Jun": 14, "Jul": 16, "Aug": 19, "Sep": 22, "Oct": 24, "Nov": 27, "Dec": 29}, "config": {"kpi_name": "Internal promotions", "section": "People & culture", "unit": "count", "owner": "Deana", "department": "People ops", "tier": "lagging"}}, {"kpi": "eNPS score", "months": {"Jan": 38, "Feb": 37, "Mar": 38, "Apr": 36, "May": 37, "Jun": 40, "Jul": 37, "Aug": 39, "Sep": 38, "Oct": 38, "Nov": 40, "Dec": 40}, "config": {"kpi_name": "eNPS score", "section": "People & culture", "unit": "score", "owner": "Deana", "department": "People ops", "tier": "lagging"}}, {"kpi": "Voluntary turnover", "months": {"Jan": 22.1, "Feb": 22.0, "Mar": 20.2, "Apr": 20.0, "May": 21.1, "Jun": 19.7, "Jul": 19.1, "Aug": 19.1, "Sep": 16.9, "Oct": 17.7, "Nov": 17.0, "Dec": 17.3}, "config": {"kpi_name": "Voluntary turnover", "section": "People & culture", "unit": "percent", "owner": "Deana", "department": "People ops", "tier": "lagging"}}], "targets": [{"kpi": "Net recurring members / studio", "months": {"Jan": 12, "Feb": 12, "Mar": 12, "Apr": 12, "May": 12, "Jun": 12, "Jul": 12, "Aug": 12, "Sep": 12, "Oct": 12, "Nov": 12, "Dec": 12}, "config": {"kpi_name": "Net recurring members / studio", "section": "Member growth", "unit": "count", "owner": "Chris", "department": "Sales ops", "tier": "leading"}}, {"kpi": "Intro conversion", "months": {"Jan": 40.0, "Feb": 40.0, "Mar": 40.0, "Apr": 40.0, "May": 40.0, "Jun": 40.0, "Jul": 40.0, "Aug": 40.0, "Sep": 40.0, "Oct": 40.0, "Nov": 40.0, "Dec": 40.0}, "config": {"kpi_name": "Intro conversion", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging"}}, {"kpi": "Lead portal management", "months": {"Jan": 90.0, "Feb": 90.0, "Mar": 90.0, "Apr": 90.0, "May": 90.0, "Jun": 90.0, "Jul": 90.0, "Aug": 90.0, "Sep": 90.0, "Oct": 90.0, "Nov": 90.0, "Dec": 90.0}, "config": {"kpi_name": "Lead portal management", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging"}}, {"kpi": "Revenue portal management", "months": {"Jan": 90.0, "Feb": 90.0, "Mar": 90.0, "Apr": 90.0, "May": 90.0, "Jun": 90.0, "Jul": 90.0, "Aug": 90.0, "Sep": 90.0, "Oct": 90.0, "Nov": 90.0, "Dec": 90.0}, "config": {"kpi_name": "Revenue portal management", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging"}}, {"kpi": "Weekend sales, no zeros", "months": {"Jan": 100.0, "Feb": 100.0, "Mar": 100.0, "Apr": 100.0, "May": 100.0, "Jun": 100.0, "Jul": 100.0, "Aug": 100.0, "Sep": 100.0, "Oct": 100.0, "Nov": 100.0, "Dec": 100.0}, "config": {"kpi_name": "Weekend sales, no zeros", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging"}}, {"kpi": "Workouts per member / week", "months": {"Jan": 1.5, "Feb": 1.5, "Mar": 1.5, "Apr": 1.5, "May": 1.5, "Jun": 1.5, "Jul": 1.5, "Aug": 1.5, "Sep": 1.5, "Oct": 1.5, "Nov": 1.5, "Dec": 1.5}, "config": {"kpi_name": "Workouts per member / week", "section": "Member engagement", "unit": "ratio", "owner": "Vic", "department": "Fitness", "tier": "leading"}}, {"kpi": "HRM usage", "months": {"Jan": 75.0, "Feb": 75.0, "Mar": 75.0, "Apr": 75.0, "May": 75.0, "Jun": 75.0, "Jul": 75.0, "Aug": 75.0, "Sep": 75.0, "Oct": 75.0, "Nov": 75.0, "Dec": 75.0}, "config": {"kpi_name": "HRM usage", "section": "Member engagement", "unit": "percent", "owner": "Vic", "department": "Fitness", "tier": "lagging"}}, {"kpi": "120-day retention", "months": {"Jan": 70.0, "Feb": 70.0, "Mar": 70.0, "Apr": 70.0, "May": 70.0, "Jun": 70.0, "Jul": 70.0, "Aug": 70.0, "Sep": 70.0, "Oct": 70.0, "Nov": 70.0, "Dec": 70.0}, "config": {"kpi_name": "120-day retention", "section": "Member engagement", "unit": "percent", "owner": "Vic", "department": "Fitness", "tier": "lagging"}}, {"kpi": "Member portal management", "months": {"Jan": 90.0, "Feb": 90.0, "Mar": 90.0, "Apr": 90.0, "May": 90.0, "Jun": 90.0, "Jul": 90.0, "Aug": 90.0, "Sep": 90.0, "Oct": 90.0, "Nov": 90.0, "Dec": 90.0}, "config": {"kpi_name": "Member portal management", "section": "Member engagement", "unit": "percent", "owner": "Vic", "department": "Fitness", "tier": "lagging"}}, {"kpi": "Fitness event achievement", "months": {"Jan": 4, "Feb": 4, "Mar": 4, "Apr": 4, "May": 4, "Jun": 4, "Jul": 4, "Aug": 4, "Sep": 4, "Oct": 4, "Nov": 4, "Dec": 4}, "config": {"kpi_name": "Fitness event achievement", "section": "Member engagement", "unit": "count", "owner": "Vic", "department": "Fitness", "tier": "lagging"}}, {"kpi": "PSA leads, YoY change", "months": {"Jan": 0, "Feb": 0, "Mar": 0, "Apr": 0, "May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 0, "Oct": 0, "Nov": 0, "Dec": 0}, "config": {"kpi_name": "PSA leads, YoY change", "section": "Brand awareness", "unit": "percent", "owner": "Christy", "department": "Marketing", "tier": "leading"}}, {"kpi": "Cost per booking, Meta", "months": {"Jan": 170, "Feb": 170, "Mar": 170, "Apr": 170, "May": 170, "Jun": 170, "Jul": 170, "Aug": 170, "Sep": 170, "Oct": 170, "Nov": 170, "Dec": 170}, "config": {"kpi_name": "Cost per booking, Meta", "section": "Brand awareness", "unit": "USD", "owner": "Christy", "department": "Marketing", "tier": "lagging"}}, {"kpi": "Cost per lead, Meta", "months": {"Jan": 80, "Feb": 80, "Mar": 80, "Apr": 80, "May": 80, "Jun": 80, "Jul": 80, "Aug": 80, "Sep": 80, "Oct": 80, "Nov": 80, "Dec": 80}, "config": {"kpi_name": "Cost per lead, Meta", "section": "Brand awareness", "unit": "USD", "owner": "Christy", "department": "Marketing", "tier": "lagging"}}, {"kpi": "Studio remodels", "months": {"Jan": 2, "Feb": 4, "Mar": 5, "Apr": 7, "May": 9, "Jun": 10, "Jul": 12, "Aug": 14, "Sep": 16, "Oct": 18, "Nov": 19, "Dec": 21}, "config": {"kpi_name": "Studio remodels", "section": "Studio refresh", "unit": "count", "owner": "Scott", "department": "Finance", "tier": "lagging"}}, {"kpi": "Treadmill refreshes", "months": {"Jan": 3, "Feb": 5, "Mar": 8, "Apr": 11, "May": 13, "Jun": 16, "Jul": 19, "Aug": 21, "Sep": 24, "Oct": 27, "Nov": 29, "Dec": 32}, "config": {"kpi_name": "Treadmill refreshes", "section": "Studio refresh", "unit": "count", "owner": "Scott", "department": "Finance", "tier": "lagging"}}, {"kpi": "Glassdoor rating", "months": {"Jan": 3.5, "Feb": 3.5, "Mar": 3.5, "Apr": 3.5, "May": 3.5, "Jun": 3.5, "Jul": 3.5, "Aug": 3.5, "Sep": 3.5, "Oct": 3.5, "Nov": 3.5, "Dec": 3.5}, "config": {"kpi_name": "Glassdoor rating", "section": "People & culture", "unit": "stars", "owner": "Deana", "department": "People ops", "tier": "leading"}}, {"kpi": "Internal promotions", "months": {"Jan": 2, "Feb": 5, "Mar": 8, "Apr": 10, "May": 12, "Jun": 15, "Jul": 18, "Aug": 20, "Sep": 22, "Oct": 25, "Nov": 28, "Dec": 30}, "config": {"kpi_name": "Internal promotions", "section": "People & culture", "unit": "count", "owner": "Deana", "department": "People ops", "tier": "lagging"}}, {"kpi": "eNPS score", "months": {"Jan": 40, "Feb": 40, "Mar": 40, "Apr": 40, "May": 40, "Jun": 40, "Jul": 40, "Aug": 40, "Sep": 40, "Oct": 40, "Nov": 40, "Dec": 40}, "config": {"kpi_name": "eNPS score", "section": "People & culture", "unit": "score", "owner": "Deana", "department": "People ops", "tier": "lagging"}}, {"kpi": "Voluntary turnover", "months": {"Jan": 20, "Feb": 20, "Mar": 20, "Apr": 20, "May": 20, "Jun": 20, "Jul": 20, "Aug": 20, "Sep": 20, "Oct": 20, "Nov": 20, "Dec": 20}, "config": {"kpi_name": "Voluntary turnover", "section": "People & culture", "unit": "percent", "owner": "Deana", "department": "People ops", "tier": "lagging"}}], "weekly": {"tabName": "Weekly2026", "columns": ["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8", "W9", "W10", "W11", "W12", "W13", "W14", "W15", "W16", "W17", "W18", "W19", "W20", "W21", "W22", "W23", "W24", "W25", "W26", "W27", "W28", "W29", "W30", "W31", "W32", "W33", "W34", "W35", "W36", "W37", "W38", "W39", "W40", "W41", "W42", "W43", "W44", "W45", "W46", "W47", "W48", "W49", "W50", "W51", "W52"], "months": ["Jan", "Jan", "Jan", "Jan", "Jan", "Feb", "Feb", "Feb", "Feb", "Mar", "Mar", "Mar", "Mar", "Apr", "Apr", "Apr", "Apr", "Apr", "May", "May", "May", "May", "Jun", "Jun", "Jun", "Jun", "Jul", "Jul", "Jul", "Jul", "Jul", "Aug", "Aug", "Aug", "Aug", "Sep", "Sep", "Sep", "Sep", "Oct", "Oct", "Oct", "Oct", "Oct", "Nov", "Nov", "Nov", "Nov", "Dec", "Dec", "Dec", "Dec"], "rows": [{"kpi": "Net recurring members / studio", "weeks": {"W1": 0, "W2": 1, "W3": 1, "W4": 0, "W5": 1, "W6": 1, "W7": 1, "W8": 0, "W9": 0, "W10": 0, "W11": 1, "W12": 1, "W13": 0, "W14": 0, "W15": 1, "W16": 0, "W17": 1}, "config": {"kpi_name": "Net recurring members / studio", "section": "Member growth", "unit": "count", "owner": "Chris", "department": "Sales ops", "tier": "leading"}}, {"kpi": "Intro conversion", "weeks": {"W1": 42.6, "W2": 42.9, "W3": 42.8, "W4": 41.5, "W5": 42.7, "W6": 42.0, "W7": 42.1, "W8": 42.7, "W9": 42.0, "W10": 42.9, "W11": 42.6, "W12": 43.5, "W13": 42.8, "W14": 42.0, "W15": 41.6, "W16": 40.9, "W17": 41.6}, "config": {"kpi_name": "Intro conversion", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging"}}, {"kpi": "Lead portal management", "weeks": {"W1": 85.1, "W2": 86.5, "W3": 85.1, "W4": 85.1, "W5": 84.9, "W6": 84.9, "W7": 85.5, "W8": 85.2, "W9": 85.4, "W10": 85.0, "W11": 85.4, "W12": 85.7, "W13": 84.3, "W14": 85.5, "W15": 86.2, "W16": 86.9, "W17": 86.4}, "config": {"kpi_name": "Lead portal management", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging"}}, {"kpi": "Revenue portal management", "weeks": {"W1": 78.8, "W2": 77.9, "W3": 78.7, "W4": 78.4, "W5": 79.4, "W6": 79.4, "W7": 78.0, "W8": 77.1, "W9": 77.2, "W10": 78.5, "W11": 78.8, "W12": 78.4, "W13": 79.8, "W14": 78.4, "W15": 77.7, "W16": 78.8, "W17": 78.6}, "config": {"kpi_name": "Revenue portal management", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging"}}, {"kpi": "Weekend sales, no zeros", "weeks": {"W1": 94.9, "W2": 93.9, "W3": 93.6, "W4": 94.4, "W5": 94.0, "W6": 94.5, "W7": 94.8, "W8": 95.5, "W9": 95.5, "W10": 96.2, "W11": 96.3, "W12": 96.3, "W13": 95.7, "W14": 93.3, "W15": 94.3, "W16": 94.2, "W17": 93.6}, "config": {"kpi_name": "Weekend sales, no zeros", "section": "Member growth", "unit": "percent", "owner": "Chris", "department": "Sales ops", "tier": "lagging"}}, {"kpi": "Workouts per member / week", "weeks": {"W1": 1.56, "W2": 1.57, "W3": 1.56, "W4": 1.57, "W5": 1.55, "W6": 1.57, "W7": 1.56, "W8": 1.58, "W9": 1.56, "W10": 1.56, "W11": 1.54, "W12": 1.57, "W13": 1.55, "W14": 1.56, "W15": 1.54, "W16": 1.55, "W17": 1.54}, "config": {"kpi_name": "Workouts per member / week", "section": "Member engagement", "unit": "ratio", "owner": "Vic", "department": "Fitness", "tier": "leading"}}, {"kpi": "HRM usage", "weeks": {"W1": 75.1, "W2": 75.5, "W3": 75.9, "W4": 75.8, "W5": 74.6, "W6": 73.5, "W7": 73.7, "W8": 73.5, "W9": 73.8, "W10": 74.5, "W11": 74.6, "W12": 73.5, "W13": 74.1, "W14": 74.7, "W15": 75.1, "W16": 74.8, "W17": 75.0}, "config": {"kpi_name": "HRM usage", "section": "Member engagement", "unit": "percent", "owner": "Vic", "department": "Fitness", "tier": "lagging"}}, {"kpi": "120-day retention", "weeks": {"W1": 72.0, "W2": 71.5, "W3": 72.0, "W4": 72.0, "W5": 71.1, "W6": 71.8, "W7": 70.9, "W8": 71.8, "W9": 71.6, "W10": 72.0, "W11": 71.1, "W12": 71.3, "W13": 71.1, "W14": 71.9, "W15": 70.8, "W16": 71.8, "W17": 70.8}, "config": {"kpi_name": "120-day retention", "section": "Member engagement", "unit": "percent", "owner": "Vic", "department": "Fitness", "tier": "lagging"}}, {"kpi": "Member portal management", "weeks": {"W1": 82.2, "W2": 83.7, "W3": 82.7, "W4": 82.9, "W5": 83.4, "W6": 83.8, "W7": 84.7, "W8": 84.9, "W9": 83.4, "W10": 81.8, "W11": 82.8, "W12": 82.2, "W13": 83.4, "W14": 82.3, "W15": 83.7, "W16": 84.0, "W17": 82.4}, "config": {"kpi_name": "Member portal management", "section": "Member engagement", "unit": "percent", "owner": "Vic", "department": "Fitness", "tier": "lagging"}}, {"kpi": "Fitness event achievement", "weeks": {"W1": 2, "W2": 1, "W3": 2, "W4": 1, "W5": 1, "W6": 0, "W7": 0, "W8": 1, "W9": 2, "W10": 1, "W11": 1, "W12": 1, "W13": 1, "W14": 1, "W15": 1, "W16": 1, "W17": 1}, "config": {"kpi_name": "Fitness event achievement", "section": "Member engagement", "unit": "count", "owner": "Vic", "department": "Fitness", "tier": "lagging"}}, {"kpi": "PSA leads, YoY change", "weeks": {"W1": 5.9, "W2": 5.9, "W3": 6.7, "W4": 4.7, "W5": 5.6, "W6": 4.9, "W7": 4.1, "W8": 5.2, "W9": 4.3, "W10": 6.2, "W11": 4.9, "W12": 4.9, "W13": 6.1, "W14": 5.8, "W15": 7.6, "W16": 6.7, "W17": 6.5}, "config": {"kpi_name": "PSA leads, YoY change", "section": "Brand awareness", "unit": "percent", "owner": "Christy", "department": "Marketing", "tier": "leading"}}, {"kpi": "Cost per booking, Meta", "weeks": {"W1": 173, "W2": 165, "W3": 173, "W4": 168, "W5": 170, "W6": 168, "W7": 170, "W8": 166, "W9": 170, "W10": 164, "W11": 166, "W12": 160, "W13": 167, "W14": 164, "W15": 160, "W16": 167, "W17": 162}, "config": {"kpi_name": "Cost per booking, Meta", "section": "Brand awareness", "unit": "USD", "owner": "Christy", "department": "Marketing", "tier": "lagging"}}, {"kpi": "Cost per lead, Meta", "weeks": {"W1": 81, "W2": 82, "W3": 82, "W4": 82, "W5": 81, "W6": 79, "W7": 81, "W8": 82, "W9": 80, "W10": 82, "W11": 80, "W12": 82, "W13": 83, "W14": 80, "W15": 83, "W16": 80, "W17": 79}, "config": {"kpi_name": "Cost per lead, Meta", "section": "Brand awareness", "unit": "USD", "owner": "Christy", "department": "Marketing", "tier": "lagging"}}, {"kpi": "Studio remodels", "weeks": {"W1": 0, "W2": 1, "W3": 1, "W4": 1, "W5": 1, "W6": 2, "W7": 2, "W8": 3, "W9": 3, "W10": 3, "W11": 3, "W12": 3, "W13": 4, "W14": 4, "W15": 4, "W16": 4, "W17": 5}, "config": {"kpi_name": "Studio remodels", "section": "Studio refresh", "unit": "count", "owner": "Scott", "department": "Finance", "tier": "lagging"}}, {"kpi": "Treadmill refreshes", "weeks": {"W1": 0, "W2": 1, "W3": 1, "W4": 2, "W5": 2, "W6": 2, "W7": 3, "W8": 3, "W9": 4, "W10": 5, "W11": 5, "W12": 5, "W13": 5, "W14": 5, "W15": 7, "W16": 7, "W17": 7}, "config": {"kpi_name": "Treadmill refreshes", "section": "Studio refresh", "unit": "count", "owner": "Scott", "department": "Finance", "tier": "lagging"}}, {"kpi": "Glassdoor rating", "weeks": {"W1": 3.6, "W2": 3.6, "W3": 3.6, "W4": 3.6, "W5": 3.6, "W6": 3.5, "W7": 3.5, "W8": 3.5, "W9": 3.5, "W10": 3.5, "W11": 3.5, "W12": 3.5, "W13": 3.5, "W14": 3.6, "W15": 3.6, "W16": 3.6, "W17": 3.6}, "config": {"kpi_name": "Glassdoor rating", "section": "People & culture", "unit": "stars", "owner": "Deana", "department": "People ops", "tier": "leading"}}, {"kpi": "Internal promotions", "weeks": {"W1": 0, "W2": 1, "W3": 1, "W4": 1, "W5": 2, "W6": 2, "W7": 3, "W8": 4, "W9": 4, "W10": 5, "W11": 4, "W12": 5, "W13": 6, "W14": 5, "W15": 6, "W16": 6, "W17": 7}, "config": {"kpi_name": "Internal promotions", "section": "People & culture", "unit": "count", "owner": "Deana", "department": "People ops", "tier": "lagging"}}, {"kpi": "eNPS score", "weeks": {"W1": 38, "W2": 36, "W3": 38, "W4": 37, "W5": 36, "W6": 38, "W7": 36, "W8": 38, "W9": 37, "W10": 36, "W11": 36, "W12": 37, "W13": 36, "W14": 39, "W15": 39, "W16": 40, "W17": 41}, "config": {"kpi_name": "eNPS score", "section": "People & culture", "unit": "score", "owner": "Deana", "department": "People ops", "tier": "lagging"}}, {"kpi": "Voluntary turnover", "weeks": {"W1": 22.8, "W2": 23.1, "W3": 23.4, "W4": 23.0, "W5": 22.7, "W6": 20.6, "W7": 20.5, "W8": 20.6, "W9": 21.1, "W10": 21.2, "W11": 21.3, "W12": 21.8, "W13": 21.8, "W14": 20.2, "W15": 19.7, "W16": 19.8, "W17": 19.4}, "config": {"kpi_name": "Voluntary turnover", "section": "People & culture", "unit": "percent", "owner": "Deana", "department": "People ops", "tier": "lagging"}}]}, "syncedAt": "2026-04-17T09:05:00Z"}};
+
+  // ============================================================
+  // PROJECTION MATH
+  // ============================================================
+  // Given MTD actual, prior year monthly total, and the KPI unit,
+  // return the month-end projection.
+  //
+  // For rate metrics (percent, ratio, stars): projection ≈ MTD
+  //   (these stabilize quickly within a month)
+  // For volume/count/USD: projection = MTD ÷ days elapsed × days in month
+  //   (straight run-rate extrapolation)
+  //
+  // daysElapsed and daysInMonth are inferred from currentWeekNum
+  // ============================================================
+  function projectValue(mtdActual, unit, weekNumInMonth, totalWeeksInMonth) {
+    if (mtdActual === null || mtdActual === undefined || mtdActual === '') return null;
+
+    const rateUnits = ['percent', 'ratio', 'stars', 'score'];
+    if (rateUnits.includes(unit)) {
+      return Number(mtdActual); // rate is stable; MTD ≈ month-end
+    }
+
+    // Volume-like: extrapolate linearly
+    const weekFraction = weekNumInMonth / totalWeeksInMonth;
+    if (weekFraction <= 0) return Number(mtdActual);
+    return Math.round((Number(mtdActual) / weekFraction) * 100) / 100;
+  }
+
+  // Determine status based on projection vs target, respecting "lower is better" units
+  function projectionStatus(projection, target, unit, kpiName) {
+    if (projection === null || target === null) return 'unknown';
+    const lowerIsBetter = ['USD'].includes(unit) ||
+      /cost|turnover|cpl|cpb/i.test(kpiName);
+    const ratio = lowerIsBetter ? target / projection : projection / target;
+    if (ratio >= 1.0) return 'on-track';
+    if (ratio >= 0.92) return 'narrow';
+    return 'at-risk';
+  }
+
+  // Human-readable projection note
+  function projectionNote(projection, priorYear, target, unit, kpiName) {
+    if (projection === null) return '—';
+    const lowerIsBetter = ['USD'].includes(unit) ||
+      /cost|turnover|cpl|cpb/i.test(kpiName);
+    const vsTarget = lowerIsBetter
+      ? (projection <= target ? 'under target' : 'over target')
+      : (projection >= target ? 'beats target' : 'misses target');
+    const vsPY = priorYear === null ? '' :
+      lowerIsBetter
+        ? (projection < priorYear ? ', improved vs PY' : ', up vs PY')
+        : (projection > priorYear ? ', ahead of PY' : ', behind PY');
+    return vsTarget + vsPY;
+  }
+
+  // ============================================================
+  // DROPDOWN MENU BEHAVIOR
+  // ============================================================
+  function toggleMenu(menuId, btn) {
+    const menu = document.getElementById(menuId);
+    const wasOpen = menu.classList.contains('open');
+    document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('open'));
+    if (!wasOpen) menu.classList.add('open');
+  }
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.dropdown-wrap')) {
+      document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('open'));
+    }
+  });
+
+  function selectMonth(item, label, weekRange) {
+    item.parentElement.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('selected'));
+    item.classList.add('selected');
+    document.getElementById('month-label').textContent = label;
+    currentMonthLabel = label;
+    currentMonth = label.slice(0, 3);
+    item.closest('.dropdown-menu').classList.remove('open');
+    // Snap week to first week of selected month (based on fixed month-to-week mapping)
+    const firstWeekOfMonth = { Jan: 1, Feb: 5, Mar: 9, Apr: 14, May: 18,
+                               Jun: 22, Jul: 26, Aug: 31, Sep: 35,
+                               Oct: 40, Nov: 44, Dec: 48 };
+    if (firstWeekOfMonth[currentMonth]) {
+      currentWeekNum = firstWeekOfMonth[currentMonth];
+      document.getElementById('week-label').textContent = 'W' + currentWeekNum;
+    }
+    rebuildHeroWeekStrip();
+    // Repopulate week dropdown with this month's weeks
+    if (window.__kpiData) {
+      repopulateWeekMenu(window.__kpiData);
+      renderDashboard(window.__kpiData);
+    }
+  }
+
+  // Rebuild the w14·w15·w16·w17 strip below the dropdowns based on current month
+  function rebuildHeroWeekStrip() {
+    const strip = document.getElementById('hero-weeks');
+    if (!strip) return;
+    const firstWeekOfMonth = { Jan: 1, Feb: 5, Mar: 9, Apr: 14, May: 18,
+                               Jun: 22, Jul: 26, Aug: 31, Sep: 35,
+                               Oct: 40, Nov: 44, Dec: 48 };
+    // Show 4 weeks starting from first week of current month
+    const start = firstWeekOfMonth[currentMonth] || currentWeekNum;
+    const weeks = [start, start + 1, start + 2, start + 3];
+    strip.innerHTML = weeks.map((wn, i) => {
+      const cls = wn === currentWeekNum ? 'hero-week current' : 'hero-week';
+      const sep = i < weeks.length - 1 ? '<span class="hero-week-sep">·</span>' : '';
+      return `<span class="${cls}">w${wn}</span>${sep}`;
+    }).join('');
+  }
+
+  function repopulateWeekMenu(data) {
+    const weekMenu = document.getElementById('week-menu');
+    if (!weekMenu) return;
+    const weekly = data.weekly || { columns: [], months: [], rows: [] };
+
+    // A week has "data" if ANY KPI row has a non-null, non-empty value for it.
+    // Empty string, null, and undefined all mean "no data yet."
+    const weekHasData = (wKey) => {
+      return (weekly.rows || []).some(r => {
+        const v = r.weeks && r.weeks[wKey];
+        return v !== null && v !== undefined && v !== '';
+      });
+    };
+
+    const weeksInMonth = [];
+    (weekly.columns || []).forEach((w, i) => {
+      if ((weekly.months || [])[i] === currentMonth && weekHasData(w)) {
+        weeksInMonth.push(w);
+      }
+    });
+
+    const header = '<div class="dropdown-header">' + currentMonthLabel + ' weeks</div>';
+    const items = weeksInMonth.length
+      ? weeksInMonth.map((w, idx) => {
+          const weekNum = parseInt(w.replace(/^W/, ''), 10);
+          const isSelected = weekNum === currentWeekNum || (idx === 0 && !weeksInMonth.includes('W' + currentWeekNum));
+          return `<div class="dropdown-item ${isSelected ? 'selected' : ''}" onclick="selectWeek(this, '${w}', ${weekNum})">
+            <span>${w}</span><span class="check">✓</span>
+          </div>`;
+        }).join('')
+      : '<div class="dropdown-header" style="text-align:center; padding:12px; font-style:italic; color: var(--ink-3);">No data yet this month</div>';
+
+    weekMenu.innerHTML = header + items;
+
+    // If the currently selected week is not in this month, snap to the most recent week with data
+    if (weeksInMonth.length && !weeksInMonth.includes('W' + currentWeekNum)) {
+      const lastWeek = weeksInMonth[weeksInMonth.length - 1];
+      currentWeekNum = parseInt(lastWeek.replace(/^W/, ''), 10);
+      document.getElementById('week-label').textContent = lastWeek;
+    }
+  }
+
+  function selectWeek(item, label, weekNum) {
+    item.parentElement.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('selected'));
+    item.classList.add('selected');
+    document.getElementById('week-label').textContent = label;
+    currentWeekNum = weekNum;
+    document.querySelectorAll('.hero-week').forEach(el => el.classList.remove('current'));
+    const target = Array.from(document.querySelectorAll('.hero-week')).find(el => el.textContent.trim() === 'w' + weekNum);
+    if (target) target.classList.add('current');
+    item.closest('.dropdown-menu').classList.remove('open');
+    if (window.__kpiData) renderDashboard(window.__kpiData);
+  }
+
+  // ============================================================
+  // SYNC — pull from Netlify API (merged Neon config + Sheet data)
+  // ============================================================
+  async function syncSheet(btn) {
+    if (btn.classList.contains('syncing')) return;
+    btn.classList.add('syncing');
+    document.getElementById('sync-label').textContent = 'Syncing';
+    document.getElementById('sync-status').textContent = 'Pulling latest data…';
+
+    try {
+      const res = await fetch(API.dashboard);
+      const payload = await res.json();
+      if (!payload.ok) throw new Error(payload.error || 'Sync failed');
+
+      // Store full payload for re-renders when dropdowns change
+      window.__kpiData = {
+        actuals: payload.sheet.actuals,
+        priorYear: payload.sheet.priorYear,
+        targets: payload.sheet.targets,
+        weekly: payload.sheet.weekly,
+        config: payload.kpis,
+        settings: payload.settings
+      };
+      repopulateWeekMenu(window.__kpiData);
+      renderDashboard(window.__kpiData);
+      updateSyncStatus(true);
+    } catch (err) {
+      console.error('API unreachable, using preview data:', err.message);
+      window.__kpiData = {
+        actuals: FAKE_DATA.sheet.actuals,
+        priorYear: FAKE_DATA.sheet.priorYear,
+        targets: FAKE_DATA.sheet.targets,
+        weekly: FAKE_DATA.sheet.weekly,
+        config: FAKE_DATA.kpis,
+        settings: FAKE_DATA.settings
+      };
+      repopulateWeekMenu(window.__kpiData);
+      renderDashboard(window.__kpiData);
+      document.getElementById('sync-status').textContent = 'Preview mode · connect to live API to sync';
+    } finally {
+      btn.classList.remove('syncing');
+      document.getElementById('sync-label').textContent = 'Sync';
+    }
+  }
+
+  function updateSyncStatus(success) {
+    const now = new Date();
+    const h = now.getHours();
+    const m = now.getMinutes().toString().padStart(2, '0');
+    const ampm = h >= 12 ? 'p.m.' : 'a.m.';
+    const h12 = h % 12 || 12;
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    document.getElementById('sync-status').textContent =
+      `Last synced · ${months[now.getMonth()]} ${now.getDate()}, ${h12}:${m} ${ampm}`;
+  }
+
+  // Auto-sync on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('sync-btn');
+    if (btn) syncSheet(btn);
+  });
+
+  // ============================================================
+  // RENDER — take sheet data + config and update dashboard
+  // ============================================================
+  // Compute + render the north star panel based on actuals/targets
+  function renderNorthStar(data) {
+    const settings = data.settings || {};
+    const nsKpi = settings.north_star_kpi || 'Net recurring members / studio';
+    const nsTarget = parseFloat(settings.north_star_eoy_target) || 12;
+
+    // Find the actual row for north star KPI
+    const actualRow = (data.actuals || []).find(r => r.kpi === nsKpi);
+    if (!actualRow) return;
+
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const monthIdx = MONTHS.indexOf(currentMonth);
+
+    // YTD — use computed value from backend (respects math_type).
+    // 'latest' → most recent non-null value
+    // 'sum'    → total
+    // 'avg'    → average
+    const mathType = actualRow.math_type || 'latest';
+    let ytd;
+    if (typeof actualRow.ytd === 'number') {
+      ytd = actualRow.ytd;
+    } else {
+      // Fallback: use current month's value if no YTD
+      const v = actualRow.months[currentMonth];
+      ytd = (typeof v === 'number') ? v : 0;
+    }
+
+    // Trend — percentage change over last 4 weeks (same logic as lagging rows).
+    // Flat when |change| < 1%.
+    const weeklyRow = ((data.weekly && data.weekly.rows) || []).find(r => r.kpi === nsKpi);
+    let trendText = '—';
+
+    if (weeklyRow && weeklyRow.weeks) {
+      const recent = [];
+      for (let wn = currentWeekNum; wn >= 1 && recent.length < 4; wn--) {
+        const v = weeklyRow.weeks['W' + wn];
+        if (typeof v === 'number') recent.push(v);
+      }
+      if (recent.length >= 2) {
+        const newest = recent[0];
+        const oldest = recent[recent.length - 1];
+        if (oldest !== 0) {
+          const pctChange = ((newest - oldest) / Math.abs(oldest)) * 100;
+          if (Math.abs(pctChange) < 1) {
+            trendText = '±0%';
+          } else {
+            const sign = pctChange > 0 ? '+' : '−';
+            trendText = sign + Math.abs(pctChange).toFixed(1) + '%';
+          }
+        }
+      }
+    }
+
+    // Update DOM
+    const fmt = (n) => (n > 0 ? '+' : '') + n;
+    const ytdEl = document.getElementById('ns-ytd');
+    const trendEl = document.getElementById('ns-trend');
+    const targetEl = document.getElementById('ns-target');
+
+    if (ytdEl) ytdEl.textContent = fmt(Math.round(ytd));
+    if (trendEl) trendEl.textContent = trendText;
+    if (targetEl) targetEl.textContent = fmt(nsTarget);
+    const issueEl = document.getElementById('hero-issue');
+    if (issueEl) issueEl.textContent = 'Week ' + currentWeekNum;
+  }
+
+  function renderDashboard(data) {
+    renderNorthStar(data);
+    // Build lookup from all 4 sources (actuals, PY, targets, weekly)
+    const lookup = {};
+    (data.actuals || []).forEach(row => {
+      const cfg = row.config || {};
+      lookup[row.kpi] = lookup[row.kpi] || { unit: cfg.unit, section: cfg.section, owner: cfg.owner, tier: cfg.tier };
+      lookup[row.kpi].mtd = row.months[currentMonth];
+      lookup[row.kpi].allMonths = row.months;
+      lookup[row.kpi].trend = row.trend || null;            // 'up' | 'down' | 'flat' | null
+      lookup[row.kpi].math_type = row.math_type || 'avg';
+    });
+    (data.priorYear || []).forEach(row => {
+      lookup[row.kpi] = lookup[row.kpi] || {};
+      lookup[row.kpi].py = row.months[currentMonth];
+    });
+    (data.targets || []).forEach(row => {
+      lookup[row.kpi] = lookup[row.kpi] || {};
+      lookup[row.kpi].target = row.months[currentMonth];
+    });
+    (data.config || []).forEach(c => {
+      lookup[c.kpi_name] = lookup[c.kpi_name] || {};
+      lookup[c.kpi_name].goal_direction = c.goal_direction || 'higher';
+      lookup[c.kpi_name].unit = lookup[c.kpi_name].unit || c.unit;
+    });
+
+    // Weekly data (all 52 weeks in Weekly2026, filtered to current month)
+    const weeklyData = data.weekly || { columns: [], months: [], rows: [] };
+    const allWeekCols = weeklyData.columns || [];
+    const weekMonthMap = weeklyData.months || [];
+
+    // Filter to only the weeks that belong to the current month
+    const weeksForMonth = [];
+    allWeekCols.forEach((w, i) => {
+      if (weekMonthMap[i] === currentMonth) weeksForMonth.push(w);
+    });
+    const weeklyCols = weeksForMonth;
+
+    (weeklyData.rows || []).forEach(row => {
+      lookup[row.kpi] = lookup[row.kpi] || {};
+      lookup[row.kpi].weekly = row.weeks;
+    });
+
+    const firstWeekOfMonth = { Jan: 1, Feb: 5, Mar: 9, Apr: 14, May: 18,
+                               Jun: 22, Jul: 26, Aug: 31, Sep: 35,
+                               Oct: 40, Nov: 44, Dec: 48 };
+    const totalWeeks = weeklyCols.length || 4;
+    const weekInMonth = Math.max(1, currentWeekNum - (firstWeekOfMonth[currentMonth] || 1) + 1);
+
+    document.querySelectorAll('.row').forEach(rowEl => {
+      const nameEl = rowEl.querySelector('.mname');
+      if (!nameEl) return;
+      const name = nameEl.textContent.trim();
+      const matchKey = Object.keys(lookup).find(k =>
+        k.toLowerCase().includes(name.toLowerCase()) ||
+        name.toLowerCase().includes(k.toLowerCase())
+      );
+      if (!matchKey) return;
+      const d = lookup[matchKey];
+
+      const projection = projectValue(d.mtd, d.unit, weekInMonth, totalWeeks);
+      const status = projectionStatus(projection, d.target, d.unit, name);
+      const note = projectionNote(projection, d.py, d.target, d.unit, name);
+
+      const cols = rowEl.querySelectorAll('.compare-col');
+      if (cols.length >= 4) {
+        setColValue(cols[0], d.mtd, d.unit);
+        setColValue(cols[1], d.py, d.unit);
+        setColValue(cols[2], d.target, d.unit);
+        setColValue(cols[3], projection, d.unit);
+        cols[3].classList.remove('warn', 'risk');
+        if (status === 'narrow') cols[3].classList.add('warn');
+        else if (status === 'at-risk') cols[3].classList.add('risk');
+        const sub = cols[3].querySelector('.compare-sub');
+        if (sub) sub.textContent = note;
+      }
+
+      // Inject / update the weekly strip
+      const compareEl = rowEl.querySelector('.compare');
+      if (compareEl && weeklyCols.length && d.weekly) {
+        // Wrap compare in .metric-body on first render so wks can sit next to it in same grid cell
+        let bodyEl = rowEl.querySelector('.metric-body');
+        if (!bodyEl) {
+          bodyEl = document.createElement('div');
+          bodyEl.className = 'metric-body';
+          compareEl.parentNode.insertBefore(bodyEl, compareEl);
+          bodyEl.appendChild(compareEl);
+        }
+
+        let wksEl = bodyEl.querySelector('.wks');
+        if (!wksEl) {
+          wksEl = document.createElement('div');
+          wksEl.className = 'wks';
+          bodyEl.appendChild(wksEl);
+        }
+        wksEl.innerHTML = weeklyCols.map(col => {
+          const isCurrent = col === 'W' + currentWeekNum;
+          const val = d.weekly[col];
+          const valDisplay = val !== undefined && val !== null && val !== ''
+            ? formatVal(val, d.unit)
+            : '<span class="empty">—</span>';
+          return `
+            <div class="wk ${isCurrent ? 'current' : ''}">
+              <p class="wk-label">${col.toLowerCase()}</p>
+              <p class="wk-val ${val === undefined ? 'empty' : ''}">${valDisplay}</p>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Right-column: 4-week percent change + goal subtitle
+      const rightCol = rowEl.children[rowEl.children.length - 1];
+      if (rightCol) {
+        const goalDir = d.goal_direction || 'higher';
+
+        // Walk backwards from current week, collect last 4 weeks with data
+        const recent = [];
+        if (d.weekly) {
+          for (let wn = currentWeekNum; wn >= 1 && recent.length < 4; wn--) {
+            const v = d.weekly['W' + wn];
+            if (typeof v === 'number') recent.push(v); // recent[0] = newest
+          }
+        }
+
+        let pctText = '—';
+        let direction = 'flat';
+        if (recent.length >= 2) {
+          const newest = recent[0];
+          const oldest = recent[recent.length - 1];
+          if (oldest !== 0) {
+            const pctChange = ((newest - oldest) / Math.abs(oldest)) * 100;
+            // Flat threshold: < 1% magnitude (real-world ops metrics move in small amounts)
+            if (Math.abs(pctChange) < 1) {
+              direction = 'flat';
+              pctText = '±0%';
+            } else {
+              direction = pctChange > 0 ? 'up' : 'down';
+              const sign = pctChange > 0 ? '+' : '−';
+              pctText = sign + Math.abs(pctChange).toFixed(1) + '%';
+            }
+          } else if (newest !== 0) {
+            // Edge case: baseline zero → show direction without %
+            direction = newest > 0 ? 'up' : 'down';
+            pctText = (newest > 0 ? '+' : '−') + Math.abs(newest).toFixed(0);
+          }
+        }
+
+        const invertedClass = (goalDir === 'lower') ? 'inverted' : '';
+        const goalVal = (d.target !== undefined && d.target !== null && d.target !== '')
+          ? formatVal(d.target, d.unit)
+          : null;
+
+        rightCol.innerHTML = `
+          <div class="row-trend">
+            <p class="row-trend-label">4-week change</p>
+            <div class="trend-pct ${direction} ${invertedClass}">${pctText}</div>
+            ${goalVal ? `<p class="row-goal">goal ${goalVal}</p>` : ''}
+          </div>
+        `;
+      }
+    });
+
+    updateRibbon(data);
+    if (data.settings) applySettings(data.settings);
+  }
+
+  function applySettings(settings) {
+    if (settings.dashboard_title) {
+      // Not replacing the hero wordmark — that's fixed styling. Just expose for future use.
+      document.title = settings.dashboard_title + ' — Scorecard';
+    }
+    if (settings.brand_color) {
+      document.documentElement.style.setProperty('--coral-400', settings.brand_color);
+    }
+  }
+
+  function setColValue(colEl, value, unit) {
+    const valEl = colEl.querySelector('.compare-val');
+    if (!valEl) return;
+    if (value === null || value === undefined || value === '') {
+      valEl.innerHTML = '<span style="color: var(--ink-3);">—</span>';
+      return;
+    }
+    valEl.innerHTML = formatVal(value, unit);
+  }
+
+  function formatVal(v, unit) {
+    if (v === null || v === undefined || v === '') return '—';
+    if (unit === 'percent') return Number(v).toFixed(1) + '<span class="pct">%</span>';
+    if (unit === 'USD') return '$' + Math.round(Number(v)).toLocaleString();
+    if (unit === 'ratio') return Number(v).toFixed(2) + '<span class="pct">×</span>';
+    if (unit === 'stars') return Number(v).toFixed(1) + '<span class="pct"> ★</span>';
+    if (unit === 'count') return Math.round(Number(v)).toString();
+    return String(v);
+  }
+
+  function updateRibbon(data) {
+    // Count status based on MTD vs Target per KPI.
+    // Respects goal_direction (for turnover/costs, lower is better).
+    let onTrack = 0, narrow = 0, risk = 0;
+
+    const configs = (data && data.config) || [];
+    const actuals = (data && data.actuals) || [];
+    const targets = (data && data.targets) || [];
+
+    const configByName = {};
+    configs.forEach(c => { configByName[c.kpi_name] = c; });
+    const targetByName = {};
+    targets.forEach(t => { targetByName[t.kpi] = t.months[currentMonth]; });
+
+    actuals.forEach(a => {
+      // Only count lagging KPIs in the ribbon (leading KPIs are the leading callouts)
+      const cfg = configByName[a.kpi];
+      if (!cfg || cfg.tier === 'leading') return;
+
+      const mtd = a.months[currentMonth];
+      const target = targetByName[a.kpi];
+      if (typeof mtd !== 'number' || typeof target !== 'number' || target === 0) return;
+
+      const goalDir = cfg.goal_direction || 'higher';
+      // Normalize ratio so "higher = better" always means >1 is on-track
+      const ratio = (goalDir === 'lower')
+        ? (target / Math.max(Math.abs(mtd), 0.0001))  // flip: lower actual = better ratio
+        : (mtd / target);
+
+      if (ratio >= 1.0) onTrack++;
+      else if (ratio >= 0.92) narrow++;
+      else risk++;
+    });
+
+    const ribbonCells = document.querySelectorAll('.ribbon-num');
+    if (ribbonCells.length >= 3) {
+      ribbonCells[0].textContent = risk;
+      ribbonCells[1].textContent = narrow;
+      ribbonCells[2].textContent = onTrack;
+    }
+  }
+</script>
+
+<script>
+(function hydrateSections(){
+  fetch('/api/dashboard').then(r=>r.json()).then(d=>{
+    if (!d || !d.sections) return;
+    d.sections.forEach(s => {
+      const key = s.section_key || s.display_name;
+      const head = document.querySelector('.section-head[data-section-key="' + key + '"]');
+      if (!head) return;
+      const title = head.querySelector('.section-title');
+      const dek = head.querySelector('.section-dek');
+      const owner = head.querySelector('.section-owner span');
+      if (title && s.display_name) title.textContent = s.display_name;
+      if (dek && s.tagline) dek.textContent = s.tagline;
+      if (owner && s.owner_badge) owner.textContent = s.owner_badge;
+      let leading = head.nextElementSibling;
+      while (leading && !leading.classList.contains('leading')) leading = leading.nextElementSibling;
+      if (leading) {
+        const lname = leading.querySelector('.leading-name');
+        const lsub = leading.querySelector('.leading-sub');
+        if (lname && s.leading_display_label) lname.textContent = s.leading_display_label;
+        if (lsub && s.leading_description) lsub.textContent = s.leading_description;
+      }
+    });
+  }).catch(e => console.warn('Section hydration failed:', e));
+})();
+</script>
+</body>
+</html>

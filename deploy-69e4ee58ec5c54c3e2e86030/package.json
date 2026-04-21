@@ -1,0 +1,20 @@
+{
+  "name": "afg-dashboard",
+  "version": "0.1.0",
+  "description": "Austin Fitness Group leadership scorecard — dashboard + admin panel",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "netlify dev",
+    "deploy": "netlify deploy --prod"
+  },
+  "dependencies": {
+    "@netlify/neon": "^0.1.2"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

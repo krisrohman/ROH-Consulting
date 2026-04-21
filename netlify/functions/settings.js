@@ -23,9 +23,11 @@ export default async (request) => {
       const actor = body.actor || 'unknown';
       const incoming = body.settings || {};
 
-      // Defense-in-depth cap on any single setting value. The admin UI already
-      // limits most of these, but we enforce here too.
-      const VALUE_LIMIT = 500;
+      // Defense-in-depth cap on any single setting value. Most settings are
+      // short strings; `kpi_targets` is a JSON blob and needs more room.
+      const DEFAULT_LIMIT = 500;
+      const LARGE_VALUE_KEYS = new Set(['kpi_targets']);
+      const LARGE_LIMIT = 8000;
 
       const before = await sql`SELECT key, value FROM settings`;
       const beforeMap = Object.fromEntries(before.map(r => [r.key, r.value]));
@@ -33,7 +35,8 @@ export default async (request) => {
       for (const [key, rawValue] of Object.entries(incoming)) {
         const cleanKey = String(key || '').trim().slice(0, 80);
         if (!cleanKey) continue;
-        const value = String(rawValue == null ? '' : rawValue).trim().slice(0, VALUE_LIMIT);
+        const limit = LARGE_VALUE_KEYS.has(cleanKey) ? LARGE_LIMIT : DEFAULT_LIMIT;
+        const value = String(rawValue == null ? '' : rawValue).trim().slice(0, limit);
 
         await sql`
           INSERT INTO settings (key, value) VALUES (${cleanKey}, ${value})

@@ -641,7 +641,7 @@
   }
   .ns-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 48px;
     align-items: start;
   }
@@ -1328,10 +1328,6 @@
       <div class="ns-stat">
         <div class="ns-big" id="ns-ytd">+17</div>
         <p class="ns-label">year to date</p>
-      </div>
-      <div class="ns-stat">
-        <div class="ns-big" id="ns-trend">+5</div>
-        <p class="ns-label">4-week change</p>
       </div>
       <div class="ns-stat">
         <div class="ns-big" id="ns-target">+12</div>
@@ -2436,7 +2432,7 @@
 
         rightCol.innerHTML = `
           <div class="row-trend">
-            <p class="row-trend-label">4-week change</p>
+            <p class="row-trend-label">trend</p>
             <div class="trend-pct ${direction} ${invertedClass}">${pctText}</div>
             ${goalVal ? `<p class="row-goal">goal ${goalVal}</p>` : ''}
           </div>

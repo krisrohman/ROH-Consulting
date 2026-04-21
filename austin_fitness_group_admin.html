@@ -226,7 +226,7 @@
   }
   .kpi-row-header, .kpi-row {
     display: grid;
-    grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.3fr) 82px 82px 98px minmax(0, 1fr) 110px 48px;
+    grid-template-columns: minmax(0, 2.0fr) minmax(0, 1.1fr) 74px 74px 90px 110px minmax(0, 0.9fr) 100px 44px;
     gap: 10px;
     align-items: center;
     padding: 10px 14px;
@@ -556,6 +556,7 @@
               <span>Unit</span>
               <span>Math</span>
               <span>Goal dir</span>
+              <span>Target</span>
               <span>Owner</span>
               <span>Tier</span>
               <span></span>
@@ -872,26 +873,27 @@
   const CURRENT_USER = 'kris@roh-consulting.com'; // will come from Netlify Identity in production
 
   // Fallback seed data for local preview before wiring up the sheet
+  // Target strings match phrasing from Ben's AFG KPI Dashboard sheet (FY26).
   let kpis = [
-    { kpi: 'Net recurring members / studio', section: 'Member growth', unit: 'count', owner: 'Chris', department: 'Sales ops', tier: 'leading' },
-    { kpi: 'Intro conversion', section: 'Member growth', unit: 'percent', owner: 'Chris', department: 'Sales ops', tier: 'lagging' },
-    { kpi: 'Lead portal management', section: 'Member growth', unit: 'percent', owner: 'Chris', department: 'Sales ops', tier: 'lagging' },
-    { kpi: 'Revenue portal management', section: 'Member growth', unit: 'percent', owner: 'Chris', department: 'Sales ops', tier: 'lagging' },
-    { kpi: 'Weekend sales, no zeros', section: 'Member growth', unit: 'percent', owner: 'Chris', department: 'Sales ops', tier: 'lagging' },
-    { kpi: 'Workouts per member / week', section: 'Member engagement', unit: 'ratio', owner: 'Vic', department: 'Fitness', tier: 'leading' },
-    { kpi: 'HRM usage', section: 'Member engagement', unit: 'percent', owner: 'Vic', department: 'Fitness', tier: 'lagging' },
-    { kpi: '120-day retention', section: 'Member engagement', unit: 'percent', owner: 'Vic', department: 'Fitness', tier: 'lagging' },
-    { kpi: 'Member portal management', section: 'Member engagement', unit: 'percent', owner: 'Vic', department: 'Fitness', tier: 'lagging' },
-    { kpi: 'Fitness event achievement', section: 'Member engagement', unit: 'count', owner: 'Vic', department: 'Fitness', tier: 'lagging' },
-    { kpi: 'PSA leads, YoY change', section: 'Brand awareness', unit: 'percent', owner: 'Christy', department: 'Marketing', tier: 'leading' },
-    { kpi: 'Cost per booking, Meta', section: 'Brand awareness', unit: 'USD', owner: 'Christy', department: 'Marketing', tier: 'lagging' },
-    { kpi: 'Cost per lead, Meta', section: 'Brand awareness', unit: 'USD', owner: 'Christy', department: 'Marketing', tier: 'lagging' },
-    { kpi: 'Studio remodels', section: 'Studio refresh', unit: 'count', owner: 'Scott', department: 'Finance', tier: 'lagging' },
-    { kpi: 'Treadmill refreshes', section: 'Studio refresh', unit: 'count', owner: 'Scott', department: 'Finance', tier: 'lagging' },
-    { kpi: 'Glassdoor rating', section: 'People & culture', unit: 'stars', owner: 'Deana', department: 'People ops', tier: 'leading' },
-    { kpi: 'Internal promotions', section: 'People & culture', unit: 'count', owner: 'Deana', department: 'People ops', tier: 'lagging' },
-    { kpi: 'eNPS score', section: 'People & culture', unit: 'score', owner: 'Deana', department: 'People ops', tier: 'lagging' },
-    { kpi: 'Voluntary turnover', section: 'People & culture', unit: 'percent', owner: 'Deana', department: 'People ops', tier: 'lagging' },
+    { kpi: 'Net recurring members / studio', section: 'Member growth', unit: 'count',   owner: 'Chris',   department: 'Sales ops',   tier: 'leading', target: '+12 by EOY' },
+    { kpi: 'Intro conversion',               section: 'Member growth', unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', target: '>50%' },
+    { kpi: 'Lead portal management',         section: 'Member growth', unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', target: '>80%' },
+    { kpi: 'Revenue portal management',      section: 'Member growth', unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', target: '>80%' },
+    { kpi: 'Weekend sales productivity',     section: 'Member growth', unit: 'count',   owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', target: "<10 studio 0's" },
+    { kpi: 'Workouts per member / week',     section: 'Member engagement', unit: 'ratio',   owner: 'Vic',     department: 'Fitness',     tier: 'leading', target: '>1.5×' },
+    { kpi: 'HRM usage',                      section: 'Member engagement', unit: 'percent', owner: 'Vic',     department: 'Fitness',     tier: 'lagging', target: '>77%' },
+    { kpi: '120-day retention',              section: 'Member engagement', unit: 'percent', owner: 'Vic',     department: 'Fitness',     tier: 'lagging', target: '>75%' },
+    { kpi: 'Member portal management',       section: 'Member engagement', unit: 'percent', owner: 'Vic',     department: 'Fitness',     tier: 'lagging', target: '>80%' },
+    { kpi: 'Fitness event achievement',      section: 'Member engagement', unit: 'count',   owner: 'Vic',     department: 'Fitness',     tier: 'lagging', target: 'TBD' },
+    { kpi: 'PSA leads, YoY change',          section: 'Brand awareness',   unit: 'percent', owner: 'Christy', department: 'Marketing',   tier: 'leading', target: '>0%' },
+    { kpi: 'Cost per booking, Meta',         section: 'Brand awareness',   unit: 'USD',     owner: 'Christy', department: 'Marketing',   tier: 'lagging', target: '<$170' },
+    { kpi: 'Cost per lead, Meta',            section: 'Brand awareness',   unit: 'USD',     owner: 'Christy', department: 'Marketing',   tier: 'lagging', target: '<$80' },
+    { kpi: 'Studio remodels',                section: 'Studio refresh',    unit: 'count',   owner: 'Scott',   department: 'Finance',     tier: 'lagging', target: '21/year' },
+    { kpi: 'Treadmill refreshes',            section: 'Studio refresh',    unit: 'count',   owner: 'Scott',   department: 'Finance',     tier: 'lagging', target: '32/year' },
+    { kpi: 'Glassdoor rating',               section: 'People & culture',  unit: 'stars',   owner: 'Deana',   department: 'People ops',  tier: 'leading', target: '>3.5★' },
+    { kpi: 'Internal promotions',            section: 'People & culture',  unit: 'count',   owner: 'Deana',   department: 'People ops',  tier: 'lagging', target: '>30' },
+    { kpi: 'eNPS score',                     section: 'People & culture',  unit: 'score',   owner: 'Deana',   department: 'People ops',  tier: 'lagging', target: '' },
+    { kpi: 'Voluntary turnover',             section: 'People & culture',  unit: 'percent', owner: 'Deana',   department: 'People ops',  tier: 'lagging', target: '' },
   ];
 
   const SECTIONS = ['Member growth', 'Member engagement', 'Brand awareness', 'Studio refresh', 'People & culture'];
@@ -956,6 +958,14 @@
       if (!cfgPayload.ok) throw new Error(cfgPayload.error || 'Config read failed');
       if (!setPayload.ok) throw new Error(setPayload.error || 'Settings read failed');
 
+      // Parse KPI targets out of settings (stored as a JSON map keyed by KPI name).
+      // This avoids a DB migration while still giving us per-KPI targets.
+      const s = setPayload.settings || {};
+      let targetsByName = {};
+      try {
+        if (s.kpi_targets) targetsByName = JSON.parse(s.kpi_targets) || {};
+      } catch (_) { targetsByName = {}; }
+
       // Map Neon column names to the shape our UI expects
       kpis = (cfgPayload.kpis || []).map(r => ({
         kpi: r.kpi_name,
@@ -965,11 +975,11 @@
         department: r.department || '',
         tier: r.tier || 'lagging',
         math_type: r.math_type || 'avg',
-        goal_direction: r.goal_direction || 'higher'
+        goal_direction: r.goal_direction || 'higher',
+        target: targetsByName[r.kpi_name] || ''
       }));
 
       // Apply settings to the form fields
-      const s = setPayload.settings || {};
       if (s.dashboard_title) document.getElementById('set-title').value = s.dashboard_title;
       if (s.fiscal_year)     document.getElementById('set-fy').value = s.fiscal_year;
       if (s.brand_color) {
@@ -1152,6 +1162,7 @@
           <option value="higher" ${goalDir === 'higher' ? 'selected' : ''}>higher ↑</option>
           <option value="lower"  ${goalDir === 'lower'  ? 'selected' : ''}>lower ↓</option>
         </select>
+        <input class="inline-input" value="${escape(k.target || '')}" maxlength="40" placeholder="e.g. >50% or <$170" onchange="updateKpi(${idx}, 'target', this.value)" title="Target value shown on the scorecard (free-form, e.g. >50%, <$170, +12 by EOY)" />
         <input class="inline-input" value="${escape(k.owner)}" maxlength="60" onchange="updateKpi(${idx}, 'owner', this.value)" />
         <div class="tier-toggle ${k.tier === 'leading' ? 'leading' : ''}" onclick="toggleTier(${idx})" title="Toggle: outcomes (lagging) vs drivers (leading)">
           <span class="lead">lagging</span>
@@ -1188,6 +1199,7 @@
       const limit = (field === 'kpi') ? LIMITS.kpi_name
                   : (field === 'owner') ? LIMITS.owner
                   : (field === 'department') ? LIMITS.department
+                  : (field === 'target') ? 40
                   : 500;
       value = truncate(value.trim(), limit);
     }
@@ -1220,7 +1232,8 @@
         department: '',
         tier: 'lagging',
         math_type: 'avg',
-        goal_direction: 'higher'
+        goal_direction: 'higher',
+        target: ''
       });
       markDirty();
       renderKpis();
@@ -1320,7 +1333,7 @@
           </div>
           <div style="margin-top: 10px;">
             <div class="field-label" style="margin-bottom: 4px;">Callout description</div>
-            <input class="inline-input" value="${escape(s.leading_description)}" placeholder="Running 4-week average" maxlength="200" onchange="updateSection(${idx}, 'leading_description', this.value)" style="width: 100%;" />
+            <input class="inline-input" value="${escape(s.leading_description)}" placeholder="Callout description" maxlength="200" onchange="updateSection(${idx}, 'leading_description', this.value)" style="width: 100%;" />
           </div>
         </div>
       </div>
@@ -1653,6 +1666,15 @@
       const cfgResult = await cfgRes.json();
       if (!cfgResult.ok) throw new Error(cfgResult.error || 'Config save failed');
 
+      // Per-KPI targets are stored as a JSON map keyed by KPI name, in the
+      // settings table. Keeps the schema stable while allowing freeform target
+      // strings like ">50%", "<$170", "+12 by EOY".
+      const kpiTargetsMap = {};
+      kpis.forEach(k => {
+        const t = String(k.target || '').trim();
+        if (t) kpiTargetsMap[k.kpi] = truncate(t, 40);
+      });
+
       // Save settings
       const settings = {
         dashboard_title: truncate(document.getElementById('set-title').value.trim(), LIMITS.settings_value),
@@ -1663,7 +1685,8 @@
         north_star_projection: truncate(document.getElementById('ns-projection').value.trim(), 20),
         apps_script_url: truncate(document.getElementById('sheet-url').value.trim(), LIMITS.settings_value),
         hero_tagline: truncate(((document.getElementById('set-hero-tagline') || {}).value || '').trim(), 200),
-        north_star_headline: truncate(((document.getElementById('ns-headline') || {}).value || '').trim(), 200)
+        north_star_headline: truncate(((document.getElementById('ns-headline') || {}).value || '').trim(), 200),
+        kpi_targets: JSON.stringify(kpiTargetsMap)
       };
       const setRes = await fetch(API.settings, {
         method: 'POST',

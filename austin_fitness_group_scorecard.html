@@ -2449,20 +2449,16 @@
           const newName = s.leading_display_label || s.leading_kpi_name;
           if (newName) lname.textContent = newName;
         }
-        // Goal text precedence for the outcome panel:
-        //   1. Per-KPI target in admin (settings.kpi_targets) — the field
-        //      the user actually edits when they update a KPI's goal.
-        //   2. Section's leading_description — legacy fallback.
-        // Without (1), editing a target in the admin KPI list silently did
-        // nothing for outcome rows because hydrateSections overwrote with (2).
+        // Goal text for the outcome panel comes ONLY from the KPI's target
+        // (settings.kpi_targets, edited in the admin KPI list). The section's
+        // leading_description is a legacy copy field that tends to be a
+        // tagline ("running 4-week average") rather than a goal — it no
+        // longer overwrites the goal line here. If the KPI has no admin
+        // target, the scorecard's static fallback text stays in place.
         if (goalEl) {
           const kpiKey = normalizeKpi(s.leading_kpi_name || '');
           const adminTarget = normTargets[kpiKey];
-          if (adminTarget) {
-            goalEl.textContent = adminTarget;
-          } else if (s.leading_description) {
-            goalEl.textContent = s.leading_description;
-          }
+          if (adminTarget) goalEl.textContent = adminTarget;
         }
         if (s.leading_kpi_name) {
           leading.setAttribute('data-kpi', s.leading_kpi_name);

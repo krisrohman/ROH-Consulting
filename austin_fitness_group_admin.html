@@ -833,6 +833,27 @@
           </div>
         </div>
 
+        <div class="panel" style="margin-top: 18px;">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Seed canonical defaults</h2>
+              <p class="panel-sub">Populates the database with the five pillar sections, per-KPI goal strings, brand, and North Star settings that ship with the scorecard. Safe to run on a fresh DB. By default it <strong>skips</strong> anything you've already filled in, so it won't clobber edits.</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <button class="btn" id="seed-btn" onclick="runSeed(this, false)">
+                <span id="seed-btn-label">Seed defaults</span>
+              </button>
+              <button class="btn ghost" id="seed-force-btn" onclick="runSeed(this, true)" title="Overwrites existing values — use only if you want to reset to the shipped defaults.">
+                <span id="seed-force-btn-label">Overwrite with defaults</span>
+              </button>
+              <span style="font-size: 11px; font-style: italic; color: var(--ink-3);">One-time action for a new environment.</span>
+            </div>
+            <div id="seed-result" style="margin-top: 12px; font-size: 12px; color: var(--ink-2); display: none;"></div>
+          </div>
+        </div>
+
       </div>
 
       <!-- Access view -->
@@ -948,7 +969,8 @@
     audit:     API_BASE + '/api/audit',
     dashboard: API_BASE + '/api/dashboard',
     users:     API_BASE + '/api/users',
-    sections:  API_BASE + '/api/sections'
+    sections:  API_BASE + '/api/sections',
+    seed:      API_BASE + '/api/seed'
   };
   const CURRENT_USER = 'kris@roh-consulting.com'; // will come from Netlify Identity in production
 
@@ -959,7 +981,7 @@
     { kpi: 'Intro conversion',               section: 'Member growth', unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', target: '>50%' },
     { kpi: 'Lead portal management',         section: 'Member growth', unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', target: '>80%' },
     { kpi: 'Revenue portal management',      section: 'Member growth', unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', target: '>80%' },
-    { kpi: 'Weekend sales productivity',     section: 'Member growth', unit: 'count',   owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', target: "<10 studio 0's" },
+    { kpi: 'Weekend sales, no zeros',        section: 'Member growth', unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', target: '100%' },
     { kpi: 'Workouts per member / week',     section: 'Member engagement', unit: 'ratio',   owner: 'Vic',     department: 'Fitness',     tier: 'leading', target: '>1.5×' },
     { kpi: 'HRM usage',                      section: 'Member engagement', unit: 'percent', owner: 'Vic',     department: 'Fitness',     tier: 'lagging', target: '>77%' },
     { kpi: '120-day retention',              section: 'Member engagement', unit: 'percent', owner: 'Vic',     department: 'Fitness',     tier: 'lagging', target: '>75%' },
@@ -1047,6 +1069,49 @@
     }
     if (label) label.textContent = prev;
     if (btn) btn.disabled = false;
+  }
+
+  // ============================================================
+  // SEED — one-shot populate DB with canonical scorecard defaults.
+  // force=true overwrites existing values; default is merge-only.
+  // ============================================================
+  async function runSeed(btn, force) {
+    if (!btn || btn.disabled) return;
+    const labelId = btn.id === 'seed-force-btn' ? 'seed-force-btn-label' : 'seed-btn-label';
+    const label = document.getElementById(labelId);
+    const prev = label ? label.textContent : 'Seed defaults';
+    if (force) {
+      if (!confirm('Overwrite with canonical defaults?\n\nThis will REPLACE section copy, goals, and base settings with the shipped values. Any edits you made in admin will be lost.')) return;
+    }
+    btn.disabled = true;
+    if (label) label.textContent = force ? 'Overwriting…' : 'Seeding…';
+    const resultEl = document.getElementById('seed-result');
+    try {
+      const res = await fetch(API.seed || '/api/seed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actor: CURRENT_USER, force: !!force })
+      });
+      const payload = await res.json();
+      if (!payload.ok) throw new Error(payload.error || 'Seed failed');
+      const summary = `Sections: ${payload.sections_added} added, ${payload.sections_skipped} skipped. Targets merged: ${payload.targets_merged}. Settings filled: ${payload.settings_added}.`;
+      if (resultEl) {
+        resultEl.style.display = 'block';
+        resultEl.textContent = summary;
+      }
+      showToast('Seed complete. ' + summary, 'success');
+      await refreshConfig();
+    } catch (err) {
+      if (resultEl) {
+        resultEl.style.display = 'block';
+        resultEl.style.color = 'var(--red-600)';
+        resultEl.textContent = 'Seed failed: ' + err.message;
+      }
+      showToast('Seed failed: ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      if (label) label.textContent = prev;
+    }
   }
 
   async function refreshConfig() {

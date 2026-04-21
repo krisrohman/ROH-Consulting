@@ -1973,10 +1973,14 @@
       const nameEl = rowEl.querySelector('.mname');
       if (!nameEl) return;
       const name = nameEl.textContent.trim();
-      const matchKey = Object.keys(lookup).find(k =>
-        k.toLowerCase().includes(name.toLowerCase()) ||
-        name.toLowerCase().includes(k.toLowerCase())
-      );
+      // Use normalized + fuzzy match so rows find their row regardless of
+      // punctuation, case, or light rewording between the scorecard's static
+      // markup and the Sheet's KPI names.
+      const normName = normalizeKpi(name);
+      let matchKey = Object.keys(lookup).find(k => normalizeKpi(k) === normName);
+      if (!matchKey) {
+        matchKey = Object.keys(lookup).find(k => fuzzyMatchKpi(k, name));
+      }
       if (!matchKey) return;
       const d = lookup[matchKey];
 

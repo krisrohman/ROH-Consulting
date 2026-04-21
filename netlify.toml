@@ -41,6 +41,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/seed"
+  to = "/.netlify/functions/seed"
+  status = 200
+
+[[redirects]]
   from = "/"
   to = "/austin_fitness_group_scorecard.html"
   status = 200

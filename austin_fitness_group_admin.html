@@ -1557,9 +1557,8 @@
               <input class="inline-input" value="${escape(s.leading_display_label)}" placeholder="e.g. Members per studio" maxlength="80" onchange="updateSection(${idx}, 'leading_display_label', this.value)" style="width: 100%;" />
             </div>
           </div>
-          <div style="margin-top: 10px;">
-            <div class="field-label" style="margin-bottom: 4px;">Outcome goal <span style="font-weight: 400; color: var(--ink-3); text-transform: none; letter-spacing: 0;">— shown on the beige callout</span></div>
-            <input class="inline-input" value="${escape(s.leading_description)}" placeholder="e.g. +12 by EOY, &gt; 1.5×, &gt; 3.5" maxlength="200" onchange="updateSection(${idx}, 'leading_description', this.value)" style="width: 100%;" />
+          <div style="margin-top: 10px; font-size: 11px; color: var(--ink-3); font-style: italic; line-height: 1.45;">
+            Goal text for this outcome is pulled from the KPI's <strong style="font-weight: 500; color: var(--ink-2); font-style: normal;">Target</strong> field in the KPIs tab — edit it there, not here.
           </div>
         </div>
       </div>

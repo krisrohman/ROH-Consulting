@@ -2236,59 +2236,103 @@
   function renderRevenueCards(data) {
     const cards = document.querySelectorAll('.rev-card[data-kpi]');
     if (!cards.length) return;
-    const actuals = (data && data.sheet && data.sheet.actuals) || [];
-    const targets = (data && data.sheet && data.sheet.targets) || [];
-    const month = currentMonth; // e.g. 'Apr'
-    const actByKpi = Object.fromEntries(actuals.map(r => [normalizeKpi(r.kpi), r]));
-    const tgtByKpi = Object.fromEntries(targets.map(r => [normalizeKpi(r.kpi), r]));
+    const sheet = (data && data.sheet) || {};
+    const actuals = sheet.actuals || data.actuals || [];
+    const targets = sheet.targets || data.targets || [];
+    const weekly  = sheet.weekly  || data.weekly  || { columns: [], months: [], rows: [] };
+    const weekCols   = weekly.columns || [];
+    const weekMonths = weekly.months  || [];
+    const weeklyRows = weekly.rows    || [];
+    const month = currentMonth;
+    const actByKpi    = Object.fromEntries(actuals.map(r => [normalizeKpi(r.kpi), r]));
+    const tgtByKpi    = Object.fromEntries(targets.map(r => [normalizeKpi(r.kpi), r]));
+    const weeklyByKpi = Object.fromEntries(weeklyRows.map(r => [normalizeKpi(r.kpi), r]));
+
+    // How many weeks of the selected month have been recorded up through
+    // the selected week, and how many weeks are in the month total? Used
+    // to pro-rate a monthly target to the MTD pace so the status pill
+    // doesn't scream 'below target' on W14 of a 5-week April.
+    let weeksElapsed = 0;
+    let weeksInMonth = 0;
+    weekCols.forEach((col, i) => {
+      if (weekMonths[i] !== month) return;
+      weeksInMonth++;
+      const wn = parseInt(String(col).replace(/[^0-9]/g, ''), 10);
+      if (wn <= currentWeekNum) weeksElapsed++;
+    });
 
     cards.forEach(card => {
       const wanted = normalizeKpi(card.dataset.kpi || '');
       const actRow = actByKpi[wanted];
       const tgtRow = tgtByKpi[wanted];
+      const weeklyRow = weeklyByKpi[wanted];
       const valEl = card.querySelector('.rev-value');
       const tgtEl = card.querySelector('.rev-target');
       const pill  = card.querySelector('.rev-status');
 
-      // Helper: set the pill into a neutral "no data" state — previously
-      // the fallback was 'On track' which caused every blank rev card to
-      // falsely show green.
       const setUnknown = () => {
         if (valEl) valEl.textContent = '—';
         if (tgtEl) tgtEl.textContent = '—';
         card.classList.remove('miss', 'over');
-        if (pill) {
-          pill.className = 'rev-status unknown';
-          pill.textContent = '';
-        }
+        if (pill) { pill.className = 'rev-status unknown'; pill.textContent = ''; }
       };
 
       if (!actRow) { setUnknown(); return; }
 
       const unit = (actRow.config && actRow.config.unit) || 'USD';
-      const actual = actRow.months ? actRow.months[month] : null;
-      const target = tgtRow && tgtRow.months ? tgtRow.months[month] : null;
+      const mathType = (actRow.config && actRow.config.math_type)
+                    || (actRow.math_type)
+                    || 'sum';
+      const monthlyTarget = tgtRow && tgtRow.months ? tgtRow.months[month] : null;
 
-      if (actual == null || target == null || target === 0) {
-        // Partial data — show whatever we have, but don't claim "on track"
-        if (valEl) valEl.innerHTML = actual == null ? '—' : formatVal(actual, unit);
-        if (tgtEl) tgtEl.innerHTML = target == null ? '—' : formatVal(target, unit);
-        card.classList.remove('miss', 'over');
-        if (pill) {
-          pill.className = 'rev-status unknown';
-          pill.textContent = '';
+      // MTD THROUGH SELECTED WEEK — rebuild from weekly row so switching
+      // the week dropdown actually moves the number. The backend's
+      // precomputed actRow.months[month] is the FULL-month roll-up and
+      // doesn't respect the selected week.
+      let mtdActual = null;
+      if (weeklyRow && weeklyRow.weeks) {
+        const vals = [];
+        weekCols.forEach((col, i) => {
+          if (weekMonths[i] !== month) return;
+          const wn = parseInt(String(col).replace(/[^0-9]/g, ''), 10);
+          if (wn > currentWeekNum) return;
+          const v = weeklyRow.weeks[col];
+          if (v !== null && v !== undefined && v !== '') vals.push(Number(v));
+        });
+        if (vals.length) {
+          if (mathType === 'sum')         mtdActual = vals.reduce((a, b) => a + b, 0);
+          else if (mathType === 'latest') mtdActual = vals[vals.length - 1];
+          else /* avg */                  mtdActual = vals.reduce((a, b) => a + b, 0) / vals.length;
         }
+      }
+      // Fallback to the backend's full-month value if no weekly data came
+      // through for this KPI.
+      if (mtdActual === null && actRow.months) {
+        mtdActual = actRow.months[month];
+      }
+
+      // Pro-rate target for sum-type KPIs so status reflects pace, not a
+      // bogus full-month shortfall when the week dropdown is early.
+      // For latest/avg, keep full-month target — those are rate-like.
+      let paceTarget = monthlyTarget;
+      if (mathType === 'sum' && typeof monthlyTarget === 'number' && weeksInMonth > 0) {
+        paceTarget = monthlyTarget * (weeksElapsed / weeksInMonth);
+      }
+
+      if (mtdActual == null || paceTarget == null || paceTarget === 0) {
+        if (valEl) valEl.innerHTML = mtdActual == null ? '—' : formatVal(mtdActual, unit);
+        if (tgtEl) tgtEl.innerHTML = monthlyTarget == null ? '—' : formatVal(monthlyTarget, unit);
+        card.classList.remove('miss', 'over');
+        if (pill) { pill.className = 'rev-status unknown'; pill.textContent = ''; }
         return;
       }
 
-      if (valEl) valEl.innerHTML = formatVal(actual, unit);
-      if (tgtEl) tgtEl.innerHTML = formatVal(target, unit);
+      if (valEl) valEl.innerHTML = formatVal(mtdActual, unit);
+      if (tgtEl) tgtEl.innerHTML = formatVal(monthlyTarget, unit);
 
-      // Status: simple compare. Use the same 'narrow' threshold used elsewhere
-      // (within 5% of target counts as narrow, below that = miss).
       card.classList.remove('miss', 'over');
       if (pill) pill.classList.remove('ontrack', 'miss', 'unknown');
-      const ratio = actual / target;
+      const ratio = mtdActual / paceTarget;
       if (ratio >= 0.98) {
         if (pill) { pill.className = 'rev-status ontrack'; pill.textContent = 'On track'; }
       } else if (ratio >= 0.93) {

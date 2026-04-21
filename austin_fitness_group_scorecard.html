@@ -1956,8 +1956,8 @@
       <div class="leading-sub">Employer-brand outcome — driven by growth and culture inputs below.</div>
     </div>
     <div class="leading-va">
-      <span class="leading-target">target <strong>&gt; 3.5 ★</strong></span>
-      <span class="leading-actual" style="color: var(--teal-600);">3.7 ★</span>
+      <span class="leading-target">target <strong>&gt; 3.5</strong></span>
+      <span class="leading-actual" style="color: var(--teal-600);">3.7</span>
     </div>
     <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
   </div>
@@ -1972,22 +1972,22 @@
     <div class="compare">
       <div class="compare-col">
         <p class="compare-label">Month actual</p>
-        <div class="compare-val">3.7 ★</div>
+        <div class="compare-val">3.7</div>
         <p class="compare-sub">Apr current</p>
       </div>
       <div class="compare-col">
         <p class="compare-label">Prior year</p>
-        <div class="compare-val">3.4 ★</div>
+        <div class="compare-val">3.4</div>
         <p class="compare-sub">Apr 2025 final</p>
       </div>
       <div class="compare-col target">
         <p class="compare-label">Target</p>
-        <div class="compare-val">> 3.5 ★</div>
+        <div class="compare-val">> 3.5</div>
         <p class="compare-sub">monthly</p>
       </div>
       <div class="compare-col projection">
         <p class="compare-label">Projection</p>
-        <div class="compare-val">3.7 ★</div>
+        <div class="compare-val">3.7</div>
         <p class="compare-sub">above PY and target</p>
       </div>
     </div>
@@ -2549,7 +2549,7 @@
     if (unit === 'percent') return Number(v).toFixed(1) + '<span class="pct">%</span>';
     if (unit === 'USD') return '$' + Math.round(Number(v)).toLocaleString();
     if (unit === 'ratio') return Number(v).toFixed(2) + '<span class="pct">×</span>';
-    if (unit === 'stars') return Number(v).toFixed(1) + '<span class="pct"> ★</span>';
+    if (unit === 'stars') return Number(v).toFixed(1);
     if (unit === 'count') return Math.round(Number(v)).toString();
     return String(v);
   }

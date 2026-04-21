@@ -45,7 +45,7 @@ const KPI_TARGETS = {
 // in the admin go away and lets dashboard.js know what math_type to use.
 const KPIS = [
   // Section: Member growth
-  { kpi_name: 'Net recurring members / studio', section: 'Member growth',     unit: 'count',   owner: 'Chris',   department: 'Sales ops',   tier: 'leading', math_type: 'latest', goal_direction: 'higher' },
+  { kpi_name: 'Net recurring members / studio', section: 'Member growth',     unit: 'count',   owner: 'Chris',   department: 'Sales ops',   tier: 'leading', math_type: 'avg',    goal_direction: 'higher' },
   { kpi_name: 'Intro conversion',               section: 'Member growth',     unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },
   { kpi_name: 'Lead portal management',         section: 'Member growth',     unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },
   { kpi_name: 'Revenue portal management',      section: 'Member growth',     unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },

@@ -226,11 +226,33 @@
   }
   .kpi-row-header, .kpi-row {
     display: grid;
-    grid-template-columns: minmax(0, 2.0fr) minmax(0, 1.1fr) 74px 74px 90px 110px minmax(0, 0.9fr) 100px 36px 36px;
+    grid-template-columns: 38px minmax(0, 1.5fr) minmax(0, 1fr) 70px 70px 86px 100px minmax(0, 0.85fr) 92px 32px 32px;
     gap: 8px;
     align-items: center;
     padding: 10px 14px;
   }
+  /* Name input: elide instead of wrapping / pushing siblings */
+  .kpi-row > .inline-input:nth-child(2) {
+    text-overflow: ellipsis;
+  }
+  /* Reorder column — two compact chevrons stacked */
+  .kpi-reorder {
+    display: flex; flex-direction: column; gap: 2px;
+    align-items: center; justify-content: center;
+  }
+  .kpi-reorder button {
+    width: 22px; height: 14px;
+    border: 0.5px solid var(--rule); border-radius: 4px;
+    background: #fff; color: var(--ink-3);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; padding: 0;
+    transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+  }
+  .kpi-reorder button:hover:not(:disabled) {
+    color: var(--ink); border-color: var(--rule-strong); background: rgba(0,0,0,0.03);
+  }
+  .kpi-reorder button:disabled { opacity: 0.25; cursor: not-allowed; }
+  .kpi-reorder svg { width: 9px; height: 9px; }
   .kpi-row.is-hidden {
     opacity: 0.4;
     background: rgba(0,0,0,0.03);
@@ -630,6 +652,7 @@
             <!-- Sheet sync banner -->
             <div id="sheet-sync-banner" class="sheet-sync-banner" style="display:none;"></div>
             <div class="kpi-row-header">
+              <span style="text-align:center;">↕</span>
               <span>KPI name</span>
               <span>Section</span>
               <span>Unit</span>
@@ -1427,9 +1450,19 @@
       const mathType = k.math_type || 'avg';
       const goalDir = k.goal_direction || 'higher';
       const hideTitle = isHidden ? 'Unhide row' : 'Hide row';
+      const isFirst = idx === 0;
+      const isLast = idx === kpis.length - 1;
       return `
       <div class="kpi-row ${isHidden ? 'is-hidden' : ''}" data-idx="${idx}">
-        <input class="inline-input" value="${escape(k.kpi)}" maxlength="100" onchange="updateKpi(${idx}, 'kpi', this.value)" style="font-family: var(--serif); font-weight: 500;" />
+        <div class="kpi-reorder">
+          <button onclick="moveKpi(${idx}, -1)" ${isFirst ? 'disabled' : ''} title="Move up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+          </button>
+          <button onclick="moveKpi(${idx}, 1)" ${isLast ? 'disabled' : ''} title="Move down">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+        </div>
+        <input class="inline-input" value="${escape(k.kpi)}" maxlength="100" title="${escape(k.kpi)}" onchange="updateKpi(${idx}, 'kpi', this.value)" onmouseenter="this.setAttribute('title', this.value)" style="font-family: var(--serif); font-weight: 500;" />
         <select class="inline-input" onchange="updateKpi(${idx}, 'section', this.value)">
           ${SECTIONS.map(s => `<option ${s === k.section ? 'selected' : ''}>${escape(s)}</option>`).join('')}
         </select>
@@ -1502,6 +1535,18 @@
 
   function toggleTier(idx) {
     kpis[idx].tier = kpis[idx].tier === 'leading' ? 'lagging' : 'leading';
+    markDirty();
+    renderKpis();
+  }
+
+  // Reorder a KPI by one position. delta = -1 (up) or +1 (down).
+  // The DB persists order via sort_order on save, so the new position
+  // becomes canonical after clicking Save.
+  function moveKpi(idx, delta) {
+    const next = idx + delta;
+    if (next < 0 || next >= kpis.length) return;
+    const [row] = kpis.splice(idx, 1);
+    kpis.splice(next, 0, row);
     markDirty();
     renderKpis();
   }

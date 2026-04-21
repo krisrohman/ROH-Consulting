@@ -1851,6 +1851,27 @@
     return 'at-risk';
   }
 
+  // Parse settings.kpi_scopes → { normName: 'annual' | 'monthly' }.
+  // Annual-scope KPIs pro-rate their target by weeks-elapsed-in-year instead
+  // of weeks-elapsed-in-month — appropriate for annual goals like
+  // '21 studio remodels / year' or '>30 internal promotions / year'.
+  function buildScopeMap(data) {
+    const raw = (data && data.settings && data.settings.kpi_scopes) || {};
+    let parsed = raw;
+    if (typeof raw === 'string') { try { parsed = JSON.parse(raw) || {}; } catch (_) { parsed = {}; } }
+    const out = {};
+    for (const [k, v] of Object.entries(parsed || {})) {
+      if (v === 'annual' || v === 'monthly') out[normalizeKpi(k)] = v;
+    }
+    // Hardcoded fallback — if settings don't have it yet (e.g. fresh DB),
+    // these three KPIs are always annual.
+    ['Studio remodels', 'Treadmill refreshes', 'Internal promotions'].forEach(n => {
+      const key = normalizeKpi(n);
+      if (!out[key]) out[key] = 'annual';
+    });
+    return out;
+  }
+
   // Parse settings.kpi_thresholds into a normalized map.
   // Each entry can be a number (legacy: narrow%) or an object
   // { ontrack: N, narrow: N } for the new two-threshold model.
@@ -2071,6 +2092,14 @@
     // Admin targets (normalized for fuzzy matching against sheet KPI names)
     const normTargets = buildNormalizedTargetMap(data);
     const thresholdMap = buildThresholdMap(data);
+    const scopeMap = buildScopeMap(data);
+    // YTD weeks for annual-scope pro-rating, same basis as updateRibbon.
+    let weeksYtd = 0;
+    allWeekCols.forEach((col) => {
+      const wn = parseInt(String(col).replace(/[^0-9]/g, ''), 10);
+      if (wn <= currentWeekNum) weeksYtd++;
+    });
+    const weeksInYear = allWeekCols.length || 52;
 
     let hiddenNames = new Set();
     try {
@@ -2104,7 +2133,14 @@
 
       const projection = projectValue(d.mtd, d.unit, weekInMonth, totalWeeks);
       const thr = thresholdMap[normalizeKpi(matchKey)] || thresholdMap[normalizeKpi(name)] || {};
-      const status = projectionStatus(projection, d.target, d.unit, name, thr.narrow, thr.ontrack);
+      // Pro-rate target for annual-scope KPIs (Studio remodels, Treadmill
+      // refreshes, Internal promotions): expected pace = target × YTD/52.
+      const scope = scopeMap[normalizeKpi(matchKey)] || scopeMap[normalizeKpi(name)] || 'monthly';
+      let paceTarget = d.target;
+      if (scope === 'annual' && typeof d.target === 'number' && weeksInYear > 0) {
+        paceTarget = d.target * (weeksYtd / weeksInYear);
+      }
+      const status = projectionStatus(projection, paceTarget, d.unit, name, thr.narrow, thr.ontrack);
       const note = projectionNote(projection, d.py, d.target, d.unit, name);
 
       const cols = rowEl.querySelectorAll('.compare-col');
@@ -2529,6 +2565,16 @@
     // the Sheet's Targets tab doesn't cover a KPI or a month.
     const adminTargetStrings = buildNormalizedTargetMap(data);
     const thresholdMap = buildThresholdMap(data);
+    const scopeMap = buildScopeMap(data);
+
+    // Year-to-date weeks elapsed for annual-scope KPIs — count weekly
+    // columns up through the currently-selected week (any month).
+    let weeksYtd = 0;
+    weekCols.forEach((col, i) => {
+      const wn = parseInt(String(col).replace(/[^0-9]/g, ''), 10);
+      if (wn <= currentWeekNum) weeksYtd++;
+    });
+    const weeksInYear = weekCols.length || 52;
 
     // Count weeks elapsed vs total-in-month — used to pro-rate sum-type
     // targets so W14 of a 5-week April isn't treated as 'Below target'
@@ -2566,13 +2612,16 @@
       const mathType = cfg.math_type || 'avg';
       const lowerIsBetter = (cfg.goal_direction === 'lower') ||
                              /cost|turnover|cpl|cpb/i.test(cfg.kpi_name || '');
+      const scope = scopeMap[nameKey] || 'monthly';
 
-      // MTD actual through the selected week (via math_type).
+      // Value actual through the selected week (via math_type). For monthly
+      // scope, restrict to the current month. For annual scope, aggregate
+      // over all weeks YTD.
       let mtd = null;
       if (weeklyRow && weeklyRow.weeks) {
         const vals = [];
         weekCols.forEach((col, i) => {
-          if (weekMonths[i] !== currentMonth) return;
+          if (scope === 'monthly' && weekMonths[i] !== currentMonth) return;
           const wn = parseInt(String(col).replace(/[^0-9]/g, ''), 10);
           if (wn > currentWeekNum) return;
           const v = weeklyRow.weeks[col];
@@ -2585,20 +2634,23 @@
         }
       }
 
-      // Monthly target precedence:
-      //   1. Sheet's Targets tab (row for this KPI, current month cell)
-      //   2. Parsed admin KPI target string ('>50%', '<$170', '+12 by EOY')
-      // Falling back to (2) keeps KPIs without a Targets-tab row out of the
-      // 'not measured' bucket as long as the admin gave them a goal.
+      // Target precedence: Sheet Targets tab → admin target string.
       let monthlyTarget = tgtRow && tgtRow.months ? tgtRow.months[currentMonth] : null;
       if (typeof monthlyTarget !== 'number') {
         const adminStr = adminTargetStrings[nameKey];
         const parsed = parseAdminTarget(adminStr);
         if (parsed !== null) monthlyTarget = parsed;
       }
+      // Pro-rate the target: annual → weeks-elapsed-in-year / 52.
+      // Monthly + sum → weeks-elapsed-in-month / weeks-in-month.
+      // Monthly + latest/avg → no pro-rating (rate metric).
       let paceTarget = monthlyTarget;
-      if (mathType === 'sum' && typeof monthlyTarget === 'number' && weeksInMonth > 0) {
-        paceTarget = monthlyTarget * (weeksElapsed / weeksInMonth);
+      if (typeof monthlyTarget === 'number') {
+        if (scope === 'annual') {
+          paceTarget = monthlyTarget * (weeksYtd / weeksInYear);
+        } else if (mathType === 'sum' && weeksInMonth > 0) {
+          paceTarget = monthlyTarget * (weeksElapsed / weeksInMonth);
+        }
       }
 
       const thr = thresholdMap[nameKey] || {};

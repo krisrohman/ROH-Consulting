@@ -106,6 +106,17 @@ const KPI_THRESHOLDS = {
   'Internal promotions':            { ontrack: 100, narrow: 85 },
 };
 
+// Per-KPI target scope — 'annual' means the Target number is a YEAR-end
+// figure that should be pro-rated by weeks-elapsed-in-year for status.
+// Default (unset) is 'monthly': target is a monthly figure and pro-rates
+// by weeks-elapsed-in-month. Only KPIs whose target is naturally annual
+// need an entry here.
+const KPI_SCOPES = {
+  'Studio remodels':     'annual',
+  'Treadmill refreshes': 'annual',
+  'Internal promotions': 'annual',
+};
+
 // Settings that describe identity / brand / north star — only set if empty.
 const BASE_SETTINGS = {
   dashboard_title:       'Austin Fitness Group',
@@ -254,6 +265,20 @@ export default async (request) => {
     }
     await sql`
       INSERT INTO settings (key, value) VALUES ('kpi_thresholds', ${JSON.stringify(curTh)})
+      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`;
+
+    // 2c) kpi_scopes — merge with existing.
+    const curScRow = await sql`SELECT value FROM settings WHERE key = 'kpi_scopes'`;
+    let curSc = {};
+    try {
+      if (curScRow.length) curSc = JSON.parse(curScRow[0].value) || {};
+    } catch (_) { curSc = {}; }
+    for (const [name, val] of Object.entries(KPI_SCOPES)) {
+      if (curSc[name] && !force) continue;
+      curSc[name] = val;
+    }
+    await sql`
+      INSERT INTO settings (key, value) VALUES ('kpi_scopes', ${JSON.stringify(curSc)})
       ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`;
 
     // 3) Base settings — only fill in keys that don't exist yet (or force).

@@ -432,20 +432,21 @@
   }
   .verdict-cell {
     display: flex;
-    align-items: baseline;
-    gap: 10px;
-    padding-right: 18px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 4px 20px 4px 0;
     border-right: 0.5px solid var(--rule);
   }
   .verdict-cell:last-child { border-right: none; padding-right: 0; }
   .verdict-num {
     font-family: var(--serif);
-    font-size: 34px;
+    font-size: 46px;
     font-weight: 500;
-    line-height: 0.95;
-    letter-spacing: -0.02em;
+    line-height: 0.9;
+    letter-spacing: -0.025em;
     font-variant-numeric: tabular-nums;
-    order: 1;
+    order: 2;
   }
   .verdict-label {
     font-family: var(--sans);
@@ -494,17 +495,86 @@
   .hero-week-sep { color: rgba(0,0,0,0.18); font-size: 10px; }
 
   /* ─── 4. North Star — full-bleed feature ─── */
+  /* NS + Revenue spread — NS beige panel on the left, revenue stacked
+     in a sidebar on the right so the hero block uses the full width. */
+  .ns-feature {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr);
+    column-gap: 32px;
+    margin: 0 0 40px;
+    align-items: stretch;
+  }
   .ns-panel {
     position: relative;
     background: #eadfc6;
     border-radius: 3px;
-    padding: 44px 48px 40px;
-    margin: 0 0 40px;
+    padding: 40px 44px 36px;
+    margin: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-    column-gap: 56px;
-    row-gap: 26px;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    column-gap: 40px;
+    row-gap: 22px;
     align-items: end;
+  }
+  .rev-sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+  }
+  .rev-sidebar-head {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+    padding: 0 0 12px;
+    border-bottom: 0.5px solid var(--rule);
+    margin-bottom: 4px;
+  }
+  .rev-sidebar .revenue-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex: 1;
+  }
+  .rev-sidebar .rev-card {
+    flex: 1;
+    padding: 14px 0;
+    border-right: none;
+    border-bottom: 0.5px solid var(--rule);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    column-gap: 14px;
+    row-gap: 2px;
+    align-items: baseline;
+  }
+  .rev-sidebar .rev-card:last-child { border-bottom: none; }
+  .rev-sidebar .rev-card + .rev-card { padding-left: 0; }
+  .rev-sidebar .rev-label {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+  }
+  .rev-sidebar .rev-value {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: 22px;
+  }
+  .rev-sidebar .rev-target {
+    grid-column: 2;
+    grid-row: 2;
+    text-align: right;
+    align-self: center;
+  }
+  .rev-sidebar .rev-status {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    margin: 0;
+    font-size: 9px;
   }
   .ns-head {
     grid-column: 1 / -1;
@@ -662,7 +732,7 @@
   .rev-card::before { display: none; }
   .rev-label {
     font-family: var(--sans);
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     font-weight: 500;
@@ -671,7 +741,7 @@
   }
   .rev-value {
     font-family: var(--serif);
-    font-size: 30px;
+    font-size: 24px;
     line-height: 1;
     font-weight: 500;
     color: var(--ink);
@@ -1072,6 +1142,7 @@
   @media (max-width: 1100px) {
     .pillar { grid-template-columns: 1fr; column-gap: 0; row-gap: 20px; }
     .pillar-left { position: static; }
+    .ns-feature { grid-template-columns: 1fr; row-gap: 20px; }
     .ns-panel { grid-template-columns: 1fr; padding: 32px 28px; }
     .ns-big { font-size: 108px; }
     .ns-side { padding-left: 0; border-left: none; border-top: 0.5px solid rgba(0,0,0,0.18); padding-top: 22px; }
@@ -1199,61 +1270,59 @@
   </section>
 
   <!-- ══════════════════════════════════════════════════
-       4. NORTH STAR — the dominant metric
+       4 + 5. NS + Revenue spread — NS beige panel on the left,
+       Revenue stacked as a sidebar on the right.
        ══════════════════════════════════════════════════ -->
-  <section class="ns-panel">
-    <h2 class="ns-title" id="ns-title">Net recurring members per studio, on average.</h2>
-    <div class="ns-hero">
-      <div class="ns-big" id="ns-ytd">+17</div>
-      <p class="ns-hero-label">members / studio &middot; year to date</p>
-    </div>
-    <div class="ns-side">
-      <div>
-        <p class="ns-side-stat-label">end-of-year target</p>
-        <div class="ns-mid" id="ns-target">+12</div>
+  <div class="ns-feature">
+    <section class="ns-panel">
+      <h2 class="ns-title" id="ns-title">Net recurring members per studio, on average.</h2>
+      <div class="ns-hero">
+        <div class="ns-big" id="ns-ytd">+17</div>
+        <p class="ns-hero-label">members / studio &middot; year to date</p>
       </div>
-      <div>
-        <p class="ns-side-stat-label">trajectory</p>
-        <div class="ns-track-bar"><span style="width: 100%;"></span></div>
-        <p class="ns-track-meta">YTD exceeds EOY target</p>
+      <div class="ns-side">
+        <div>
+          <p class="ns-side-stat-label">end-of-year target</p>
+          <div class="ns-mid" id="ns-target">+12</div>
+        </div>
+        <div>
+          <p class="ns-side-stat-label">trajectory</p>
+          <div class="ns-track-bar"><span style="width: 100%;"></span></div>
+          <p class="ns-track-meta">YTD exceeds EOY target</p>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ══════════════════════════════════════════════════
-       5. REVENUE STRAP — horizontal marquee, 4 KPIs
-       ══════════════════════════════════════════════════ -->
-  <section class="rev-strap">
-    <div class="rev-strap-head">
-      <span class="strap-kicker">revenue &middot; month to date</span>
-    </div>
-    <div class="revenue-row" id="revenue-row">
-      <div class="rev-card" data-kpi="Systemwide revenue">
-        <p class="rev-label">Systemwide</p>
-        <div class="rev-value">—</div>
-        <p class="rev-target">—</p>
-        <span class="rev-status ontrack">On track</span>
+    <aside class="rev-sidebar">
+      <p class="rev-sidebar-head">revenue &middot; month to date</p>
+      <div class="revenue-row" id="revenue-row">
+        <div class="rev-card" data-kpi="Systemwide revenue">
+          <p class="rev-label">Systemwide</p>
+          <div class="rev-value">—</div>
+          <p class="rev-target">—</p>
+          <span class="rev-status ontrack">On track</span>
+        </div>
+        <div class="rev-card" data-kpi="Recurring revenue">
+          <p class="rev-label">Recurring</p>
+          <div class="rev-value">—</div>
+          <p class="rev-target">—</p>
+          <span class="rev-status ontrack">On track</span>
+        </div>
+        <div class="rev-card" data-kpi="Prepaid package revenue">
+          <p class="rev-label">Prepaid package</p>
+          <div class="rev-value">—</div>
+          <p class="rev-target">—</p>
+          <span class="rev-status ontrack">On track</span>
+        </div>
+        <div class="rev-card" data-kpi="Retail, fees &amp; other">
+          <p class="rev-label">Retail, fees &amp; other</p>
+          <div class="rev-value">—</div>
+          <p class="rev-target">—</p>
+          <span class="rev-status ontrack">On track</span>
+        </div>
       </div>
-      <div class="rev-card" data-kpi="Recurring revenue">
-        <p class="rev-label">Recurring</p>
-        <div class="rev-value">—</div>
-        <p class="rev-target">—</p>
-        <span class="rev-status ontrack">On track</span>
-      </div>
-      <div class="rev-card" data-kpi="Prepaid package revenue">
-        <p class="rev-label">Prepaid package</p>
-        <div class="rev-value">—</div>
-        <p class="rev-target">—</p>
-        <span class="rev-status ontrack">On track</span>
-      </div>
-      <div class="rev-card" data-kpi="Retail, fees &amp; other">
-        <p class="rev-label">Retail, fees &amp; other</p>
-        <div class="rev-value">—</div>
-        <p class="rev-target">—</p>
-        <span class="rev-status ontrack">On track</span>
-      </div>
-    </div>
-  </section>
+    </aside>
+  </div>
 
   <!-- ══════════════════════════════════════════════════
        6. PILLARS LEDE — transition to sections

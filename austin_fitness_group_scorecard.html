@@ -1287,29 +1287,17 @@
     grid-template-columns: minmax(0, 1.2fr) minmax(0, 3fr) auto;
     gap: 28px;
     align-items: center;
-    padding: 22px 0;
+    padding: 22px 24px;
     margin: 6px 0 10px;
     background: #f4ede0;
     border: none;
     border-radius: 2px;
-    /* Pull the beige panel out to the page's horizontal padding so the
-       inner text aligns with driver rows below, while the beige still
-       reads as a full-width feature panel. */
-    padding-left: 2.75rem;
-    padding-right: 2.75rem;
-    margin-left: -2.75rem;
-    margin-right: -2.75rem;
   }
-  /* Collapse the middle column when we don't have weekly data to show
-     so the callout doesn't leave a big blank gap in the middle. */
+  /* Collapse middle column when we genuinely have no weekly data for
+     that KPI — prevents a giant empty gap. In practice every lagging
+     outcome should match the sheet via fuzzyMatchKpi(). */
   .leading.no-weekly { grid-template-columns: 1fr auto; }
   .leading.no-weekly .wks { display: none; }
-  @media (max-width: 900px) {
-    .leading { margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; }
-  }
-  @media (max-width: 640px) {
-    .leading { margin-left: -1rem; margin-right: -1rem; padding-left: 1rem; padding-right: 1rem; }
-  }
   .leading-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .leading-text .row-goal { margin-top: 12px; }
   .leading .wks { margin-top: 0; }
@@ -2719,15 +2707,12 @@
       const nameEl = el.querySelector('.leading-name');
       const nameKpi = normalizeKpi(nameEl ? nameEl.textContent : '');
 
-      // Exact match first, then fuzzy: same normalized name, then any row
-      // whose name shares a word with data-kpi or the displayed name.
+      // Exact normalized match first, then word-overlap fuzzy match
+      // against the data-kpi attribute OR the visible outcome name.
       let row = rowsByKpi[kpi] || rowsByKpi[nameKpi];
       if (!row) {
-        row = rows.find(r => {
-          const rn = normalizeKpi(r.kpi);
-          return (kpi && (rn.includes(kpi) || kpi.includes(rn)))
-              || (nameKpi && (rn.includes(nameKpi) || nameKpi.includes(rn)));
-        });
+        row = rows.find(r => fuzzyMatchKpi(r.kpi, el.dataset.kpi || '')
+                          || fuzzyMatchKpi(r.kpi, nameEl ? nameEl.textContent : ''));
       }
 
       if (!row) {

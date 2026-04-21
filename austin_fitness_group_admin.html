@@ -226,7 +226,7 @@
   }
   .kpi-row-header, .kpi-row {
     display: grid;
-    grid-template-columns: 38px minmax(260px, 2.4fr) minmax(0, 1fr) 70px 70px 86px 100px 66px minmax(0, 0.85fr) 92px 32px 32px;
+    grid-template-columns: 38px minmax(260px, 2.4fr) minmax(0, 1fr) 70px 70px 86px 100px 66px 66px minmax(0, 0.85fr) 92px 32px 32px;
     gap: 8px;
     align-items: center;
     padding: 10px 14px;
@@ -661,7 +661,8 @@
               <span>Math</span>
               <span>Goal dir</span>
               <span>Target</span>
-              <span title="How far below target still counts as a narrow miss. Default 8%.">Narrow %</span>
+              <span title="How far below goal still counts as on track. 0 = must meet goal exactly. Default 0.">On-track %</span>
+              <span title="How far below goal counts as a narrow miss. Beyond this = at risk. Default 8.">Narrow %</span>
               <span>Owner</span>
               <span>Tier</span>
               <span></span>
@@ -1166,11 +1167,27 @@
         if (s.kpi_targets) targetsByName = JSON.parse(s.kpi_targets) || {};
       } catch (_) { targetsByName = {}; }
 
-      // Per-KPI narrow-% thresholds: mirror the same pattern as kpi_targets.
+      // Per-KPI thresholds: each entry can be a number (legacy single
+      // narrow-%) or an object { ontrack, narrow } for the dual-threshold
+      // model. Helpers below normalize lookup across both shapes.
       let thresholdsByName = {};
       try {
         if (s.kpi_thresholds) thresholdsByName = JSON.parse(s.kpi_thresholds) || {};
       } catch (_) { thresholdsByName = {}; }
+
+      function thresholdsOntrack(map, name) {
+        const v = map[name];
+        if (v == null) return '';
+        if (typeof v === 'object' && v.ontrack != null) return String(v.ontrack);
+        return ''; // legacy number = narrow-only, no on-track override
+      }
+      function thresholdsNarrow(map, name) {
+        const v = map[name];
+        if (v == null) return '';
+        if (typeof v === 'number') return String(v);
+        if (typeof v === 'object' && v.narrow != null) return String(v.narrow);
+        return '';
+      }
 
       // Hydrate hidden-KPI list from server (authoritative) so other devices
       // stay in sync. Local storage is just a cache of the last loaded state.
@@ -1193,7 +1210,8 @@
         math_type: r.math_type || 'avg',
         goal_direction: r.goal_direction || 'higher',
         target: targetsByName[r.kpi_name] || '',
-        narrow_pct: (thresholdsByName[r.kpi_name] != null ? String(thresholdsByName[r.kpi_name]) : '')
+        ontrack_pct: thresholdsOntrack(thresholdsByName, r.kpi_name),
+        narrow_pct:  thresholdsNarrow(thresholdsByName,  r.kpi_name)
       }));
 
       // Apply settings to the form fields
@@ -1489,7 +1507,8 @@
           <option value="lower"  ${goalDir === 'lower'  ? 'selected' : ''}>lower ↓</option>
         </select>
         <input class="inline-input" value="${escape(k.target || '')}" maxlength="40" placeholder="e.g. >50% or <$170" onchange="updateKpi(${idx}, 'target', this.value)" title="Target value shown on the scorecard (free-form, e.g. >50%, <$170, +12 by EOY)" />
-        <input class="inline-input" value="${escape(k.narrow_pct === '' || k.narrow_pct == null ? '' : k.narrow_pct)}" type="number" min="0" max="100" step="0.5" placeholder="8" onchange="updateKpi(${idx}, 'narrow_pct', this.value)" title="How far below target still counts as a narrow miss. Blank = default 8%. Revenue often uses 10; tight KPIs like Intro close often use 5." style="text-align: right;" />
+        <input class="inline-input" value="${escape(k.ontrack_pct === '' || k.ontrack_pct == null ? '' : k.ontrack_pct)}" type="number" min="0" max="100" step="0.5" placeholder="0" onchange="updateKpi(${idx}, 'ontrack_pct', this.value)" title="How far below goal still counts as on track. 0 = must meet goal exactly. Blank = default 0." style="text-align: right;" />
+        <input class="inline-input" value="${escape(k.narrow_pct === '' || k.narrow_pct == null ? '' : k.narrow_pct)}" type="number" min="0" max="100" step="0.5" placeholder="8" onchange="updateKpi(${idx}, 'narrow_pct', this.value)" title="How far below goal counts as a narrow miss. Must be ≥ On-track %. Blank = default 8. Revenue often uses 10; tight KPIs like Intro close often use 5." style="text-align: right;" />
         <input class="inline-input" value="${escape(k.owner)}" maxlength="60" onchange="updateKpi(${idx}, 'owner', this.value)" />
         <div class="tier-toggle ${k.tier === 'leading' ? 'leading' : ''}" onclick="toggleTier(${idx})" title="Toggle: outcomes (lagging) vs drivers (leading)">
           <span class="lead">lagging</span>
@@ -1527,14 +1546,24 @@
   }
 
   function updateKpi(idx, field, value) {
-    if (field === 'narrow_pct') {
+    if (field === 'narrow_pct' || field === 'ontrack_pct') {
       // Keep as string so '' means "clear / use default" — don't coerce
-      // blank to 0. Enforce the 0..100 range on input.
+      // blank to 0. Enforce the 0..100 range on input. Also guard that
+      // ontrack_pct never exceeds narrow_pct (silently clamps).
       const raw = String(value == null ? '' : value).trim();
       if (raw === '') { kpis[idx][field] = ''; }
       else {
         const n = Number(raw);
         if (!Number.isNaN(n) && n >= 0 && n <= 100) kpis[idx][field] = String(n);
+      }
+      // Cross-validate: on-track tolerance can't exceed narrow tolerance
+      const ontrack = Number(kpis[idx].ontrack_pct);
+      const narrow  = Number(kpis[idx].narrow_pct);
+      if (!Number.isNaN(ontrack) && !Number.isNaN(narrow) && ontrack > narrow) {
+        // Clamp the one the user just edited
+        if (field === 'ontrack_pct') kpis[idx].ontrack_pct = String(narrow);
+        else kpis[idx].narrow_pct = String(ontrack);
+        renderKpis();
       }
       markDirty();
       return;
@@ -1590,6 +1619,7 @@
         math_type: 'avg',
         goal_direction: 'higher',
         target: '',
+        ontrack_pct: '',
         narrow_pct: ''
       });
       markDirty();
@@ -2031,14 +2061,20 @@
         if (t) kpiTargetsMap[k.kpi] = truncate(t, 40);
       });
 
-      // Per-KPI narrow-% thresholds: only save rows where the user
-      // actually entered a number. Blank = use scorecard default (8%).
+      // Per-KPI thresholds: save as { ontrack, narrow } objects. Only
+      // include keys the user actually filled so blanks stay at default.
       const kpiThresholdsMap = {};
       kpis.forEach(k => {
-        const raw = k.narrow_pct;
-        if (raw === '' || raw == null) return;
-        const n = Number(raw);
-        if (!Number.isNaN(n) && n >= 0 && n <= 100) kpiThresholdsMap[k.kpi] = n;
+        const out = {};
+        const n = Number(k.narrow_pct);
+        if (k.narrow_pct !== '' && k.narrow_pct != null && !Number.isNaN(n) && n >= 0 && n <= 100) {
+          out.narrow = n;
+        }
+        const o = Number(k.ontrack_pct);
+        if (k.ontrack_pct !== '' && k.ontrack_pct != null && !Number.isNaN(o) && o >= 0 && o <= 100) {
+          out.ontrack = o;
+        }
+        if (Object.keys(out).length) kpiThresholdsMap[k.kpi] = out;
       });
 
       // Save settings

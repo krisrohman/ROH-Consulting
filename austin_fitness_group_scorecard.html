@@ -1610,10 +1610,10 @@
   }
 
   // Determine status based on projection vs target, respecting "lower is better" units
-  function projectionStatus(projection, target, unit, kpiName, narrowPct) {
+  function projectionStatus(projection, target, unit, kpiName, narrowPct, ontrackPct) {
     const lowerIsBetter = ['USD'].includes(unit) ||
       /cost|turnover|cpl|cpb/i.test(kpiName);
-    return computeStatus(projection, target, lowerIsBetter, narrowPct);
+    return computeStatus(projection, target, lowerIsBetter, narrowPct, ontrackPct);
   }
 
   // Human-readable projection note
@@ -1830,11 +1830,15 @@
     return m ? parseFloat(m[0]) : null;
   }
 
-  function computeStatus(value, target, lowerIsBetter, narrowPct) {
+  function computeStatus(value, target, lowerIsBetter, narrowPct, ontrackPct) {
     if (typeof value !== 'number' || typeof target !== 'number') return 'unknown';
-    const pct = (typeof narrowPct === 'number' && narrowPct >= 0 && narrowPct <= 100)
+    const narrow = (typeof narrowPct === 'number' && narrowPct >= 0 && narrowPct <= 100)
       ? narrowPct : 8;
-    const narrowFloor = 1 - (pct / 100);
+    let ontrack = (typeof ontrackPct === 'number' && ontrackPct >= 0 && ontrackPct <= 100)
+      ? ontrackPct : 0;
+    if (ontrack > narrow) ontrack = narrow; // guard — on-track tolerance can't exceed narrow tolerance
+    const onTrackFloor = 1 - (ontrack / 100);
+    const narrowFloor  = 1 - (narrow  / 100);
     if (target === 0) {
       if (lowerIsBetter) return value <= 0 ? 'on-track' : 'at-risk';
       if (value > 0)    return 'on-track';
@@ -1842,21 +1846,31 @@
       return 'at-risk';
     }
     const ratio = lowerIsBetter ? target / value : value / target;
-    if (ratio >= 1.0)         return 'on-track';
-    if (ratio >= narrowFloor) return 'narrow';
+    if (ratio >= onTrackFloor) return 'on-track';
+    if (ratio >= narrowFloor)  return 'narrow';
     return 'at-risk';
   }
 
-  // Parse settings.kpi_thresholds into a normalized {normName: number} map
-  // so per-KPI narrow overrides are cheap to look up per render.
+  // Parse settings.kpi_thresholds into a normalized map.
+  // Each entry can be a number (legacy: narrow%) or an object
+  // { ontrack: N, narrow: N } for the new two-threshold model.
   function buildThresholdMap(data) {
     const raw = (data && data.settings && data.settings.kpi_thresholds) || {};
     let parsed = raw;
     if (typeof raw === 'string') { try { parsed = JSON.parse(raw) || {}; } catch (_) { parsed = {}; } }
     const out = {};
     for (const [k, v] of Object.entries(parsed || {})) {
-      const n = Number(v);
-      if (!Number.isNaN(n) && n >= 0 && n <= 100) out[normalizeKpi(k)] = n;
+      const key = normalizeKpi(k);
+      if (typeof v === 'number') {
+        out[key] = { narrow: v, ontrack: 0 };
+      } else if (v && typeof v === 'object') {
+        const n = Number(v.narrow);
+        const o = Number(v.ontrack);
+        out[key] = {
+          narrow:  (!Number.isNaN(n) && n >= 0 && n <= 100) ? n : undefined,
+          ontrack: (!Number.isNaN(o) && o >= 0 && o <= 100) ? o : undefined
+        };
+      }
     }
     return out;
   }
@@ -2077,8 +2091,8 @@
       if (isHidden) return;
 
       const projection = projectValue(d.mtd, d.unit, weekInMonth, totalWeeks);
-      const narrowPct = thresholdMap[normalizeKpi(matchKey)] ?? thresholdMap[normalizeKpi(name)];
-      const status = projectionStatus(projection, d.target, d.unit, name, narrowPct);
+      const thr = thresholdMap[normalizeKpi(matchKey)] || thresholdMap[normalizeKpi(name)] || {};
+      const status = projectionStatus(projection, d.target, d.unit, name, thr.narrow, thr.ontrack);
       const note = projectionNote(projection, d.py, d.target, d.unit, name);
 
       const cols = rowEl.querySelectorAll('.compare-col');
@@ -2248,9 +2262,9 @@
         const tgtRow = targetsByKpi[normalizeKpi(row ? row.kpi : (el.dataset.kpi || ''))];
         const target = tgtRow && tgtRow.months ? tgtRow.months[currentMonth] : null;
         const lowerIsBetter = /cost|turnover|cpl|cpb/i.test(row ? row.kpi : '');
-        const narrowPct = thresholdMap[normalizeKpi(row ? row.kpi : '')]
-                       ?? thresholdMap[normalizeKpi(el.dataset.kpi || '')];
-        const status = computeStatus(currentVal, target, lowerIsBetter, narrowPct);
+        const thr = thresholdMap[normalizeKpi(row ? row.kpi : '')]
+                 || thresholdMap[normalizeKpi(el.dataset.kpi || '')] || {};
+        const status = computeStatus(currentVal, target, lowerIsBetter, thr.narrow, thr.ontrack);
         applyPillStyle(pill, status);
       }
     });
@@ -2366,8 +2380,8 @@
       card.classList.remove('miss', 'over');
       if (pill) pill.classList.remove('ontrack', 'miss', 'unknown');
       const lowerIsBetter = false; // revenue is always higher-is-better
-      const narrowPct = thresholdMap[wanted];
-      const status = computeStatus(mtdActual, paceTarget, lowerIsBetter, narrowPct);
+      const thr = thresholdMap[wanted] || {};
+      const status = computeStatus(mtdActual, paceTarget, lowerIsBetter, thr.narrow, thr.ontrack);
       if (status === 'on-track') {
         if (pill) { pill.className = 'rev-status ontrack'; pill.textContent = 'On track'; }
       } else if (status === 'narrow') {
@@ -2566,8 +2580,8 @@
         paceTarget = monthlyTarget * (weeksElapsed / weeksInMonth);
       }
 
-      const narrowPct = thresholdMap[nameKey];
-      const status = computeStatus(mtd, paceTarget, lowerIsBetter, narrowPct);
+      const thr = thresholdMap[nameKey] || {};
+      const status = computeStatus(mtd, paceTarget, lowerIsBetter, thr.narrow, thr.ontrack);
       if (status === 'on-track') onTrack++;
       else if (status === 'narrow') narrow++;
       else if (status === 'at-risk') risk++;

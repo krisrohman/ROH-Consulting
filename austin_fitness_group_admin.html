@@ -455,26 +455,21 @@
     display: flex; align-items: center; gap: 8px;
   }
 
-  /* Page footer — subtle link back to the dashboard */
-  .page-footer {
-    margin-top: 3rem;
-    padding: 1.5rem 0 0;
-    border-top: 0.5px solid var(--rule);
-    display: flex;
-    justify-content: center;
-  }
-  .admin-link {
-    font-family: var(--serif);
+  /* Back-to-scorecard link in the topbar — replaces the 'dashboard admin'
+     kicker so the user has a clear route out of the admin panel. */
+  .back-link {
+    display: inline-block;
+    font-family: var(--sans);
     font-size: 11px;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--ink-3);
+    color: var(--coral-600);
     text-decoration: none;
     font-weight: 500;
-    padding: 6px 14px;
+    margin: 0 0 6px;
     transition: color 140ms ease;
   }
-  .admin-link:hover { color: var(--coral-600); }
+  .back-link:hover { color: var(--ink); }
 
   /* Toast notifications */
   .toast-container {
@@ -563,8 +558,8 @@
   <!-- Top bar -->
   <div class="topbar">
     <div>
-      <p class="kicker">dashboard admin</p>
-      <h1 class="ptitle">Austin Fitness Group &middot; Settings</h1>
+      <a href="austin_fitness_group_scorecard.html" class="back-link">← Back to scorecard</a>
+      <h1 class="ptitle">Admin</h1>
     </div>
   </div>
 
@@ -920,11 +915,6 @@
       </div>
 
     </div>
-  </div>
-
-  <!-- Subtle footer: return link to the scorecard -->
-  <div class="page-footer">
-    <a href="austin_fitness_group_scorecard.html" class="admin-link">← Back to scorecard</a>
   </div>
 
   <!-- Toast container -->

@@ -1183,7 +1183,7 @@
        3. VERDICT — the real hero: status at a glance
        ══════════════════════════════════════════════════ -->
   <section class="verdict" role="list" aria-label="KPI status summary">
-    <p class="verdict-kicker">the state of play &middot; week <span class="verdict-wk">16</span> &middot; <span id="verdict-total">0</span> drivers tracked</p>
+    <p class="verdict-kicker">the tally</p>
     <div class="verdict-line ribbon">
       <div class="verdict-cell v-ok ribbon-cell cell-ok" role="listitem">
         <span class="verdict-label ribbon-label" style="color: var(--teal-600);">on pace</span>
@@ -1829,6 +1829,21 @@
   // by treating any positive value as on-track, exactly zero as narrow, and
   // negative as at-risk — avoids the divide-by-zero that was rendering
   // hollow dots on perfectly good data.
+  // Parse a free-form admin target string into a numeric target when the
+  // Sheet's Targets tab doesn't have a row for this KPI. Grabs the first
+  // number it finds and ignores everything else, so:
+  //   ">50%"       → 50
+  //   "< $170"     → 170
+  //   "+12 by EOY" → 12
+  //   "> 1.5×"     → 1.5
+  //   "21 / year"  → 21
+  //   "vs plan"    → null   (no number, no target)
+  function parseAdminTarget(str) {
+    if (str === null || str === undefined) return null;
+    const m = String(str).match(/-?\d+(?:\.\d+)?/);
+    return m ? parseFloat(m[0]) : null;
+  }
+
   function computeStatus(value, target, lowerIsBetter) {
     if (typeof value !== 'number' || typeof target !== 'number') return 'unknown';
     if (target === 0) {
@@ -2261,6 +2276,7 @@
     const actByKpi    = Object.fromEntries(actuals.map(r => [normalizeKpi(r.kpi), r]));
     const tgtByKpi    = Object.fromEntries(targets.map(r => [normalizeKpi(r.kpi), r]));
     const weeklyByKpi = Object.fromEntries(weeklyRows.map(r => [normalizeKpi(r.kpi), r]));
+    const adminTargetStrings = buildNormalizedTargetMap(data);
 
     // How many weeks of the selected month have been recorded up through
     // the selected week, and how many weeks are in the month total? Used
@@ -2297,7 +2313,11 @@
       const mathType = (actRow.config && actRow.config.math_type)
                     || (actRow.math_type)
                     || 'sum';
-      const monthlyTarget = tgtRow && tgtRow.months ? tgtRow.months[month] : null;
+      let monthlyTarget = tgtRow && tgtRow.months ? tgtRow.months[month] : null;
+      if (typeof monthlyTarget !== 'number') {
+        const parsed = parseAdminTarget(adminTargetStrings[wanted]);
+        if (parsed !== null) monthlyTarget = parsed;
+      }
 
       // MTD THROUGH SELECTED WEEK — rebuild from weekly row so switching
       // the week dropdown actually moves the number. The backend's
@@ -2468,6 +2488,9 @@
     weeklyRows.forEach(r => { weeklyByKpi[normalizeKpi(r.kpi)] = r; });
     const targetByKpi = {};
     targets.forEach(t => { targetByKpi[normalizeKpi(t.kpi)] = t; });
+    // Admin-side target strings (parsed into numbers) as a fallback when
+    // the Sheet's Targets tab doesn't cover a KPI or a month.
+    const adminTargetStrings = buildNormalizedTargetMap(data);
 
     // Count weeks elapsed vs total-in-month — used to pro-rate sum-type
     // targets so W14 of a 5-week April isn't treated as 'Below target'
@@ -2521,7 +2544,17 @@
         }
       }
 
-      const monthlyTarget = tgtRow && tgtRow.months ? tgtRow.months[currentMonth] : null;
+      // Monthly target precedence:
+      //   1. Sheet's Targets tab (row for this KPI, current month cell)
+      //   2. Parsed admin KPI target string ('>50%', '<$170', '+12 by EOY')
+      // Falling back to (2) keeps KPIs without a Targets-tab row out of the
+      // 'not measured' bucket as long as the admin gave them a goal.
+      let monthlyTarget = tgtRow && tgtRow.months ? tgtRow.months[currentMonth] : null;
+      if (typeof monthlyTarget !== 'number') {
+        const adminStr = adminTargetStrings[nameKey];
+        const parsed = parseAdminTarget(adminStr);
+        if (parsed !== null) monthlyTarget = parsed;
+      }
       let paceTarget = monthlyTarget;
       if (mathType === 'sum' && typeof monthlyTarget === 'number' && weeksInMonth > 0) {
         paceTarget = monthlyTarget * (weeksElapsed / weeksInMonth);

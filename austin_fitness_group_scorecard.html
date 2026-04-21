@@ -2688,7 +2688,16 @@
     const weekly = (data && data.sheet && data.sheet.weekly) || {};
     const cols = weekly.columns || [];
     const rows = weekly.rows || [];
-    if (!cols.length || !rows.length) return;
+    // Even when we have no data, still process every callout so the grid
+    // collapses (.no-weekly) instead of leaving a giant empty middle.
+    if (!cols.length || !rows.length) {
+      document.querySelectorAll('.leading[data-kpi]').forEach(el => {
+        const wksEl = el.querySelector('.wks');
+        if (wksEl) wksEl.innerHTML = '';
+        el.classList.add('no-weekly');
+      });
+      return;
+    }
 
     // Show a 5-week window centered on the current ISO week so the
     // selected week sits in the middle (or right of center when early in year).
@@ -2812,20 +2821,26 @@
 
   // Word-set overlap: returns true if a and b share a reasonable fraction
   // of their significant words. Handles name drift between admin and sheet
-  // (different punctuation, word order, minor rephrasing).
+  // (different punctuation, word order, minor rephrasing, abbreviations
+  // like YoY -> year-over-year).
   function fuzzyMatchKpi(a, b) {
     const normA = normalizeKpi(a);
     const normB = normalizeKpi(b);
     if (!normA || !normB) return false;
     if (normA === normB) return true;
     if (normA.includes(normB) || normB.includes(normA)) return true;
+    // First two significant words match? Handles 'PSA leads, YoY change'
+    // ↔ 'PSA leads, year-over-year' and other trailing-word variations.
+    const firstTwo = s => s.split(' ').filter(w => w.length >= 2).slice(0, 2).join(' ');
+    if (firstTwo(normA) && firstTwo(normA) === firstTwo(normB)) return true;
+    // Word-set overlap (any overlap >= 40% of smaller set)
     const toWords = s => new Set(s.split(' ').filter(w => w.length >= 2));
     const wa = toWords(normA);
     const wb = toWords(normB);
     if (wa.size === 0 || wb.size === 0) return false;
     let overlap = 0;
     wa.forEach(w => { if (wb.has(w)) overlap++; });
-    return overlap / Math.min(wa.size, wb.size) >= 0.6;
+    return overlap / Math.min(wa.size, wb.size) >= 0.4;
   }
 
   function applySettings(settings) {

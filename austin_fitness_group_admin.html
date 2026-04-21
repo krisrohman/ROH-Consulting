@@ -231,9 +231,13 @@
     align-items: center;
     padding: 10px 14px;
   }
-  .kpi-row.is-hidden { opacity: 0.45; }
+  .kpi-row.is-hidden {
+    opacity: 0.4;
+    background: rgba(0,0,0,0.03);
+  }
   .kpi-row.is-hidden .inline-input,
   .kpi-row.is-hidden .tier-toggle { pointer-events: none; }
+  .kpi-row.is-hidden input.inline-input { text-decoration: line-through; }
   .hide-btn {
     display: inline-flex; align-items: center; justify-content: center;
     width: 28px; height: 28px;
@@ -605,16 +609,10 @@
               <h2 class="panel-title">KPIs</h2>
               <p class="panel-sub">Manage every KPI's name, section, unit, and whether it's a leading or lagging indicator.</p>
             </div>
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <button class="btn ghost" id="show-hidden-toggle" onclick="toggleShowHidden()" style="display: none;" title="Show or hide rows that have been collapsed">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                <span id="show-hidden-label">Show hidden (0)</span>
-              </button>
-              <button class="btn primary" onclick="addKpi()">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Add KPI
-              </button>
-            </div>
+            <button class="btn primary" onclick="addKpi()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add KPI
+            </button>
           </div>
           <div class="panel-body">
             <!-- Sheet sync banner -->
@@ -1214,7 +1212,6 @@
   // it out of sight so you can focus on the ones you're editing.
   const HIDDEN_KPIS_KEY = 'afg_admin_hidden_kpis';
   let hiddenKpiSet = new Set();
-  let showHiddenRows = false;
   try {
     const raw = localStorage.getItem(HIDDEN_KPIS_KEY);
     if (raw) hiddenKpiSet = new Set(JSON.parse(raw) || []);
@@ -1231,35 +1228,18 @@
     if (!name) return;
     if (hiddenKpiSet.has(name)) {
       hiddenKpiSet.delete(name);
-      showToast('"' + name + '" shown.', 'success');
     } else {
       hiddenKpiSet.add(name);
-      showToast('"' + name + '" hidden.', 'warn');
     }
     persistHiddenKpis();
     renderKpis();
   }
 
-  function toggleShowHidden() {
-    showHiddenRows = !showHiddenRows;
-    renderKpis();
-  }
-
   function renderKpis() {
     const container = document.getElementById('kpi-rows');
-    const hiddenCount = kpis.filter(k => hiddenKpiSet.has(k.kpi)).length;
-
-    // Update the header toggle's visibility + label
-    const toggleBtn = document.getElementById('show-hidden-toggle');
-    const toggleLbl = document.getElementById('show-hidden-label');
-    if (toggleBtn) toggleBtn.style.display = hiddenCount ? 'inline-flex' : 'none';
-    if (toggleLbl) toggleLbl.textContent = showHiddenRows
-      ? 'Hide hidden (' + hiddenCount + ')'
-      : 'Show hidden (' + hiddenCount + ')';
 
     container.innerHTML = kpis.map((k, idx) => {
       const isHidden = hiddenKpiSet.has(k.kpi);
-      if (isHidden && !showHiddenRows) return ''; // filtered out entirely
       const mathType = k.math_type || 'avg';
       const goalDir = k.goal_direction || 'higher';
       const hideTitle = isHidden ? 'Unhide row' : 'Hide row';

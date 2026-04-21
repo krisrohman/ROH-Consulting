@@ -1172,10 +1172,10 @@
        ══════════════════════════════════════════════════ -->
   <div class="nameplate">
     <span class="nameplate-kicker">leadership scorecard</span>
-    <span class="nameplate-issue">Vol · FY 2026 &middot; Issue · <span id="hero-issue">Week 16</span></span>
+    <span class="nameplate-issue">Vol · <span id="nameplate-fy">FY 2026</span> &middot; Issue · <span id="hero-issue">Week 16</span></span>
   </div>
-  <h1 class="wordmark">Austin Fitness Group.</h1>
-  <p class="wordmark-tagline">High standards. Relentless execution. No shortcuts.</p>
+  <h1 class="wordmark" id="wordmark">Austin Fitness Group.</h1>
+  <p class="wordmark-tagline" id="wordmark-tagline">High standards. Relentless execution. No shortcuts.</p>
 
   <!-- ══════════════════════════════════════════════════
        3. VERDICT — the real hero: status at a glance
@@ -2386,11 +2386,33 @@
     return overlap / Math.min(wa.size, wb.size) >= 0.4;
   }
 
+  // Wire every admin-editable setting into its visible spot on the scorecard.
+  // Each field is guarded so a missing setting leaves the static HTML default
+  // in place — admin edits are additive, never destructive.
   function applySettings(settings) {
+    if (!settings) return;
+    const setText = (id, value) => {
+      if (!value) return;
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    };
+
+    // Browser tab
     if (settings.dashboard_title) {
-      // Not replacing the hero wordmark — that's fixed styling. Just expose for future use.
       document.title = settings.dashboard_title + ' — Scorecard';
     }
+    // Hero wordmark ('Austin Fitness Group.')
+    setText('wordmark', settings.dashboard_title
+      ? (settings.dashboard_title.trim().endsWith('.') ? settings.dashboard_title : settings.dashboard_title + '.')
+      : '');
+    // Italic line under the wordmark
+    setText('wordmark-tagline', settings.hero_tagline);
+    // 'Vol · FY 2026 · Issue · Week 16'
+    setText('nameplate-fy', settings.fiscal_year);
+    // North Star headline sentence
+    setText('ns-title', settings.north_star_headline);
+
+    // Brand color — drives everything that reads --coral-400
     if (settings.brand_color) {
       document.documentElement.style.setProperty('--coral-400', settings.brand_color);
     }

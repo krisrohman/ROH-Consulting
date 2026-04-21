@@ -455,6 +455,27 @@
     display: flex; align-items: center; gap: 8px;
   }
 
+  /* Page footer — subtle link back to the dashboard */
+  .page-footer {
+    margin-top: 3rem;
+    padding: 1.5rem 0 0;
+    border-top: 0.5px solid var(--rule);
+    display: flex;
+    justify-content: center;
+  }
+  .admin-link {
+    font-family: var(--serif);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 6px 14px;
+    transition: color 140ms ease;
+  }
+  .admin-link:hover { color: var(--coral-600); }
+
   /* Toast notifications */
   .toast-container {
     position: fixed; bottom: 90px; right: 20px;
@@ -544,10 +565,6 @@
     <div>
       <p class="kicker">dashboard admin</p>
       <h1 class="ptitle">Austin Fitness Group &middot; Settings</h1>
-    </div>
-    <div class="view-switcher">
-      <a href="austin_fitness_group_scorecard.html">Dashboard</a>
-      <a href="#" class="active">Admin</a>
     </div>
   </div>
 
@@ -903,6 +920,11 @@
       </div>
 
     </div>
+  </div>
+
+  <!-- Subtle footer: return link to the dashboard -->
+  <div class="page-footer">
+    <a href="austin_fitness_group_scorecard.html" class="admin-link">← Back to dashboard</a>
   </div>
 
   <!-- Toast container -->

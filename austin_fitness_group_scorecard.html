@@ -741,36 +741,59 @@
     font-weight: 500;
     margin: 6px 0 0;
   }
-  /* Revenue snapshot cards — sit just below the North Star */
+  /* Page footer — subtle link back to admin */
+  .page-footer {
+    margin-top: 4rem;
+    padding: 2rem 0 0;
+    border-top: 0.5px solid var(--rule);
+    display: flex;
+    justify-content: center;
+  }
+  .admin-link {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 6px 14px;
+    transition: color 140ms ease;
+  }
+  .admin-link:hover { color: var(--coral-600); }
+
+  /* Revenue snapshot — sits just below the North Star. Editorial strip,
+     no hard card borders; a top rule marks status per column. */
   .revenue-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    background: var(--rule);
-    margin: 0 0 2.5rem;
-    border-radius: 2px;
-    overflow: hidden;
+    gap: 0;
+    margin: 0 0 2.75rem;
+    border-top: 0.5px solid var(--rule);
+    border-bottom: 0.5px solid var(--rule);
   }
   .rev-card {
-    background: var(--paper);
-    padding: 20px 22px 18px;
+    background: transparent;
+    padding: 22px 24px 20px;
     display: flex;
     flex-direction: column;
     position: relative;
-    min-height: 168px;
+    min-height: 150px;
+    border-right: 0.5px solid var(--rule);
   }
+  .rev-card:last-child { border-right: none; }
   .rev-card::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
+    top: -1px; left: 0; right: 0;
+    height: 2px;
     background: var(--teal-400);
   }
   .rev-card.miss::before { background: var(--amber-400); }
   .rev-card.over::before { background: var(--red-400); }
   .rev-label {
-    font-size: 10px;
-    letter-spacing: 0.22em;
+    font-size: 9px;
+    letter-spacing: 0.24em;
     text-transform: uppercase;
     font-weight: 500;
     color: var(--ink-3);
@@ -778,7 +801,7 @@
   }
   .rev-value {
     font-family: var(--serif);
-    font-size: 42px;
+    font-size: 38px;
     line-height: 1;
     font-weight: 500;
     color: var(--ink);
@@ -789,26 +812,51 @@
     font-size: 12px;
     color: var(--ink-3);
     font-family: var(--serif);
-    margin: 8px 0 auto;
+    font-style: italic;
+    margin: 10px 0 auto;
   }
   .rev-status {
-    display: inline-block;
-    font-size: 11px;
-    padding: 4px 12px;
-    border-radius: 100px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    padding: 0;
+    border-radius: 0;
     align-self: flex-start;
     font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     font-family: var(--sans, Inter, system-ui);
-    margin-top: 12px;
+    margin-top: 14px;
+    color: var(--teal-800);
+    background: transparent !important;
   }
-  .rev-status.ontrack { background: var(--teal-50); color: var(--teal-800); }
-  .rev-status.miss { background: var(--amber-50); color: var(--amber-800); }
+  .rev-status::before {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--teal-400);
+    display: inline-block;
+  }
+  .rev-status.miss { color: var(--amber-800); }
+  .rev-status.miss::before { background: var(--amber-400); }
   .rev-proj {
-    color: var(--teal-600);
+    color: var(--ink);
     font-weight: 500;
     font-family: var(--serif);
-    margin: 12px 0 0;
+    margin: 14px 0 0;
     font-size: 13px;
+    letter-spacing: -0.01em;
+  }
+  .rev-proj::before {
+    content: 'Projection ';
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+    margin-right: 6px;
   }
   @media (max-width: 900px) {
     .revenue-row { grid-template-columns: 1fr 1fr; }
@@ -1237,8 +1285,10 @@
     letter-spacing: 0.26em;
     color: var(--ink-3);
     text-transform: uppercase;
-    margin: 14px 0 0;
-    padding: 0 0 6px;
+    font-weight: 500;
+    margin: 20px 0 10px;
+    padding: 0 0 8px;
+    border-bottom: 0.5px solid var(--rule);
   }
 
   /* Colophon */
@@ -1326,12 +1376,7 @@
   <!-- Masthead -->
   <div class="masthead">
     <div class="masthead-top">
-      <div class="masthead-top-left">
-        <div class="view-switcher">
-          <a href="#" class="active">Dashboard</a>
-          <a href="austin_fitness_group_admin.html">Admin</a>
-        </div>
-      </div>
+      <div class="masthead-top-left"></div>
       <div class="masthead-top-right">
         <div class="masthead-date" id="masthead-date">Saturday, April 18, 2026</div>
         <div class="hero-controls">
@@ -2033,6 +2078,11 @@
     <div style="text-align: right;">
       <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
     </div>
+  </div>
+
+  <!-- Subtle footer: single admin link replaces the top view-switcher -->
+  <div class="page-footer">
+    <a href="austin_fitness_group_admin.html" class="admin-link">Open admin →</a>
   </div>
 
   </div>

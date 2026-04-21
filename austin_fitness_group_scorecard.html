@@ -2868,6 +2868,7 @@
 (function hydrateSections(){
   fetch('/api/dashboard').then(r=>r.json()).then(d=>{
     if (!d || !d.sections) return;
+    let laggingChanged = false;
     d.sections.forEach(s => {
       const key = s.section_key || s.display_name;
       const head = document.querySelector('.section-head[data-section-key="' + key + '"]');
@@ -2882,11 +2883,30 @@
       while (leading && !leading.classList.contains('leading')) leading = leading.nextElementSibling;
       if (leading) {
         const lname = leading.querySelector('.leading-name');
-        const lsub = leading.querySelector('.leading-sub');
-        if (lname && s.leading_display_label) lname.textContent = s.leading_display_label;
-        if (lsub && s.leading_description) lsub.textContent = s.leading_description;
+        const goalEl = leading.querySelector('.row-goal');
+        // Outcome KPI name on the callout — prefer admin's display_label,
+        // fall back to the raw KPI name.
+        if (lname) {
+          const newName = s.leading_display_label || s.leading_kpi_name;
+          if (newName) lname.textContent = newName;
+        }
+        // Goal text on the callout — admin's leading_description field
+        // (repurposed from a sub-tagline to the goal string).
+        if (goalEl && s.leading_description) {
+          goalEl.textContent = s.leading_description;
+        }
+        // Keep the weekly-strip lookup key in sync with admin's chosen KPI
+        if (s.leading_kpi_name) {
+          leading.setAttribute('data-kpi', s.leading_kpi_name);
+          laggingChanged = true;
+        }
       }
     });
+    // data-kpi may have changed — re-render the weekly strips so they
+    // point at the admin-selected outcome KPI instead of the static one.
+    if (laggingChanged && window.__kpiData) {
+      try { renderLaggingWeekly(window.__kpiData); } catch (_) {}
+    }
   }).catch(e => console.warn('Section hydration failed:', e));
 })();
 </script>

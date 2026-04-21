@@ -1471,23 +1471,23 @@
         </div>
 
         <div style="margin-top: 18px; padding-top: 14px; border-top: 0.5px solid var(--rule);">
-          <div style="font-size: 10px; letter-spacing: 0.22em; color: var(--ink-3); text-transform: uppercase; margin-bottom: 10px;">Leading outcome callout</div>
+          <div style="font-size: 10px; letter-spacing: 0.22em; color: var(--ink-3); text-transform: uppercase; margin-bottom: 10px;">Lagging outcome callout</div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
             <div>
-              <div class="field-label" style="margin-bottom: 4px;">Leading KPI</div>
+              <div class="field-label" style="margin-bottom: 4px;">Outcome KPI <span style="font-weight: 400; color: var(--ink-3); text-transform: none; letter-spacing: 0;">— drives the weekly strip</span></div>
               <select class="inline-input" onchange="updateSection(${idx}, 'leading_kpi_name', this.value)" style="width: 100%;">
                 <option value="">— none —</option>
                 ${kpiOptions.map(k => `<option value="${escape(k)}" ${k === s.leading_kpi_name ? 'selected' : ''}>${escape(k)}</option>`).join('')}
               </select>
             </div>
             <div>
-              <div class="field-label" style="margin-bottom: 4px;">Display label</div>
-              <input class="inline-input" value="${escape(s.leading_display_label)}" placeholder="Members per studio" maxlength="80" onchange="updateSection(${idx}, 'leading_display_label', this.value)" style="width: 100%;" />
+              <div class="field-label" style="margin-bottom: 4px;">Outcome name <span style="font-weight: 400; color: var(--ink-3); text-transform: none; letter-spacing: 0;">— headline on the callout</span></div>
+              <input class="inline-input" value="${escape(s.leading_display_label)}" placeholder="e.g. Members per studio" maxlength="80" onchange="updateSection(${idx}, 'leading_display_label', this.value)" style="width: 100%;" />
             </div>
           </div>
           <div style="margin-top: 10px;">
-            <div class="field-label" style="margin-bottom: 4px;">Callout description</div>
-            <input class="inline-input" value="${escape(s.leading_description)}" placeholder="Callout description" maxlength="200" onchange="updateSection(${idx}, 'leading_description', this.value)" style="width: 100%;" />
+            <div class="field-label" style="margin-bottom: 4px;">Outcome goal <span style="font-weight: 400; color: var(--ink-3); text-transform: none; letter-spacing: 0;">— shown on the beige callout</span></div>
+            <input class="inline-input" value="${escape(s.leading_description)}" placeholder="e.g. +12 by EOY, &gt; 1.5×, &gt; 3.5" maxlength="200" onchange="updateSection(${idx}, 'leading_description', this.value)" style="width: 100%;" />
           </div>
         </div>
       </div>

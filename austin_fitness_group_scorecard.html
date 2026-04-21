@@ -790,81 +790,8 @@
   }
   .admin-link:hover { color: var(--coral-600); }
 
-  /* North Star feature spread — editorial 2-column:
-     hero metric on the left, 'By the numbers' revenue sidebar on the
-     right, separated by a column rule. */
-  .ns-feature {
-    display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-    gap: 0;
-    margin: 2rem 0 2.5rem;
-    background: #f4ede0;
-    padding: 2.25rem 2rem;
-    border-radius: 2px;
-  }
-  .ns-feature .north-star {
-    background: transparent !important;
-    padding: 0 2.25rem 0 0 !important;
-    margin: 0 !important;
-    border-right: 0.5px solid rgba(0,0,0,0.14);
-  }
-  .rev-sidebar {
-    padding: 0 0 0 2.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    min-width: 0;
-  }
-  .rev-sidebar-heading {
-    font-family: var(--sans);
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    font-weight: 500;
-    margin: 0 0 14px;
-  }
-  @media (max-width: 900px) {
-    .ns-feature { grid-template-columns: 1fr; padding: 1.5rem; }
-    .ns-feature .north-star {
-      padding: 0 0 1.5rem !important;
-      border-right: none;
-      border-bottom: 0.5px solid rgba(0,0,0,0.14);
-    }
-    .rev-sidebar { padding: 1.5rem 0 0; }
-  }
-
-  /* Revenue cards inside the sidebar: stacked, no card chrome,
-     hairline dividers between entries. */
-  .rev-sidebar .rev-card {
-    background: transparent;
-    padding: 14px 0;
-    min-height: 0;
-    border: none;
-    border-bottom: 0.5px solid rgba(0,0,0,0.10);
-    border-right: none;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .rev-sidebar .rev-card:first-of-type { padding-top: 0; }
-  .rev-sidebar .rev-card:last-of-type { border-bottom: none; padding-bottom: 0; }
-  .rev-sidebar .rev-card::before { display: none; }
-  .rev-sidebar .rev-label { font-size: 9px; margin: 0 0 4px; }
-  .rev-sidebar .rev-value { font-size: 28px; }
-  .rev-sidebar .rev-target { font-size: 11px; margin: 6px 0 0; }
-  .rev-sidebar .rev-status { font-size: 9px; margin: 8px 0 0; }
-
-  /* Original horizontal revenue-row styles are kept below for any legacy
-     uses / fallback rendering in the wild. */
-  .revenue-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    margin: 0 0 2.75rem;
-    border-top: 0.5px solid var(--rule);
-    border-bottom: 0.5px solid var(--rule);
-  }
+  /* Revenue snapshot — sits just below the North Star. Editorial strip,
+     no hard card borders; a top rule marks status per column. */
   .revenue-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -1634,52 +1561,49 @@
     </div>
   </div><!-- /masthead -->
 
-  <!-- North Star feature + Revenue sidebar — a single editorial spread.
-       Two columns: NS hero on the left, 'By the numbers' revenue stack
-       on the right, separated by a column rule. -->
-  <div class="ns-feature">
-    <div class="north-star">
-      <p class="kicker" style="margin-bottom: 20px;">the north star</p>
-      <p class="ns-headline" id="ns-title">Net recurring members per studio, on average.</p>
-      <div class="ns-grid">
-        <div class="ns-stat">
-          <div class="ns-big" id="ns-ytd">+17</div>
-          <p class="ns-label">year to date</p>
-        </div>
-        <div class="ns-stat">
-          <div class="ns-big" id="ns-target">+12</div>
-          <p class="ns-label">end-of-year target</p>
-        </div>
+  <!-- North Star feature — stands alone -->
+  <div class="north-star">
+    <p class="kicker" style="margin-bottom: 20px;">the north star</p>
+    <p class="ns-headline" id="ns-title">Net recurring members per studio, on average.</p>
+    <div class="ns-grid">
+      <div class="ns-stat">
+        <div class="ns-big" id="ns-ytd">+17</div>
+        <p class="ns-label">year to date</p>
+      </div>
+      <div class="ns-stat">
+        <div class="ns-big" id="ns-target">+12</div>
+        <p class="ns-label">end-of-year target</p>
       </div>
     </div>
+  </div>
 
-    <aside class="rev-sidebar" id="revenue-row" aria-label="Revenue snapshot">
-      <p class="rev-sidebar-heading">By the numbers</p>
-      <div class="rev-card" data-kpi="Systemwide revenue">
-        <p class="rev-label">Systemwide revenue</p>
-        <div class="rev-value">—</div>
-        <p class="rev-target">—</p>
-        <span class="rev-status ontrack">On track</span>
-      </div>
-      <div class="rev-card" data-kpi="Recurring revenue">
-        <p class="rev-label">Recurring revenue</p>
-        <div class="rev-value">—</div>
-        <p class="rev-target">—</p>
-        <span class="rev-status ontrack">On track</span>
-      </div>
-      <div class="rev-card" data-kpi="Prepaid package revenue">
-        <p class="rev-label">Prepaid package rev</p>
-        <div class="rev-value">—</div>
-        <p class="rev-target">—</p>
-        <span class="rev-status ontrack">On track</span>
-      </div>
-      <div class="rev-card" data-kpi="Retail, fees &amp; other">
-        <p class="rev-label">Retail, fees &amp; other</p>
-        <div class="rev-value">—</div>
-        <p class="rev-target">—</p>
-        <span class="rev-status ontrack">On track</span>
-      </div>
-    </aside>
+  <!-- Revenue snapshot — sits directly below the North Star as its own strip.
+       Each card's data-kpi must match the KPI name in column A of your sheet. -->
+  <div class="revenue-row" id="revenue-row">
+    <div class="rev-card" data-kpi="Systemwide revenue">
+      <p class="rev-label">Systemwide revenue</p>
+      <div class="rev-value">—</div>
+      <p class="rev-target">—</p>
+      <span class="rev-status ontrack">On track</span>
+    </div>
+    <div class="rev-card" data-kpi="Recurring revenue">
+      <p class="rev-label">Recurring revenue</p>
+      <div class="rev-value">—</div>
+      <p class="rev-target">—</p>
+      <span class="rev-status ontrack">On track</span>
+    </div>
+    <div class="rev-card" data-kpi="Prepaid package revenue">
+      <p class="rev-label">Prepaid package rev</p>
+      <div class="rev-value">—</div>
+      <p class="rev-target">—</p>
+      <span class="rev-status ontrack">On track</span>
+    </div>
+    <div class="rev-card" data-kpi="Retail, fees &amp; other">
+      <p class="rev-label">Retail, fees &amp; other</p>
+      <div class="rev-value">—</div>
+      <p class="rev-target">—</p>
+      <span class="rev-status ontrack">On track</span>
+    </div>
   </div>
 
   <!-- Section 01 — Member Growth -->

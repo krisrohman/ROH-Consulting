@@ -1134,7 +1134,7 @@
     font-family: var(--serif);
     font-size: 18px;
     font-weight: 500;
-    color: var(--ink);
+    color: var(--coral-400);
     letter-spacing: -0.01em;
     margin: 6px 0 0;
     line-height: 1.1;
@@ -1151,6 +1151,7 @@
     display: block;
     margin-bottom: 2px;
   }
+  .row-goal .pct { font-size: 13px; font-weight: 500; }
 
   /* Per-row status: a small filled dot instead of a verbose pill.
      Hovering / tap shows the full status (title attr is added by JS). */
@@ -1166,6 +1167,11 @@
     padding: 0 !important;
     flex: 0 0 auto;
   }
+  /* Vivid dot colors keyed off the original pill's inline color var
+     so the static markup doesn't need to change */
+  .pill[style*="--red"]   { background: var(--red-400)   !important; }
+  .pill[style*="--amber"] { background: var(--amber-400) !important; }
+  .pill[style*="--teal"]  { background: var(--teal-400)  !important; }
 
   /* Leading metric callout (between section header and driver rows) */
   .leading {
@@ -1460,26 +1466,18 @@
     </div>
   </div>
 
-  <!-- Lagging outcome · weekly tracker -->
-  <div class="section-lag" id="mg-lag" data-section-key="Member growth">
-    <div class="section-lag-head">
-      <p class="lag-tag">lagging outcome &middot; weekly</p>
-      <p class="lag-name">Net recurring members / studio</p>
+  <!-- Lagging outcome — same layout as Member engagement -->
+  <div class="leading" data-section-key="Member growth">
+    <span class="leading-tag">lagging &middot; outcome</span>
+    <div>
+      <div class="leading-name">Net recurring members / studio</div>
+      <div class="leading-sub">Net weekly change in recurring members per studio.</div>
     </div>
-    <div class="lag-stats">
-      <div class="lag-stat">
-        <p class="lag-label">Week to date</p>
-        <div class="lag-val" id="mg-lag-wtd">+3</div>
-      </div>
-      <div class="lag-stat">
-        <p class="lag-label">Last 4 weeks</p>
-        <div class="lag-val" id="mg-lag-4w">+11</div>
-      </div>
-      <div class="lag-stat">
-        <p class="lag-label">Year to date</p>
-        <div class="lag-val" id="mg-lag-ytd">+14</div>
-      </div>
+    <div class="leading-va">
+      <span class="leading-target">target <strong>+12 by EOY</strong></span>
+      <span class="leading-actual" id="mg-lag-actual" style="color: var(--teal-600);">+3</span>
     </div>
+    <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
   </div>
 
   <p class="drivers-label">leading drivers &middot; weekly</p>
@@ -2507,16 +2505,25 @@
         || ((d.target !== undefined && d.target !== null && d.target !== '')
               ? formatVal(d.target, d.unit) : null);
 
-      // Left-side prominent goal: insert/update inside the metric cell
+      // Left-side prominent goal: insert/update inside the metric cell.
+      // Admin-entered targets (settings.kpi_targets) are plain strings; the
+      // formatVal fallback may include <span class="pct"> markup — trusted
+      // since both sources are under our control.
       const leftCol = rowEl.children[0];
-      if (leftCol && goalText) {
+      if (leftCol && goalText != null && goalText !== '') {
         let goalEl = leftCol.querySelector('.row-goal');
         if (!goalEl) {
           goalEl = document.createElement('p');
           goalEl.className = 'row-goal';
           leftCol.appendChild(goalEl);
         }
-        goalEl.textContent = goalText;
+        if (kpiTargetMap[d.kpi]) {
+          // Admin free-form string — user input, safer as text
+          goalEl.textContent = goalText;
+        } else {
+          // Our own formatVal output can include markup like <span class="pct">
+          goalEl.innerHTML = goalText;
+        }
       }
     });
 

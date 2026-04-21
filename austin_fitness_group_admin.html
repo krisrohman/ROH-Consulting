@@ -1219,19 +1219,52 @@
     }
   }
 
+  // ----- Fuzzy KPI matching (mirrors the scorecard) ------------------
+  // Normalize names before comparing so punctuation, slashes, commas,
+  // and casing don't throw false warnings.
+  function normalizeKpiName(s) {
+    return String(s || '')
+      .replace(/&amp;/g, '&')
+      .replace(/[,\/\\\-]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+  }
+  function fuzzyKpiMatch(a, b) {
+    const na = normalizeKpiName(a);
+    const nb = normalizeKpiName(b);
+    if (!na || !nb) return false;
+    if (na === nb) return true;
+    if (na.includes(nb) || nb.includes(na)) return true;
+    const firstTwo = s => s.split(' ').filter(w => w.length >= 2).slice(0, 2).join(' ');
+    if (firstTwo(na) && firstTwo(na) === firstTwo(nb)) return true;
+    const toWords = s => new Set(s.split(' ').filter(w => w.length >= 2));
+    const wa = toWords(na);
+    const wb = toWords(nb);
+    if (wa.size === 0 || wb.size === 0) return false;
+    let overlap = 0;
+    wa.forEach(w => { if (wb.has(w)) overlap++; });
+    return overlap / Math.min(wa.size, wb.size) >= 0.4;
+  }
+
   // Compare admin kpi names vs Sheet kpi names — alert the user to mismatches.
   function renderSheetSyncBanner(dashData) {
     const banner = document.getElementById('sheet-sync-banner');
     if (!banner) return;
 
     const sheetRows = ((dashData.sheet || {}).actuals || []).map(r => r.kpi);
-    const sheetNames = new Set(sheetRows);
-    const adminNames = new Set(kpis.map(k => k.kpi));
+    const adminKpiList = kpis.map(k => k.kpi);
 
-    // Admin-side: which KPIs in admin have no matching row in Sheet?
-    const missingInSheet = kpis.map(k => k.kpi).filter(n => !sheetNames.has(n));
-    // Sheet-side: which Sheet rows have no matching admin KPI? (orphaned data)
-    const missingInAdmin = sheetRows.filter(n => !adminNames.has(n));
+    // Fuzzy compare — a Sheet row with minor name drift (typo, punctuation,
+    // slash vs comma) still counts as 'matched' if there's a recognizable
+    // admin KPI. Only rows that have NO fuzzy match at all get flagged.
+    const adminHasFuzzyMatch = (sheetName) =>
+      adminKpiList.some(adminName => fuzzyKpiMatch(adminName, sheetName));
+    const sheetHasFuzzyMatch = (adminName) =>
+      sheetRows.some(sheetName => fuzzyKpiMatch(adminName, sheetName));
+
+    const missingInSheet = adminKpiList.filter(n => !sheetHasFuzzyMatch(n));
+    const missingInAdmin = sheetRows.filter(n => !adminHasFuzzyMatch(n));
 
     if (missingInSheet.length === 0 && missingInAdmin.length === 0) {
       banner.className = 'sheet-sync-banner ok';
@@ -1241,7 +1274,7 @@
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           Synced with Google Sheet
         </div>
-        <div class="banner-action">All ${kpis.length} admin KPIs match the Google Sheet exactly. Dashboard will render all rows.</div>
+        <div class="banner-action">All ${kpis.length} admin KPIs match the Google Sheet. Dashboard will render all rows.</div>
       `;
       return;
     }
@@ -1261,15 +1294,44 @@
     if (missingInAdmin.length) {
       html += `<div style="margin-top:10px;"><strong>In Sheet but missing from admin:</strong><ul class="banner-list">`;
       missingInAdmin.forEach(n => {
-        html += `<li>• <code>${escape(n)}</code> — this Sheet row has no config, so it won't display. Either add it as a KPI above, or remove the row from the Sheet</li>`;
+        html += `<li>• <code>${escape(n)}</code></li>`;
       });
-      html += `</ul></div>`;
+      html += `</ul><div style="margin-top:8px;">
+        <button class="btn" onclick="addMissingKpis(this)"><span>Add these KPIs to admin</span></button>
+        <span style="font-size: 11px; font-style: italic; color: var(--ink-3); margin-left: 10px;">Runs Seed defaults — safe, won't overwrite existing rows.</span>
+      </div></div>`;
     }
     html += `<div class="banner-action">💡 If you renamed a KPI in admin, you need to rename it in column A of all 4 Sheet tabs as well.</div>`;
 
     banner.className = 'sheet-sync-banner';
     banner.style.display = 'block';
     banner.innerHTML = html;
+  }
+
+  // One-click handler wired into the 'Add these KPIs' button in the banner.
+  // Delegates to runSeed (the same merge-mode endpoint behind the Seed
+  // defaults panel on the Google Sheet view) so we have one code path.
+  async function addMissingKpis(btn) {
+    const label = btn.querySelector('span');
+    const prev = label ? label.textContent : 'Add';
+    btn.disabled = true;
+    if (label) label.textContent = 'Adding…';
+    try {
+      const res = await fetch(API.seed || '/api/seed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actor: CURRENT_USER, force: false })
+      });
+      const payload = await res.json();
+      if (!payload.ok) throw new Error(payload.error || 'Seed failed');
+      showToast(`Added ${payload.kpis_added || 0} KPI${payload.kpis_added === 1 ? '' : 's'} to admin.`, 'success');
+      await refreshConfig();
+    } catch (err) {
+      showToast('Failed: ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      if (label) label.textContent = prev;
+    }
   }
 
   async function loadAudit() {

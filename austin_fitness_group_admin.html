@@ -233,7 +233,7 @@
   }
   .kpi-row-header, .kpi-row {
     display: grid;
-    grid-template-columns: 38px minmax(260px, 2.4fr) minmax(0, 1fr) 70px 70px 86px 100px 66px 66px minmax(0, 0.85fr) 32px 32px;
+    grid-template-columns: 38px minmax(260px, 2.4fr) minmax(0, 1fr) 70px 70px 76px 86px 100px 66px 66px minmax(0, 0.85fr) 32px 32px;
     gap: 8px;
     align-items: center;
     padding: 10px 14px;
@@ -666,6 +666,7 @@
               <span>Section</span>
               <span>Unit</span>
               <span>Math</span>
+              <span title="Target scope: monthly = target applies per month. annual = annual target pro-rated by weeks-elapsed / 52.">Scope</span>
               <span>Goal dir</span>
               <span>Target</span>
               <span title="Minimum % of goal required for on-track. 100 = must hit goal. 95 = 95%+ is on-track. Default 100.">On-track %</span>
@@ -1185,6 +1186,12 @@
         if (s.kpi_thresholds) thresholdsByName = JSON.parse(s.kpi_thresholds) || {};
       } catch (_) { thresholdsByName = {}; }
 
+      // Per-KPI target scope: 'monthly' (default) or 'annual'.
+      let scopesByName = {};
+      try {
+        if (s.kpi_scopes) scopesByName = JSON.parse(s.kpi_scopes) || {};
+      } catch (_) { scopesByName = {}; }
+
       function thresholdsOntrack(map, name) {
         const v = map[name];
         if (v == null) return '';
@@ -1221,7 +1228,8 @@
         goal_direction: r.goal_direction || 'higher',
         target: targetsByName[r.kpi_name] || '',
         ontrack_pct: thresholdsOntrack(thresholdsByName, r.kpi_name),
-        narrow_pct:  thresholdsNarrow(thresholdsByName,  r.kpi_name)
+        narrow_pct:  thresholdsNarrow(thresholdsByName,  r.kpi_name),
+        target_scope: (scopesByName[r.kpi_name] === 'annual' ? 'annual' : 'monthly')
       }));
 
       // Apply settings to the form fields
@@ -1512,6 +1520,10 @@
           <option value="sum"    ${mathType === 'sum'    ? 'selected' : ''}>sum</option>
           <option value="latest" ${mathType === 'latest' ? 'selected' : ''}>latest</option>
         </select>
+        <select class="inline-input" onchange="updateKpi(${idx}, 'target_scope', this.value)" title="Monthly = target applies per month (e.g. 80% adoption). Annual = target is yearly and pro-rates by weeks-elapsed.">
+          <option value="monthly" ${(k.target_scope || 'monthly') === 'monthly' ? 'selected' : ''}>monthly</option>
+          <option value="annual"  ${(k.target_scope || 'monthly') === 'annual'  ? 'selected' : ''}>annual</option>
+        </select>
         <select class="inline-input" onchange="updateKpi(${idx}, 'goal_direction', this.value)" title="Higher is better, or lower is better">
           <option value="higher" ${goalDir === 'higher' ? 'selected' : ''}>higher ↑</option>
           <option value="lower"  ${goalDir === 'lower'  ? 'selected' : ''}>lower ↓</option>
@@ -1631,7 +1643,8 @@
         goal_direction: 'higher',
         target: '',
         ontrack_pct: '',
-        narrow_pct: ''
+        narrow_pct: '',
+        target_scope: 'monthly'
       });
       markDirty();
       renderKpis();
@@ -2072,6 +2085,13 @@
         if (t) kpiTargetsMap[k.kpi] = truncate(t, 40);
       });
 
+      // Per-KPI target scope: only save 'annual' rows — 'monthly' is
+      // the default and doesn't need storage.
+      const kpiScopesMap = {};
+      kpis.forEach(k => {
+        if (k.target_scope === 'annual') kpiScopesMap[k.kpi] = 'annual';
+      });
+
       // Per-KPI thresholds: save as { ontrack, narrow } objects. Only
       // include keys the user actually filled so blanks stay at default.
       const kpiThresholdsMap = {};
@@ -2101,6 +2121,7 @@
         north_star_headline: truncate(((document.getElementById('ns-headline') || {}).value || '').trim(), 200),
         kpi_targets: JSON.stringify(kpiTargetsMap),
         kpi_thresholds: JSON.stringify(kpiThresholdsMap),
+        kpi_scopes: JSON.stringify(kpiScopesMap),
         hidden_kpis: JSON.stringify([...hiddenKpiSet])
       };
       const setRes = await fetch(API.settings, {

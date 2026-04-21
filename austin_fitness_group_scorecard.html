@@ -29,10 +29,10 @@
     --teal-600: #0F6E56;
     --teal-800: #085041;
 
-    --amber-50: #FAEEDA;
-    --amber-400: #BA7517;
-    --amber-600: #854F0B;
-    --amber-800: #633806;
+    --amber-50: #FBF1D0;
+    --amber-400: #E6B53A;
+    --amber-600: #8C6A10;
+    --amber-800: #5C4509;
 
     --red-50: #FCEBEB;
     --red-400: #E24B4A;
@@ -406,57 +406,63 @@
     letter-spacing: -0.005em;
   }
 
-  /* ─── 3. Verdict — the real hero ─── */
+  /* ─── 3. Verdict — compact status summary. Intentionally smaller than
+         the North Star so it doesn't compete for visual dominance. ─── */
   .verdict {
-    border-top: 2px solid var(--ink);
+    border-top: 1px solid var(--ink);
     border-bottom: 0.5px solid var(--ink);
-    padding: 28px 0 30px;
-    margin: 0 0 44px;
+    padding: 16px 0 16px;
+    margin: 0 0 36px;
   }
   .verdict-kicker {
     font-family: var(--sans);
-    font-size: 10px;
+    font-size: 9px;
     letter-spacing: 0.24em;
     text-transform: uppercase;
     font-weight: 500;
     color: var(--ink-3);
-    margin: 0 0 14px;
+    margin: 0 0 8px;
   }
   .verdict-line {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    gap: 18px;
     margin: 0;
+    align-items: baseline;
   }
   .verdict-cell {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding-right: 28px;
+    align-items: baseline;
+    gap: 10px;
+    padding-right: 18px;
     border-right: 0.5px solid var(--rule);
   }
   .verdict-cell:last-child { border-right: none; padding-right: 0; }
   .verdict-num {
     font-family: var(--serif);
-    font-size: 72px;
+    font-size: 34px;
     font-weight: 500;
-    line-height: 0.9;
-    letter-spacing: -0.035em;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
+    order: 1;
   }
   .verdict-label {
     font-family: var(--sans);
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     font-weight: 500;
+    order: 2;
   }
   .verdict-sub {
     font-family: var(--serif);
     font-style: italic;
-    font-size: 13px;
+    font-size: 11px;
     color: var(--ink-3);
-    margin: 4px 0 0;
+    margin: 0 0 0 auto;
+    order: 3;
+    display: none; /* trimmed in compact mode so the row stays one line */
   }
   .verdict-cell.v-ok     .verdict-num,  .verdict-cell.v-ok     .verdict-label { color: var(--teal-600); }
   .verdict-cell.v-narrow .verdict-num,  .verdict-cell.v-narrow .verdict-label { color: var(--amber-600); }
@@ -1068,8 +1074,8 @@
   }
   @media (max-width: 900px) {
     .wordmark { font-size: 28px; }
-    .verdict { padding: 22px 0 24px; margin-bottom: 32px; }
-    .verdict-num { font-size: 54px; }
+    .verdict { padding: 14px 0 14px; margin-bottom: 28px; }
+    .verdict-num { font-size: 28px; }
     .ns-title { font-size: 22px; }
     .ns-big { font-size: 88px; }
     .revenue-row { grid-template-columns: 1fr 1fr; }
@@ -1083,11 +1089,11 @@
     .page { padding: 1.25rem 1rem; margin: 0; }
     .wordmark { font-size: 24px; }
     .wordmark-tagline { font-size: 13px; margin-bottom: 20px; }
-    .verdict { padding: 18px 0 20px; }
-    .verdict-line { grid-template-columns: 1fr; gap: 14px; }
-    .verdict-cell { border-right: none; border-bottom: 0.5px solid var(--rule); padding: 0 0 12px; }
+    .verdict { padding: 12px 0; margin-bottom: 22px; }
+    .verdict-line { grid-template-columns: 1fr; gap: 8px; }
+    .verdict-cell { border-right: none; border-bottom: 0.5px solid var(--rule); padding: 0 0 8px; }
     .verdict-cell:last-child { border-bottom: none; padding-bottom: 0; }
-    .verdict-num { font-size: 44px; }
+    .verdict-num { font-size: 24px; }
     .ns-panel { padding: 26px 20px; }
     .ns-big { font-size: 72px; }
     .ns-mid { font-size: 34px; }
@@ -1810,6 +1816,48 @@
   // ============================================================
   // RENDER — take sheet data + config and update dashboard
   // ============================================================
+
+  // Shared status compute. Returns 'on-track' | 'narrow' | 'at-risk' | 'unknown'.
+  // Handles target=0 correctly (zero is a valid goal, e.g. 'PSA leads > 0%')
+  // by treating any positive value as on-track, exactly zero as narrow, and
+  // negative as at-risk — avoids the divide-by-zero that was rendering
+  // hollow dots on perfectly good data.
+  function computeStatus(value, target, lowerIsBetter) {
+    if (typeof value !== 'number' || typeof target !== 'number') return 'unknown';
+    if (target === 0) {
+      if (lowerIsBetter) {
+        if (value <= 0) return 'on-track';
+        return 'at-risk';
+      }
+      if (value > 0) return 'on-track';
+      if (value === 0) return 'narrow';
+      return 'at-risk';
+    }
+    const ratio = lowerIsBetter ? target / value : value / target;
+    if (ratio >= 1.0)  return 'on-track';
+    if (ratio >= 0.92) return 'narrow';
+    return 'at-risk';
+  }
+
+  // Paint a .pill element per status — or a hollow ring if unknown.
+  function applyPillStyle(pill, status) {
+    if (!pill) return;
+    pill.classList.remove('unknown');
+    if (status === 'on-track') {
+      pill.setAttribute('style',
+        'color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);');
+    } else if (status === 'narrow') {
+      pill.setAttribute('style',
+        'color: var(--amber-800); border-color: var(--amber-400); background: var(--amber-50);');
+    } else if (status === 'at-risk') {
+      pill.setAttribute('style',
+        'color: var(--red-800); border-color: var(--red-600); background: var(--red-50);');
+    } else {
+      pill.removeAttribute('style');
+      pill.classList.add('unknown');
+    }
+  }
+
   // Compute + render the north star panel based on actuals/targets
   function renderNorthStar(data) {
     const settings = data.settings || {};
@@ -2025,27 +2073,9 @@
       // Update the visible status pill on the row based on the computed
       // status. Without this, every row shows the static shipped color
       // (teal = on-track) regardless of what the data actually says.
-      // If we can't compute a status (missing projection or target),
-      // mark it .unknown so the CSS renders a hollow ring instead of a
-      // filled dot — reads as 'no data' rather than a false 'on track'.
       const pillEl = rowEl.querySelector('.pill');
       if (pillEl) {
-        pillEl.classList.remove('unknown');
-        const canStatus = (projection !== null && projection !== undefined) &&
-                          (d.target !== null && d.target !== undefined && d.target !== '');
-        if (!canStatus) {
-          pillEl.removeAttribute('style');
-          pillEl.classList.add('unknown');
-        } else if (status === 'at-risk') {
-          pillEl.setAttribute('style',
-            'color: var(--red-800); border-color: var(--red-600); background: var(--red-50);');
-        } else if (status === 'narrow') {
-          pillEl.setAttribute('style',
-            'color: var(--amber-800); border-color: var(--amber-400); background: var(--amber-50);');
-        } else {
-          pillEl.setAttribute('style',
-            'color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);');
-        }
+        applyPillStyle(pillEl, status);
       }
 
       // Inject / update the weekly strip
@@ -2186,30 +2216,15 @@
         `;
       }).join('');
 
-      // Status pill on the outcome panel: update based on real data so we
-      // don't keep flashing the shipped static green when there's no data.
+      // Status pill on the outcome panel — update based on real data.
       const pill = el.querySelector('.pill');
       if (pill) {
         pill.classList.remove('unknown');
         const tgtRow = targetsByKpi[normalizeKpi(row ? row.kpi : (el.dataset.kpi || ''))];
         const target = tgtRow && tgtRow.months ? tgtRow.months[currentMonth] : null;
-        const canStatus = hasCurrent && typeof target === 'number' && target !== 0;
-        if (!canStatus) {
-          pill.removeAttribute('style');
-          pill.classList.add('unknown');
-        } else {
-          const lowerIsBetter = /cost|turnover|cpl|cpb/i.test(row ? row.kpi : '');
-          const ratio = lowerIsBetter ? target / currentVal : currentVal / target;
-          let style;
-          if (ratio >= 1.0) {
-            style = 'color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);';
-          } else if (ratio >= 0.92) {
-            style = 'color: var(--amber-800); border-color: var(--amber-400); background: var(--amber-50);';
-          } else {
-            style = 'color: var(--red-800); border-color: var(--red-600); background: var(--red-50);';
-          }
-          pill.setAttribute('style', style);
-        }
+        const lowerIsBetter = /cost|turnover|cpl|cpb/i.test(row ? row.kpi : '');
+        const status = computeStatus(currentVal, target, lowerIsBetter);
+        applyPillStyle(pill, status);
       }
     });
   }

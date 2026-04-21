@@ -2688,20 +2688,20 @@
     const weekly = (data && data.sheet && data.sheet.weekly) || {};
     const cols = weekly.columns || [];
     const rows = weekly.rows || [];
-    // Even when we have no data, still process every callout so the grid
-    // collapses (.no-weekly) instead of leaving a giant empty middle.
-    if (!cols.length || !rows.length) {
-      document.querySelectorAll('.leading[data-kpi]').forEach(el => {
-        const wksEl = el.querySelector('.wks');
-        if (wksEl) wksEl.innerHTML = '';
-        el.classList.add('no-weekly');
-      });
-      return;
-    }
+    // If we have no weekly columns, fabricate a default 5-week window so the
+    // cells still render. If we have columns but no rows, we still iterate
+    // callouts so they render empty cells with week labels.
 
     // Show a 5-week window centered on the current ISO week so the
     // selected week sits in the middle (or right of center when early in year).
-    const allCols = cols.slice();
+    // If sheet didn't return any columns, fabricate a 5-week window
+    // centered on the current ISO week so cells still render.
+    let allCols = cols.slice();
+    if (!allCols.length) {
+      for (let w = Math.max(1, currentWeekNum - 2); w <= currentWeekNum + 2; w++) {
+        allCols.push('W' + w);
+      }
+    }
     let centerIdx = allCols.indexOf('W' + currentWeekNum);
     if (centerIdx < 0) centerIdx = allCols.length - 1;
     const start = Math.max(0, Math.min(allCols.length - 5, centerIdx - 2));
@@ -2716,34 +2716,30 @@
       const nameEl = el.querySelector('.leading-name');
       const nameKpi = normalizeKpi(nameEl ? nameEl.textContent : '');
 
-      // Exact normalized match first, then word-overlap fuzzy match
-      // against the data-kpi attribute OR the visible outcome name.
+      // Exact normalized match first, then word-overlap fuzzy match.
       let row = rowsByKpi[kpi] || rowsByKpi[nameKpi];
       if (!row) {
         row = rows.find(r => fuzzyMatchKpi(r.kpi, el.dataset.kpi || '')
                           || fuzzyMatchKpi(r.kpi, nameEl ? nameEl.textContent : ''));
       }
 
-      if (!row) {
-        // No matching sheet row — collapse the weekly column so the
-        // callout doesn't leave a big empty middle.
-        wksEl.innerHTML = '';
-        el.classList.add('no-weekly');
-        return;
-      }
+      // ALWAYS render the weekly cell structure — even if no matching row,
+      // the labels + em-dashes still show so the layout stays consistent
+      // with driver rows. User explicitly asked for weekly cells to appear
+      // on every lagging callout regardless of match state.
       el.classList.remove('no-weekly');
-
-      const unit = (row.config && row.config.unit) || 'count';
+      const unit = (row && row.config && row.config.unit) || 'count';
       wksEl.innerHTML = weekWindow.map(col => {
         const isCurrent = col === 'W' + currentWeekNum;
-        const val = row.weeks ? row.weeks[col] : null;
-        const display = (val !== undefined && val !== null && val !== '')
+        const val = row && row.weeks ? row.weeks[col] : null;
+        const hasVal = val !== undefined && val !== null && val !== '';
+        const display = hasVal
           ? formatVal(val, unit)
           : '<span class="empty">—</span>';
         return `
           <div class="wk ${isCurrent ? 'current' : ''}">
             <p class="wk-label">${col.toLowerCase()}</p>
-            <p class="wk-val ${val === undefined || val === null ? 'empty' : ''}">${display}</p>
+            <p class="wk-val ${hasVal ? '' : 'empty'}">${display}</p>
           </div>
         `;
       }).join('');
@@ -2956,11 +2952,13 @@
         }
       }
     });
-    // data-kpi may have changed — re-render the weekly strips so they
-    // point at the admin-selected outcome KPI instead of the static one.
-    if (laggingChanged && window.__kpiData) {
-      try { renderLaggingWeekly(window.__kpiData); } catch (_) {}
-    }
+    // Always re-render weekly strips after hydration, using THIS fetch's
+    // data. Avoids a race with syncSheet where window.__kpiData might not
+    // be set yet, and ensures any data-kpi changes take effect.
+    try { renderLaggingWeekly(d); } catch(_) {}
+    try { renderRevenueCards(d); } catch(_) {}
+    // Also update window.__kpiData so subsequent renders have the freshest data
+    if (!window.__kpiData || !window.__kpiData.sheet) window.__kpiData = d;
   }).catch(e => console.warn('Section hydration failed:', e));
 })();
 </script>

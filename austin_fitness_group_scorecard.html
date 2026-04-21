@@ -1530,30 +1530,31 @@
     </div>
   </div>
 
-  <!-- Revenue snapshot — sits directly below the North Star -->
+  <!-- Revenue snapshot — sits directly below the North Star
+       Each card's data-kpi must match the KPI name in column A of your sheet. -->
   <div class="revenue-row" id="revenue-row">
-    <div class="rev-card">
+    <div class="rev-card" data-kpi="Systemwide revenue">
       <p class="rev-label">Systemwide revenue</p>
-      <div class="rev-value">$2,016</div>
-      <p class="rev-target">$3,140</p>
+      <div class="rev-value">—</div>
+      <p class="rev-target">—</p>
       <span class="rev-status ontrack">On track</span>
     </div>
-    <div class="rev-card miss">
+    <div class="rev-card" data-kpi="Recurring revenue">
       <p class="rev-label">Recurring revenue</p>
-      <div class="rev-value">$1,840</div>
-      <p class="rev-target">$2,895</p>
-      <span class="rev-status miss">Narrow miss</span>
-    </div>
-    <div class="rev-card">
-      <p class="rev-label">Prepaid package rev</p>
-      <div class="rev-value">$83</div>
-      <p class="rev-target">$109</p>
+      <div class="rev-value">—</div>
+      <p class="rev-target">—</p>
       <span class="rev-status ontrack">On track</span>
     </div>
-    <div class="rev-card">
+    <div class="rev-card" data-kpi="Prepaid package revenue">
+      <p class="rev-label">Prepaid package rev</p>
+      <div class="rev-value">—</div>
+      <p class="rev-target">—</p>
+      <span class="rev-status ontrack">On track</span>
+    </div>
+    <div class="rev-card" data-kpi="Retail, fees &amp; other">
       <p class="rev-label">Retail, fees &amp; other</p>
-      <div class="rev-value">$93</div>
-      <p class="rev-target">$136</p>
+      <div class="rev-value">—</div>
+      <p class="rev-target">—</p>
       <span class="rev-status ontrack">On track</span>
     </div>
   </div>
@@ -2640,7 +2641,74 @@
     });
 
     updateRibbon(data);
+    renderRevenueCards(data);
     if (data.settings) applySettings(data.settings);
+  }
+
+  // Revenue snapshot cards (4 cards below North Star): match each card's
+  // data-kpi to a row in actuals + targets from the sheet, and render the
+  // month actual / target / status. Silently leaves '—' placeholders if
+  // the sheet doesn't include that KPI yet.
+  function renderRevenueCards(data) {
+    const cards = document.querySelectorAll('.rev-card[data-kpi]');
+    if (!cards.length) return;
+    const actuals = (data && data.sheet && data.sheet.actuals) || [];
+    const targets = (data && data.sheet && data.sheet.targets) || [];
+    const month = currentMonth; // e.g. 'Apr'
+    const actByKpi = Object.fromEntries(actuals.map(r => [normalizeKpi(r.kpi), r]));
+    const tgtByKpi = Object.fromEntries(targets.map(r => [normalizeKpi(r.kpi), r]));
+
+    cards.forEach(card => {
+      const wanted = normalizeKpi(card.dataset.kpi || '');
+      const actRow = actByKpi[wanted];
+      const tgtRow = tgtByKpi[wanted];
+      const valEl = card.querySelector('.rev-value');
+      const tgtEl = card.querySelector('.rev-target');
+      const pill  = card.querySelector('.rev-status');
+
+      if (!actRow) {
+        // No matching row in sheet yet — keep placeholder dashes
+        if (valEl) valEl.textContent = '—';
+        if (tgtEl) tgtEl.textContent = '—';
+        return;
+      }
+
+      const unit = (actRow.config && actRow.config.unit) || 'USD';
+      const actual = actRow.months ? actRow.months[month] : null;
+      const target = tgtRow && tgtRow.months ? tgtRow.months[month] : null;
+
+      if (valEl) valEl.innerHTML = formatVal(actual, unit);
+      if (tgtEl) tgtEl.innerHTML = target == null ? '—' : formatVal(target, unit);
+
+      // Status: simple compare. Use the same 'narrow' threshold used elsewhere
+      // (within 5% of target counts as narrow, below that = miss).
+      card.classList.remove('miss', 'over');
+      if (pill) pill.classList.remove('ontrack', 'miss');
+      if (actual != null && target != null && target !== 0) {
+        const ratio = actual / target;
+        if (ratio >= 0.98) {
+          if (pill) { pill.className = 'rev-status ontrack'; pill.textContent = 'On track'; }
+        } else if (ratio >= 0.93) {
+          card.classList.add('miss');
+          if (pill) { pill.className = 'rev-status miss'; pill.textContent = 'Narrow miss'; }
+        } else {
+          card.classList.add('miss');
+          if (pill) { pill.className = 'rev-status miss'; pill.textContent = 'Below target'; }
+        }
+      } else {
+        if (pill) { pill.className = 'rev-status ontrack'; pill.textContent = 'On track'; }
+      }
+    });
+  }
+
+  // Normalize KPI names for lookups: trim, lower, decode a few HTML entities
+  // so "Retail, fees &amp; other" matches "Retail, fees & other" from the sheet.
+  function normalizeKpi(s) {
+    return String(s || '')
+      .replace(/&amp;/g, '&')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
   }
 
   function applySettings(settings) {

@@ -34,7 +34,46 @@ const KPI_TARGETS = {
   'Internal promotions':            '> 30 / year',
   'eNPS score':                     '> 40',
   'Voluntary turnover':             '< 20%',
+  'Systemwide revenue':             'vs plan',
+  'Recurring revenue':              'vs plan',
+  'Prepaid package revenue':        'vs plan',
+  'Retail, fees & other':           'vs plan',
 };
+
+// Canonical KPI list — every row the scorecard + sheet expect. Seeding this
+// into the kpis table makes the 'this Sheet row has no config' warnings
+// in the admin go away and lets dashboard.js know what math_type to use.
+const KPIS = [
+  // Section: Member growth
+  { kpi_name: 'Net recurring members / studio', section: 'Member growth',     unit: 'count',   owner: 'Chris',   department: 'Sales ops',   tier: 'leading', math_type: 'latest', goal_direction: 'higher' },
+  { kpi_name: 'Intro conversion',               section: 'Member growth',     unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },
+  { kpi_name: 'Lead portal management',         section: 'Member growth',     unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },
+  { kpi_name: 'Revenue portal management',      section: 'Member growth',     unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },
+  { kpi_name: 'Weekend sales, no zeros',        section: 'Member growth',     unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },
+  // Section: Member engagement
+  { kpi_name: 'Workouts per member / week',     section: 'Member engagement', unit: 'ratio',   owner: 'Vic',     department: 'Fitness',     tier: 'leading', math_type: 'latest', goal_direction: 'higher' },
+  { kpi_name: 'HRM usage',                      section: 'Member engagement', unit: 'percent', owner: 'Vic',     department: 'Fitness',     tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },
+  { kpi_name: '120-day retention',              section: 'Member engagement', unit: 'percent', owner: 'Vic',     department: 'Fitness',     tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },
+  { kpi_name: 'Member portal management',       section: 'Member engagement', unit: 'percent', owner: 'Vic',     department: 'Fitness',     tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },
+  { kpi_name: 'Fitness event achievement',      section: 'Member engagement', unit: 'count',   owner: 'Vic',     department: 'Fitness',     tier: 'lagging', math_type: 'sum',    goal_direction: 'higher' },
+  // Section: Brand awareness
+  { kpi_name: 'PSA leads, YoY change',          section: 'Brand awareness',   unit: 'percent', owner: 'Christy', department: 'Marketing',   tier: 'leading', math_type: 'avg',    goal_direction: 'higher' },
+  { kpi_name: 'Cost per booking, Meta',         section: 'Brand awareness',   unit: 'USD',     owner: 'Christy', department: 'Marketing',   tier: 'lagging', math_type: 'avg',    goal_direction: 'lower' },
+  { kpi_name: 'Cost per lead, Meta',            section: 'Brand awareness',   unit: 'USD',     owner: 'Christy', department: 'Marketing',   tier: 'lagging', math_type: 'avg',    goal_direction: 'lower' },
+  // Section: Studio refresh
+  { kpi_name: 'Studio remodels',                section: 'Studio refresh',    unit: 'count',   owner: 'Scott',   department: 'Finance',     tier: 'lagging', math_type: 'latest', goal_direction: 'higher' },
+  { kpi_name: 'Treadmill refreshes',            section: 'Studio refresh',    unit: 'count',   owner: 'Scott',   department: 'Finance',     tier: 'lagging', math_type: 'latest', goal_direction: 'higher' },
+  // Section: People & culture
+  { kpi_name: 'Glassdoor rating',               section: 'People & culture',  unit: 'stars',   owner: 'Deana',   department: 'People ops',  tier: 'leading', math_type: 'latest', goal_direction: 'higher' },
+  { kpi_name: 'Internal promotions',            section: 'People & culture',  unit: 'count',   owner: 'Deana',   department: 'People ops',  tier: 'lagging', math_type: 'sum',    goal_direction: 'higher' },
+  { kpi_name: 'eNPS score',                     section: 'People & culture',  unit: 'score',   owner: 'Deana',   department: 'People ops',  tier: 'lagging', math_type: 'latest', goal_direction: 'higher' },
+  { kpi_name: 'Voluntary turnover',             section: 'People & culture',  unit: 'percent', owner: 'Deana',   department: 'People ops',  tier: 'lagging', math_type: 'avg',    goal_direction: 'lower' },
+  // Section: Revenue — standalone, rendered in the revenue strap above the pillars
+  { kpi_name: 'Systemwide revenue',             section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', math_type: 'sum',    goal_direction: 'higher' },
+  { kpi_name: 'Recurring revenue',              section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', math_type: 'sum',    goal_direction: 'higher' },
+  { kpi_name: 'Prepaid package revenue',        section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', math_type: 'sum',    goal_direction: 'higher' },
+  { kpi_name: 'Retail, fees & other',           section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', math_type: 'sum',    goal_direction: 'higher' },
+];
 
 // Settings that describe identity / brand / north star — only set if empty.
 const BASE_SETTINGS = {
@@ -56,7 +95,39 @@ export default async (request) => {
     const body = await request.json().catch(() => ({}));
     const actor = body.actor || 'seed';
     const force = body.force === true;
-    const report = { sections_added: 0, sections_skipped: 0, settings_added: 0, targets_merged: 0 };
+    const report = { kpis_added: 0, kpis_skipped: 0, sections_added: 0, sections_skipped: 0, settings_added: 0, targets_merged: 0 };
+
+    // 0) KPIs — every row the scorecard and sheet expect. In merge mode,
+    //    skip KPIs that already have a row (so user edits survive). In
+    //    force mode, overwrite unit/owner/section/etc. back to the shipped
+    //    canonical config.
+    for (let i = 0; i < KPIS.length; i++) {
+      const k = KPIS[i];
+      const existing = await sql`SELECT kpi_name FROM kpis WHERE kpi_name = ${k.kpi_name}`;
+      if (existing.length && !force) {
+        report.kpis_skipped++;
+        continue;
+      }
+      await sql`
+        INSERT INTO kpis (kpi_name, section, unit, owner, department, tier, math_type, goal_direction, sort_order, active)
+        VALUES (${k.kpi_name}, ${k.section}, ${k.unit}, ${k.owner}, ${k.department}, ${k.tier}, ${k.math_type}, ${k.goal_direction}, ${i * 10}, TRUE)
+        ON CONFLICT (kpi_name) DO UPDATE SET
+          section = EXCLUDED.section,
+          unit = EXCLUDED.unit,
+          owner = EXCLUDED.owner,
+          department = EXCLUDED.department,
+          tier = EXCLUDED.tier,
+          math_type = EXCLUDED.math_type,
+          goal_direction = EXCLUDED.goal_direction,
+          sort_order = EXCLUDED.sort_order,
+          active = TRUE`;
+      if (!existing.length) {
+        await audit(actor, 'kpi.seed', k.kpi_name, null, k);
+        report.kpis_added++;
+      } else {
+        await audit(actor, 'kpi.seed-overwrite', k.kpi_name, null, k);
+      }
+    }
 
     // 1) Sections — upsert (only fills in rows; doesn't nuke user edits to
     //    an existing row unless force=true).

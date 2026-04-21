@@ -996,9 +996,15 @@
     { kpi: 'Internal promotions',            section: 'People & culture',  unit: 'count',   owner: 'Deana',   department: 'People ops',  tier: 'lagging', target: '>30' },
     { kpi: 'eNPS score',                     section: 'People & culture',  unit: 'score',   owner: 'Deana',   department: 'People ops',  tier: 'lagging', target: '' },
     { kpi: 'Voluntary turnover',             section: 'People & culture',  unit: 'percent', owner: 'Deana',   department: 'People ops',  tier: 'lagging', target: '' },
+    // Revenue KPIs — standalone (not inside a pillar). Rendered in the
+    // 'By the numbers' strip directly under the North Star.
+    { kpi: 'Systemwide revenue',             section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', target: 'vs plan' },
+    { kpi: 'Recurring revenue',              section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', target: 'vs plan' },
+    { kpi: 'Prepaid package revenue',        section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', target: 'vs plan' },
+    { kpi: 'Retail, fees & other',           section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', target: 'vs plan' },
   ];
 
-  const SECTIONS = ['Member growth', 'Member engagement', 'Brand awareness', 'Studio refresh', 'People & culture'];
+  const SECTIONS = ['Member growth', 'Member engagement', 'Brand awareness', 'Studio refresh', 'People & culture', 'Revenue'];
   const UNITS = ['percent', 'count', 'USD', 'ratio', 'stars', 'score'];
 
   const SECTION_CLASS = {
@@ -1006,7 +1012,8 @@
     'Member engagement': 'sec-me',
     'Brand awareness': 'sec-ba',
     'Studio refresh': 'sec-sr',
-    'People & culture': 'sec-pc'
+    'People & culture': 'sec-pc',
+    'Revenue': 'sec-rv'
   };
 
   let isDirty = false;
@@ -1094,7 +1101,7 @@
       });
       const payload = await res.json();
       if (!payload.ok) throw new Error(payload.error || 'Seed failed');
-      const summary = `Sections: ${payload.sections_added} added, ${payload.sections_skipped} skipped. Targets merged: ${payload.targets_merged}. Settings filled: ${payload.settings_added}.`;
+      const summary = `KPIs: ${payload.kpis_added || 0} added, ${payload.kpis_skipped || 0} skipped. Sections: ${payload.sections_added} added, ${payload.sections_skipped} skipped. Targets merged: ${payload.targets_merged}. Settings filled: ${payload.settings_added}.`;
       if (resultEl) {
         resultEl.style.display = 'block';
         resultEl.textContent = summary;

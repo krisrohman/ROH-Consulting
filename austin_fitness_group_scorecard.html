@@ -308,961 +308,382 @@
   }
 
   /* ═══════════════════════════════════════════════════
-     MASTHEAD — clean editorial layout
-     Structure:
-       Row 1: [Toggle]                     [Date]
-       Row 2: ═══════════════════════════════════════
-       Row 3: LEADERSHIP SCORECARD         VOL·FY·ISSUE
-       Row 4: Austin Fitness Group.    [Apr][Wk][Sync]
-                                       Last synced ·
-       Row 5: High standards. Relentless...
+     LAYOUT ARCHITECTURE — 2026 editorial
+     ─────────────────────────────────────────────────
+     1. Control strip  — date + period selectors
+     2. Nameplate      — small kicker + wordmark
+     3. Verdict        — the actual hero: status at a glance
+     4. North Star     — full-bleed feature panel (dominant)
+     5. Revenue strap  — compact one-line marquee
+     6. Pillars lede   — transition between hero block + sections
+     7. Pillar spread  — 2-col: identity+outcome | drivers
+     8. Colophon
      ═══════════════════════════════════════════════════ */
 
-  .masthead {
-    padding: 0.25rem 0 0;
-  }
-
-  /* Row 1: Top bar — toggle left, date + controls right */
-  .masthead-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    padding-bottom: 14px;
-    flex-wrap: wrap;
-  }
-  .masthead-top-left {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .masthead-top-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 6px;
-  }
-  .masthead-mark {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--serif);
-    font-weight: 600;
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--coral-600);
-  }
-  .masthead-mark::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    background: var(--coral-600);
-    border-radius: 50%;
-  }
-  .masthead-date {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 14px;
-    color: var(--ink-2);
-    white-space: nowrap;
-  }
-
-  /* View switcher (inside masthead-top-left) */
-  .view-switcher {
-    display: inline-flex;
-    background: #fff;
-    border: 0.5px solid var(--rule);
-    border-radius: 100px;
-    padding: 3px;
-  }
-  .view-switcher a {
-    padding: 6px 14px;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--ink-2);
-    text-decoration: none;
-    border-radius: 100px;
-    transition: all 0.15s ease;
-    font-family: var(--sans);
-    letter-spacing: 0.02em;
-  }
-  .view-switcher a:hover { color: var(--ink); }
-  .view-switcher a.active {
-    background: var(--coral-400);
-    color: #fff;
-  }
-
-  /* Row 2: Editorial double-rule */
-  .masthead-rule {
-    border-top: 2px solid var(--ink);
-    border-bottom: 0.5px solid var(--ink);
-    height: 4px;
-  }
-
-  /* Row 3: Kicker left, issue meta right */
-  .masthead-meta-row {
+  /* ─── 1. Control strip ─── */
+  .control-strip {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    padding: 14px 0 6px;
+    padding: 0 0 18px;
+    margin: 0 0 22px;
+    border-bottom: 0.5px solid var(--rule);
+    flex-wrap: wrap;
   }
-  .masthead-meta-row .kicker {
-    margin: 0;
-  }
-  .hero-meta {
+  .control-left {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    font-weight: 500;
-    white-space: nowrap;
+    gap: 14px;
+    flex-wrap: wrap;
   }
-  .hero-meta-val {
-    color: var(--ink);
-    font-weight: 600;
-  }
-  .hero-meta-sep {
-    color: var(--ink-3);
-    margin: 0 2px;
-    opacity: 0.6;
-  }
-
-  /* Row 4: Title takes full width */
-  .hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    padding: 4px 0 0;
-  }
-  .hero-title-col {
-    min-width: 0;
-  }
-  .sync-status-line {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: var(--ink-3);
-    font-style: italic;
-    font-family: var(--serif);
-    justify-content: flex-end;
-    margin-top: 2px;
-  }
-  .kicker {
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    color: var(--coral-600);
-    margin: 0;
-    text-transform: lowercase;
-    font-weight: 500;
-  }
-  h1 {
-    font-family: var(--serif);
-    font-size: 96px;
-    font-weight: 500;
-    line-height: 0.92;
-    letter-spacing: -0.03em;
-    margin: 0;
-    color: var(--ink);
-  }
-  .hero-controls {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  /* Row 5: Tagline below everything, full width */
-  .hero-tagline {
+  .control-date {
     font-family: var(--serif);
     font-style: italic;
-    font-size: 20px;
-    color: var(--ink-2);
-    margin: 20px 0 0;
-    padding-bottom: 24px;
-    /* Masthead closer — one of only two 'heavy' editorial rules on
-       the page (the other is above the colophon). */
-    border-bottom: 1.5px solid var(--ink);
-    letter-spacing: -0.005em;
-    max-width: 640px;
-  }
-
-  /* ─── BREAKPOINT: Tablet (≤ 1024px) ─── */
-  @media (max-width: 1024px) {
-    h1 { font-size: 72px; }
-    .hero-tagline { font-size: 18px; }
-    .masthead-top-right {
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 8px;
-    }
-  }
-
-  /* ─── BREAKPOINT: Mobile (≤ 640px) — everything stacks ─── */
-  @media (max-width: 640px) {
-    .masthead-top {
-      flex-wrap: wrap;
-      gap: 10px;
-      padding-bottom: 12px;
-    }
-    .masthead-top-right {
-      width: 100%;
-      justify-content: flex-start;
-      gap: 10px;
-    }
-    .masthead-date {
-      font-size: 12px;
-      white-space: normal;
-    }
-    .masthead-mark {
-      font-size: 10px;
-    }
-    .view-switcher a { padding: 5px 12px; font-size: 10px; }
-    .masthead-meta-row {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 6px;
-      padding: 12px 0 4px;
-    }
-    .hero-meta {
-      font-size: 9px;
-      letter-spacing: 0.15em;
-      flex-wrap: wrap;
-    }
-    .hero {
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-    h1 { font-size: 48px; line-height: 0.96; }
-    .sync-status-line { justify-content: flex-start; }
-    .hero-controls { flex-wrap: wrap; gap: 6px; }
-    .hero-tagline { font-size: 15px; margin-top: 18px; padding-top: 14px; }
-  }
-  .hero-weeks {
-    display: flex;
-    gap: 2px;
-    align-items: center;
-    padding: 6px 4px 0;
-    border-top: 0.5px solid var(--rule);
-    width: 100%;
-    justify-content: flex-end;
-  }
-  .hero-week {
-    font-family: var(--serif);
     font-size: 13px;
-    color: var(--ink-3);
-    padding: 4px 10px;
-    letter-spacing: 0.02em;
-    font-variant-numeric: tabular-nums;
+    color: var(--ink-2);
   }
-  .hero-week.current {
-    color: var(--ink);
-    font-weight: 500;
-    background: var(--coral-50);
-    border-radius: 4px;
-  }
-  .hero-week-sep {
-    color: rgba(0,0,0,0.18);
-    font-size: 11px;
-  }
-  .hero-sync-note {
+  .control-sync-note {
     font-family: var(--serif);
     font-style: italic;
     font-size: 12px;
     color: var(--ink-3);
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
-    margin-top: 2px;
+    gap: 7px;
   }
-  .hero-sync-note .pulse-dot {
-    width: 5px;
-    height: 5px;
+  .control-sync-note .pulse-dot {
+    width: 5px; height: 5px;
     border-radius: 50%;
     background: var(--teal-400);
     animation: pulse 2s ease-in-out infinite;
   }
+  .control-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-  /* Section-level lagging outcome — weekly tracker (sits between
-     section header and the leading-drivers list). Mirrors the editorial
-     North-Star treatment but at section scope and weekly cadence. */
-  .section-lag {
-    background: #f4ede0;
-    border-radius: 4px;
-    padding: 18px 22px;
-    margin: 0 0 18px;
+  /* ─── 2. Nameplate ─── */
+  .nameplate {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    gap: 28px;
-    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 16px;
+    padding: 0 0 10px;
   }
-  .section-lag-head { flex: 1 1 240px; min-width: 0; }
-  .lag-tag {
-    font-size: 9px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--coral-600);
-    font-weight: 500;
-    margin: 0 0 4px;
+  .nameplate-kicker {
     font-family: var(--sans);
-  }
-  .lag-name {
-    font-family: var(--serif);
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--ink);
-    margin: 0;
-    letter-spacing: -0.01em;
-  }
-  .lag-stats {
-    display: flex;
-    gap: 32px;
-    align-items: baseline;
-  }
-  .lag-stat { text-align: right; }
-  .lag-label {
-    font-size: 9px;
-    letter-spacing: 0.18em;
+    font-size: 10px;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: var(--ink-3);
-    margin: 0 0 4px;
     font-weight: 500;
+    color: var(--coral-600);
   }
-  .lag-val {
-    font-family: var(--serif);
-    font-size: 30px;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    color: var(--ink);
-    line-height: 1;
-    letter-spacing: -0.02em;
-  }
-  @media (max-width: 640px) {
-    .section-lag { padding: 14px 16px; gap: 14px; }
-    .lag-stats { gap: 18px; width: 100%; justify-content: space-between; }
-    .lag-val { font-size: 24px; }
-  }
-
-  /* Status legend — anchored to the masthead as a nameplate-closer.
-     Sits as a full-width rule with three evenly-spaced tick marks: color dot,
-     label, count, and a whispered sub-caption. Reads like magazine furniture
-     (a drop hed / status line) rather than a floating UI widget. */
-  .ribbon {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    align-items: baseline;
-    gap: 0;
-    padding: 22px 0 0;
-    margin: 0;
-  }
-  .ribbon-cell {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    padding: 0 18px;
-    border-right: 0.5px solid var(--rule);
-  }
-  .ribbon-cell:first-child { padding-left: 0; }
-  .ribbon-cell:last-child  { padding-right: 0; border-right: 0; }
-  .ribbon-cell::before {
-    content: '';
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--ink-3);
-    display: inline-block;
-    flex: 0 0 auto;
-    transform: translateY(-1px);
-  }
-  .ribbon-cell.cell-risk::before   { background: var(--red-400); }
-  .ribbon-cell.cell-narrow::before { background: var(--amber-400); }
-  .ribbon-cell.cell-ok::before     { background: var(--teal-400); }
-  .ribbon-label {
+  .nameplate-issue {
+    font-family: var(--sans);
     font-size: 10px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
+    color: var(--ink-3);
     font-weight: 500;
-    font-family: var(--sans);
-    white-space: nowrap;
   }
-  .ribbon-num {
+  .wordmark {
     font-family: var(--serif);
-    font-size: 22px;
+    font-size: 36px;
     font-weight: 500;
     line-height: 1;
-    letter-spacing: -0.01em;
-    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin: 0 0 6px;
   }
-  .ribbon-sub {
+  .wordmark-tagline {
     font-family: var(--serif);
     font-style: italic;
-    font-size: 11px;
-    color: var(--ink-3);
-    margin-left: 6px;
-    line-height: 1.3;
-    display: inline;
-  }
-  @media (max-width: 900px) {
-    .ribbon { grid-template-columns: 1fr; gap: 8px; padding: 14px 0 2px; }
-    .ribbon-cell {
-      padding: 0; border-right: 0;
-      border-bottom: 0.5px solid var(--rule);
-      padding-bottom: 8px;
-    }
-    .ribbon-cell:last-child { border-bottom: 0; padding-bottom: 0; }
-    .ribbon-num { font-size: 18px; }
-    .ribbon-sub { font-size: 10px; }
-  }
-
-  /* North Star feature */
-  /* North Star — editorial feature */
-  .north-star {
-    margin: 2rem 0 2.5rem;
-    padding: 2rem 2rem;
-    background: #f4ede0;
-    border-radius: 2px;
-  }
-  .ns-headline {
-    font-family: var(--serif);
-    font-size: 24px;
-    font-weight: 500;
-    line-height: 1.25;
+    font-size: 15px;
+    color: var(--ink-2);
     margin: 0 0 28px;
-    color: var(--ink);
-    letter-spacing: -0.01em;
-    max-width: 720px;
+    letter-spacing: -0.005em;
   }
-  .ns-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
-    align-items: start;
-  }
-  .ns-stat {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .ns-big {
-    font-family: var(--serif);
-    font-size: 72px;
-    line-height: 0.95;
-    font-weight: 500;
-    color: var(--ink);
-    letter-spacing: -0.03em;
-  }
-  .ns-label {
-    font-size: 10px;
-    color: var(--ink-3);
-    letter-spacing: 0.22em;
-    text-transform: lowercase;
-    font-weight: 500;
-  }
-  .ns-sub-note {
-    font-size: 10px;
-    color: var(--ink-3);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    font-weight: 500;
-    margin: 6px 0 0;
-  }
-  /* Page footer — subtle link back to admin */
-  .page-footer {
-    margin-top: 4rem;
-    padding: 2rem 0 0;
-    border-top: 0.5px solid var(--rule);
-    display: flex;
-    justify-content: center;
-  }
-  .admin-link {
-    font-family: var(--sans);
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    text-decoration: none;
-    font-weight: 500;
-    padding: 6px 14px;
-    transition: color 140ms ease;
-  }
-  .admin-link:hover { color: var(--coral-600); }
 
-  /* Revenue snapshot — sits just below the North Star. Editorial strip,
-     no hard card borders; a top rule marks status per column. */
-  .revenue-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    margin: 0 0 2.75rem;
-    border-top: 0.5px solid var(--rule);
-    border-bottom: 0.5px solid var(--rule);
+  /* ─── 3. Verdict — the real hero ─── */
+  .verdict {
+    border-top: 2px solid var(--ink);
+    border-bottom: 0.5px solid var(--ink);
+    padding: 28px 0 30px;
+    margin: 0 0 44px;
   }
-  .rev-card {
-    background: transparent;
-    padding: 22px 24px 20px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    min-height: 150px;
-    border-right: 0.5px solid var(--rule);
-  }
-  .rev-card:last-child { border-right: none; }
-  .rev-card::before {
-    content: '';
-    position: absolute;
-    top: -1px; left: 0; right: 0;
-    height: 2px;
-    background: var(--teal-400);
-  }
-  .rev-card.miss::before { background: var(--amber-400); }
-  .rev-card.over::before { background: var(--red-400); }
-  .rev-label {
-    font-size: 9px;
+  .verdict-kicker {
+    font-family: var(--sans);
+    font-size: 10px;
     letter-spacing: 0.24em;
     text-transform: uppercase;
     font-weight: 500;
     color: var(--ink-3);
-    margin: 0 0 10px;
+    margin: 0 0 14px;
   }
-  .rev-value {
-    font-family: var(--serif);
-    font-size: 38px;
-    line-height: 1;
-    font-weight: 500;
-    color: var(--ink);
-    letter-spacing: -0.02em;
-    font-variant-numeric: tabular-nums;
-  }
-  .rev-target {
-    font-family: var(--serif);
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--ink-2);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em;
-    margin: 10px 0 auto;
-  }
-  .rev-target::before {
-    content: 'Target ';
-    font-family: var(--sans);
-    font-size: 9px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    font-weight: 500;
-    margin-right: 6px;
-  }
-  .rev-compare {
-    font-size: 12px;
-    color: var(--ink-3);
-    font-family: var(--serif);
-    font-style: italic;
-    margin: 10px 0 auto;
-  }
-  .rev-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 10px;
-    padding: 0;
-    border-radius: 0;
-    align-self: flex-start;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    font-family: var(--sans, Inter, system-ui);
-    margin-top: 14px;
-    color: var(--teal-800);
-    background: transparent !important;
-  }
-  .rev-status::before {
-    content: '';
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--teal-400);
-    display: inline-block;
-  }
-  .rev-status.miss { color: var(--amber-800); }
-  .rev-status.miss::before { background: var(--amber-400); }
-  .rev-proj {
-    color: var(--ink);
-    font-weight: 500;
-    font-family: var(--serif);
-    margin: 14px 0 0;
-    font-size: 13px;
-    letter-spacing: -0.01em;
-  }
-  .rev-proj::before {
-    content: 'Projection ';
-    font-family: var(--sans);
-    font-size: 9px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    font-weight: 500;
-    margin-right: 6px;
-  }
-  @media (max-width: 900px) {
-    .revenue-row { grid-template-columns: 1fr 1fr; }
-  }
-  @media (max-width: 640px) {
-    .revenue-row { grid-template-columns: 1fr; }
-  }
-
-  .over-pill {
-    display: inline-block;
-    font-size: 10px;
-    color: #fff;
-    padding: 3px 8px;
-    background: var(--teal-600);
-    border-radius: 100px;
-    letter-spacing: 0.12em;
-    vertical-align: middle;
-    margin-left: 8px;
-  }
-
-  /* Contents / TOC */
-  .contents {
-    margin: 2.5rem 0 0;
-    padding: 2rem 2.25rem;
-    background: #fff;
-    border: 0.5px solid var(--rule);
-    border-radius: 12px;
-  }
-  .contents-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    padding-bottom: 1rem;
-    border-bottom: 0.5px solid var(--rule);
-    margin-bottom: 1rem;
-  }
-  .contents-title {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 18px;
-    color: var(--ink);
+  .verdict-line {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
     margin: 0;
   }
-  .toc-item {
-    display: grid;
-    grid-template-columns: 48px minmax(0, 1.4fr) minmax(0, 1.8fr) auto;
-    gap: 20px;
-    align-items: center;
-    padding: 14px 0;
-    border-bottom: 0.5px dashed var(--rule);
-  }
-  .toc-item:last-child { border-bottom: 0; }
-  .toc-num {
-    font-family: var(--serif);
-    font-size: 22px;
-    font-weight: 500;
-    color: var(--coral-400);
-    letter-spacing: -0.02em;
-  }
-  .toc-name {
-    font-family: var(--serif);
-    font-size: 20px;
-    font-weight: 500;
-    color: var(--ink);
-    letter-spacing: -0.01em;
-  }
-  .toc-goal {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 14px;
-    color: var(--ink-2);
-  }
-  .toc-owner {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .toc-avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 500;
-    font-family: var(--sans);
-  }
-  .toc-owner-meta {
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    color: var(--ink-3);
-    text-transform: uppercase;
-  }
-  .toc-owner-name {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--ink);
-  }
-
-  /* Owner badge in section header */
-  .section-owner {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    color: var(--ink-3);
-    text-transform: uppercase;
-  }
-  .owner-avatar-sm {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 9px;
-    font-weight: 500;
-    letter-spacing: 0;
-  }
-
-  /* Progress bar for annual metrics */
-  .progress-cell {
+  .verdict-cell {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    border-left: 0.5px solid var(--rule);
-    padding-left: 24px;
+    gap: 4px;
+    padding-right: 28px;
+    border-right: 0.5px solid var(--rule);
   }
-  .progress-track {
-    position: relative;
-    height: 8px;
-    background: rgba(0,0,0,0.06);
-    border-radius: 100px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    border-radius: 100px;
-  }
-  .progress-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    color: var(--ink-3);
-    text-transform: uppercase;
-  }
-  .progress-ytd {
+  .verdict-cell:last-child { border-right: none; padding-right: 0; }
+  .verdict-num {
     font-family: var(--serif);
-    font-size: 14px;
+    font-size: 72px;
     font-weight: 500;
-    color: var(--ink);
+    line-height: 0.9;
+    letter-spacing: -0.035em;
     font-variant-numeric: tabular-nums;
   }
-  .section-head {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    gap: 24px;
-    align-items: end;
-    padding-bottom: 0.75rem;
-    /* Standardized to hairline rule in the 3-weight divider system */
-    border-bottom: 0.5px solid var(--rule);
-    margin-top: 1.75rem;
-  }
-  .section-num {
-    font-family: var(--serif);
-    font-size: 40px;
+  .verdict-label {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
     font-weight: 500;
-    color: var(--coral-400);
-    line-height: 0.8;
-    letter-spacing: -0.03em;
   }
-  .section-title {
-    font-family: var(--serif);
-    font-size: 22px;
-    font-weight: 500;
-    margin: 0 0 3px;
-    letter-spacing: -0.015em;
-    color: var(--ink);
-  }
-  /* Editorial drop cap on section titles — first letter set ~1.75x size
-     so each section opens like a feature article headline. */
-  .section-title::first-letter {
-    font-size: 1.75em;
-    line-height: 0.82;
-    font-weight: 500;
-    letter-spacing: -0.04em;
-    padding-right: 2px;
-    vertical-align: baseline;
-  }
-  .section-dek {
+  .verdict-sub {
     font-family: var(--serif);
     font-style: italic;
     font-size: 13px;
-    color: var(--ink-2);
-    margin: 0;
-  }
-  .section-tag {
-    font-size: 10px;
-    letter-spacing: 0.22em;
     color: var(--ink-3);
+    margin: 4px 0 0;
   }
+  .verdict-cell.v-ok     .verdict-num,  .verdict-cell.v-ok     .verdict-label { color: var(--teal-600); }
+  .verdict-cell.v-narrow .verdict-num,  .verdict-cell.v-narrow .verdict-label { color: var(--amber-600); }
+  .verdict-cell.v-risk   .verdict-num,  .verdict-cell.v-risk   .verdict-label { color: var(--red-600); }
 
-  /* Metric row — MTD / PY / Target / Projection model */
-  .row {
-    padding: 0.95rem 0;
-    border-bottom: 0.5px solid var(--rule);
-    display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 3.8fr) minmax(0, 0.7fr);
-    gap: 24px;
-    align-items: start;
+  /* Hero week chips (sits under the verdict as a temporal anchor) */
+  .hero-weeks {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 14px 0 0;
+    justify-content: flex-start;
   }
-  .row > *:first-child { padding-top: 8px; }
-  .row > *:last-child { padding-top: 8px; text-align: right; }
-  .row.terminal { border-bottom: 1px solid var(--rule-strong); }
-  .mname {
+  .hero-week {
     font-family: var(--serif);
-    font-size: 16px;
-    font-weight: 500;
-    margin: 0 0 3px;
-    letter-spacing: -0.01em;
-    color: var(--ink);
-    line-height: 1.2;
-  }
-  .mdept {
-    font-size: 9px;
-    letter-spacing: 0.22em;
+    font-size: 12px;
     color: var(--ink-3);
-    margin: 0;
-    text-transform: uppercase;
-    display: none; /* dropped — redundant with the KPI name + section header */
-  }
-
-  /* Four-column comparison grid */
-  /* Comparison grid — HIDDEN. Weekly strip is the main display now. */
-  .compare { display: none; }
-
-  .compare-col.projection {
-    display: none;
-  }
-  .compare-label {
-    font-size: 9px;
-    letter-spacing: 0.22em;
-    color: var(--ink-3);
-    text-transform: uppercase;
-    font-weight: 500;
-    margin: 0 0 5px;
-  }
-  .compare-val {
-    font-family: var(--serif);
-    font-size: 20px;
-    font-weight: 500;
-    line-height: 1;
-    font-variant-numeric: tabular-nums;
-    color: var(--ink);
-  }
-  .compare-val .pct { font-size: 13px; }
-  .compare-sub {
-    font-size: 9px;
-    color: var(--ink-3);
-    margin-top: 4px;
-    letter-spacing: 0.1em;
+    padding: 3px 9px;
+    letter-spacing: 0.02em;
     font-variant-numeric: tabular-nums;
   }
-  .compare-col.projection .compare-val { color: var(--teal-800); }
-  .compare-col.projection .compare-label { color: var(--teal-600); }
-  .compare-col.projection.warn .compare-val { color: var(--amber-800); }
-  .compare-col.projection.warn .compare-label { color: var(--amber-600); }
-  .compare-col.projection.risk .compare-val { color: var(--red-800); }
-  .compare-col.projection.risk .compare-label { color: var(--red-600); }
-  .compare-col.projection .compare-sub {
-    color: var(--teal-600);
-    font-weight: 500;
-    letter-spacing: 0.04em;
-  }
-
-  .pill {
-    display: inline-block;
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    padding: 4px 11px;
-    border-radius: 100px;
-    border: 0.5px solid;
-  }
-
-  /* Weekly strip per metric row — primary display */
-  .wks {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-    gap: 0;
-    margin-top: 2px;
-    min-width: 0;
-  }
-  .wk {
-    text-align: center;
-    position: relative;
-    padding: 0 14px;
-    border-right: 0.5px solid var(--rule);
-    min-width: 0;
-  }
-  .wk:first-child { padding-left: 0; }
-  .wk:last-child { border-right: 0; padding-right: 0; }
-  .wk-label {
-    font-size: 9px;
-    letter-spacing: 0.22em;
-    color: var(--ink-3);
-    text-transform: uppercase;
-    margin: 0 0 6px;
-  }
-  .wk-val {
-    font-family: var(--serif);
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 1;
-    margin: 0;
-    font-variant-numeric: tabular-nums;
-    color: var(--ink);
-    letter-spacing: -0.01em;
-  }
-  .wk-val.empty { color: var(--ink-3); font-weight: 300; }
-  /* Current week: italic coral serif so the reader's eye lands there first */
-  .wk.current .wk-label { color: var(--coral-600); font-weight: 600; }
-  .wk.current .wk-val {
+  .hero-week.current {
     color: var(--coral-700);
     font-weight: 500;
     font-style: italic;
+    background: var(--coral-50);
+    border-radius: 4px;
   }
-  /* Past weeks stay default ink; future weeks lighten + shrink so they
-     feel like placeholder / not-yet-happened. */
-  .wk.future .wk-label { color: var(--ink-3); opacity: 0.55; }
-  .wk.future .wk-val { color: var(--ink-3); font-weight: 300; opacity: 0.55; font-size: 15px; }
+  .hero-week-sep { color: rgba(0,0,0,0.18); font-size: 10px; }
 
-  /* Right-column: trend percentage + goal subtitle */
-  /* Trend (and percent) hidden by request — left-side Goal carries the
-     "what we're aiming at" message instead. CSS keeps the JS logic intact
-     so we can flip it back on later without touching markup. */
-  .row-trend { display: none; }
-  .row-trend-label, .trend-pct { display: none; }
-  /* Goal — coral serif italic so it reads as editorial pull-quote rather
-     than competing with the metric name or blending into the subhead. */
-  .row-goal {
-    display: block;
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 16px;
-    font-weight: 500;
+  /* ─── 4. North Star — full-bleed feature ─── */
+  .ns-panel {
+    position: relative;
+    background: #eadfc6;
+    border-radius: 3px;
+    padding: 44px 48px 40px;
+    margin: 0 0 40px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    column-gap: 56px;
+    row-gap: 26px;
+    align-items: end;
+  }
+  .ns-head {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    padding: 0 0 4px;
+    border-bottom: 0.5px solid rgba(0,0,0,0.18);
+  }
+  .ns-kicker {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-weight: 600;
     color: var(--coral-600);
-    letter-spacing: -0.005em;
-    margin: 10px 0 0;
-    line-height: 1.2;
+  }
+  .ns-meta {
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .ns-title {
+    grid-column: 1 / -1;
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.15;
+    margin: 6px 0 16px;
+    color: var(--ink);
+    letter-spacing: -0.015em;
+    max-width: 780px;
+  }
+  .ns-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .ns-big {
+    font-family: var(--serif);
+    font-size: 140px;
+    line-height: 0.85;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.045em;
     font-variant-numeric: tabular-nums;
   }
-  .row-goal::before {
-    content: 'Goal ';
+  .ns-hero-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+    margin: 2px 0 0;
+  }
+  .ns-side {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding-left: 32px;
+    border-left: 0.5px solid rgba(0,0,0,0.18);
+  }
+  .ns-side-stat-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+    margin: 0 0 4px;
+  }
+  .ns-mid {
+    font-family: var(--serif);
+    font-size: 44px;
+    line-height: 0.95;
+    font-weight: 500;
+    color: var(--ink-2);
+    letter-spacing: -0.025em;
+    font-variant-numeric: tabular-nums;
+  }
+  .ns-track-bar {
+    position: relative;
+    height: 4px;
+    background: rgba(0,0,0,0.12);
+    border-radius: 100px;
+    overflow: hidden;
+    margin: 8px 0 6px;
+  }
+  .ns-track-bar span {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    background: var(--coral-400);
+    border-radius: 100px;
+  }
+  .ns-track-meta {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-2);
+    letter-spacing: -0.005em;
+  }
+
+  /* ─── 5. Revenue strap — compact horizontal marquee ─── */
+  .rev-strap {
+    margin: 0 0 56px;
+  }
+  .rev-strap-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0 0 10px;
+    border-bottom: 0.5px solid var(--rule);
+    margin: 0 0 14px;
+  }
+  .strap-kicker {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .strap-meta {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 12px;
+    color: var(--ink-3);
+  }
+  .revenue-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 0;
+    border-bottom: 0;
+    margin: 0;
+  }
+  .rev-card {
+    background: transparent;
+    padding: 6px 22px 6px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    border-right: 0.5px solid var(--rule);
+    min-height: 0;
+  }
+  .rev-card:last-child { border-right: none; padding-right: 0; }
+  .rev-card + .rev-card { padding-left: 22px; }
+  .rev-card::before { display: none; }
+  .rev-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--ink-3);
+    margin: 0;
+  }
+  .rev-value {
+    font-family: var(--serif);
+    font-size: 30px;
+    line-height: 1;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    margin: 4px 0 2px;
+  }
+  .rev-target {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 12px;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .rev-target::before {
+    content: 'vs target ';
     font-family: var(--sans);
     font-style: normal;
     font-size: 9px;
@@ -1270,18 +691,309 @@
     text-transform: uppercase;
     color: var(--ink-3);
     font-weight: 500;
-    display: block;
-    margin-bottom: 2px;
+    margin-right: 4px;
   }
-  .row-goal .pct { font-size: 13px; font-weight: 500; color: var(--coral-400); }
+  .rev-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--teal-600);
+    margin: 6px 0 0;
+    background: transparent !important;
+    padding: 0;
+  }
+  .rev-status::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--teal-400);
+  }
+  .rev-status.miss { color: var(--amber-600); }
+  .rev-status.miss::before { background: var(--amber-400); }
+  .rev-proj { display: none; }
 
-  /* Per-row status: a small filled dot instead of a verbose pill.
-     font-size: 0 collapses every glyph to zero width so the label
-     text can't visibly leak, while the inline 'color: var(--teal-800)'
-     on the pill markup still drives the background via currentColor. */
+  /* ─── 6. Pillars lede ─── */
+  .pillars-lede {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 40px;
+    align-items: baseline;
+    padding: 22px 0 18px;
+    border-top: 1.5px solid var(--ink);
+    border-bottom: 0.5px solid var(--ink);
+    margin: 0 0 36px;
+  }
+  .pillars-lede .kicker {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--coral-600);
+    font-weight: 600;
+  }
+  .pillars-lede-text {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--ink-2);
+    letter-spacing: -0.005em;
+    margin: 0;
+    max-width: 620px;
+  }
+
+  /* ─── 7. Pillar — editorial 2-col spread ─── */
+  .pillar {
+    display: grid;
+    grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+    column-gap: 48px;
+    row-gap: 20px;
+    padding: 36px 0 44px;
+    border-bottom: 0.5px solid var(--rule);
+  }
+  .pillar:last-of-type { border-bottom: none; }
+
+  /* Left column — identity + lagging outcome */
+  .pillar-left {
+    position: sticky;
+    top: 72px;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+  }
+  .section-head {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 16px;
+    row-gap: 4px;
+    align-items: baseline;
+    padding: 0;
+    margin: 0;
+    border-bottom: none;
+  }
+  .section-num {
+    grid-row: 1 / 3;
+    font-family: var(--serif);
+    font-size: 56px;
+    font-weight: 500;
+    color: var(--coral-400);
+    line-height: 0.82;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 500;
+    margin: 0;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 1.05;
+  }
+  .section-title::first-letter {
+    /* drop cap removed — section number now carries the visual weight */
+    font-size: 1em;
+    letter-spacing: inherit;
+    padding-right: 0;
+  }
+  .section-owner {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+    margin: 0;
+  }
+
+  /* The lagging outcome panel (left col) */
+  .leading {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #f4ede0;
+    padding: 22px 24px 24px;
+    border-radius: 3px;
+    border-left: 3px solid var(--coral-400);
+    margin: 0;
+  }
+  .leading-tag {
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--coral-600);
+    font-weight: 600;
+    margin: 0;
+  }
+  .leading-name {
+    font-family: var(--serif);
+    font-size: 20px !important;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    margin: 0;
+  }
+  .leading .row-goal {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--coral-700);
+    margin: 2px 0 0;
+    display: block;
+    letter-spacing: -0.005em;
+    line-height: 1.25;
+  }
+  .leading .row-goal::before {
+    content: 'Goal · ';
+    font-family: var(--sans);
+    font-style: normal;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  /* The weekly strip inside the outcome panel */
+  .leading .wks {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0;
+    margin: 6px 0 0;
+    padding: 10px 0 0;
+    border-top: 0.5px solid rgba(0,0,0,0.14);
+  }
+  /* Status pill at the end of the outcome panel */
+  .leading > .pill {
+    align-self: flex-start;
+    margin-top: 2px;
+  }
+  .leading.no-weekly .wks { display: none; }
+
+  /* Right column — leading drivers */
+  .pillar-right { min-width: 0; }
+  .drivers-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+    margin: 0 0 10px;
+    padding: 0 0 10px;
+    border-bottom: 0.5px solid var(--rule);
+  }
+
+  /* Driver row — dense single-line format */
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 2.4fr) auto;
+    column-gap: 20px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 0.5px dashed var(--rule);
+    margin: 0;
+  }
+  .row:last-of-type,
+  .row.terminal { border-bottom: none; }
+  .row > *:first-child, .row > *:last-child { padding-top: 0; }
+  .row > *:last-child { text-align: right; }
+  .mname {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .mdept { display: none; }
+  .row .row-goal {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 12px;
+    color: var(--coral-700);
+    margin: 4px 0 0;
+    display: block;
+    line-height: 1.2;
+    letter-spacing: -0.005em;
+    font-variant-numeric: tabular-nums;
+  }
+  .row .row-goal::before {
+    content: 'Goal · ';
+    font-family: var(--sans);
+    font-style: normal;
+    font-size: 8px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .row .row-goal .pct { font-size: 11px; color: var(--coral-400); }
+
+  /* Hide the 4-col compare block — it's a data carrier for the JS */
+  .compare { display: none; }
+  .metric-body { min-width: 0; display: block; }
+  .metric-body .compare { display: none; }
+
+  /* Weekly strip inside driver rows */
+  .wks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(56px, 1fr));
+    gap: 0;
+    min-width: 0;
+  }
+  .wk {
+    text-align: center;
+    position: relative;
+    padding: 0 6px;
+    border-right: 0.5px solid var(--rule);
+    min-width: 0;
+  }
+  .wk:first-child { padding-left: 0; }
+  .wk:last-child { border-right: 0; padding-right: 0; }
+  .wk-label {
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin: 0 0 4px;
+  }
+  .wk-val {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .wk-val.empty { color: var(--ink-3); font-weight: 300; }
+  .wk.current .wk-label { color: var(--coral-600); font-weight: 600; }
+  .wk.current .wk-val {
+    color: var(--coral-700);
+    font-weight: 500;
+    font-style: italic;
+  }
+  .wk.future .wk-label { color: var(--ink-3); opacity: 0.5; }
+  .wk.future .wk-val {
+    color: var(--ink-3); font-weight: 300; opacity: 0.5;
+    font-size: 14px; font-style: italic;
+  }
+
+  /* Status pill in driver rows = compact colored dot */
   .pill {
     display: inline-block;
-    width: 12px; height: 12px;
+    width: 10px; height: 10px;
     border-radius: 50%;
     background: currentColor !important;
     border: none !important;
@@ -1294,174 +1006,90 @@
     overflow: hidden;
     text-indent: -9999px;
   }
-  /* Vivid dot colors keyed off the original pill's inline color var
-     so the static markup doesn't need to change */
   .pill[style*="--red"]   { background: var(--red-400)   !important; }
   .pill[style*="--amber"] { background: var(--amber-400) !important; }
   .pill[style*="--teal"]  { background: var(--teal-400)  !important; }
 
-  /* Leading metric callout (between section header and driver rows) */
-  /* Lagging outcome callout — editorial "feature" panel on beige, same
-     shape as a driver row: [text stack] [weekly strip] [status dot] so
-     the reader compares outcomes and drivers in the same visual frame. */
-  .leading {
-    display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 3fr) auto;
-    gap: 28px;
-    align-items: center;
-    padding: 22px 24px;
-    margin: 6px 0 10px;
-    background: #f4ede0;
-    border: none;
-    border-radius: 2px;
-  }
-  /* Collapse middle column when we genuinely have no weekly data for
-     that KPI — prevents a giant empty gap. In practice every lagging
-     outcome should match the sheet via fuzzyMatchKpi(). */
-  .leading.no-weekly { grid-template-columns: 1fr auto; }
-  .leading.no-weekly .wks { display: none; }
-  .leading-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .leading-text .row-goal { margin-top: 12px; }
-  .leading .wks { margin-top: 0; }
-  @media (max-width: 1000px) {
-    .leading { grid-template-columns: 1fr; gap: 14px; padding: 18px 20px; }
-    .leading .wks { border-top: 0.5px solid var(--rule); padding-top: 12px; min-width: 0; }
-  }
-  .leading-tag {
-    font-size: 9px;
-    letter-spacing: 0.26em;
-    color: var(--ink-3);
-    text-transform: uppercase;
-    font-weight: 500;
-    white-space: nowrap;
-    margin: 0 0 6px;
-  }
-  .leading-name {
-    font-family: var(--serif);
-    font-size: 20px !important;
-    font-weight: 500;
-    color: var(--ink);
-    letter-spacing: -0.015em;
-    line-height: 1.15;
-  }
-  .leading-name {
-    font-family: var(--serif);
-    font-size: 17px;
-    font-weight: 500;
-    color: var(--ink);
-    letter-spacing: -0.01em;
-  }
-  .leading-sub {
-    font-size: 10px;
-    color: var(--ink-3);
-    margin-top: 2px;
-    letter-spacing: 0.02em;
-  }
-  .leading-va {
-    display: flex;
-    align-items: baseline;
-    gap: 14px;
-    font-family: var(--serif);
-    font-variant-numeric: tabular-nums;
-  }
-  .leading-target {
-    font-size: 13px;
-    color: var(--ink-3);
-  }
-  .leading-target strong {
-    font-weight: 500;
-    color: var(--ink);
-  }
-  .leading-actual {
-    font-size: 24px;
-    font-weight: 500;
-    line-height: 1;
-  }
-  .drivers-label {
-    font-size: 9px;
-    letter-spacing: 0.26em;
-    color: var(--ink-3);
-    text-transform: uppercase;
-    font-weight: 500;
-    margin: 8px 0 12px;
-    padding: 0;
-  }
+  /* Hide legacy trend/compare scaffolding */
+  .row-trend, .row-trend-label, .trend-pct { display: none; }
+  .compare-col { display: none; }
+  .compare-col.projection { display: none; }
 
-  /* Colophon */
-  .colophon {
+  /* ─── 8. Colophon / footer ─── */
+  .page-footer {
+    margin-top: 3rem;
     padding: 2rem 0 0;
+    border-top: 1.5px solid var(--ink);
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: baseline;
+    gap: 20px;
+    flex-wrap: wrap;
   }
-  .colophon-left {
+  .page-footer-left {
     font-family: var(--serif);
     font-style: italic;
     font-size: 13px;
     color: var(--ink-3);
     margin: 0;
+    letter-spacing: -0.005em;
   }
-
-  @media (max-width: 1000px) {
-    .top-nav { padding: 0 1rem; height: auto; flex-wrap: wrap; gap: 10px; padding-top: 10px; padding-bottom: 10px; }
-    .nav-links { display: none; }
-    .page { padding: 2rem 1.5rem; margin: 0; }
-    .controls { flex-direction: column; align-items: stretch; gap: 12px; }
-    .controls-right { flex-wrap: wrap; }
-    /* North star + ribbon stay horizontal, just shrink numbers */
-    .ns-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
-    .ns-big { font-size: 48px; letter-spacing: -0.02em; }
-    .ribbon-num { font-size: 40px; }
-    /* Rows stack: metric + goal on top, weekly strip below on its own */
-    .row { grid-template-columns: 1fr; gap: 16px; }
-    .metric-body { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .wks { grid-column: span 1; padding-left: 0; border-left: 0; border-top: 0.5px solid var(--rule); padding-top: 14px; min-width: 480px; }
-    /* Leading callout stacks nicely when cramped */
-    .leading { grid-template-columns: 1fr; gap: 8px; }
-    .leading-va { align-self: start; }
+  .admin-link {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 140ms ease;
   }
+  .admin-link:hover { color: var(--coral-600); }
 
-  /* Mobile — phones under 640px */
+  /* ─── Responsive ─── */
+  @media (max-width: 1100px) {
+    .pillar { grid-template-columns: 1fr; column-gap: 0; row-gap: 20px; }
+    .pillar-left { position: static; }
+    .ns-panel { grid-template-columns: 1fr; padding: 32px 28px; }
+    .ns-big { font-size: 108px; }
+    .ns-side { padding-left: 0; border-left: none; border-top: 0.5px solid rgba(0,0,0,0.18); padding-top: 22px; }
+  }
+  @media (max-width: 900px) {
+    .wordmark { font-size: 28px; }
+    .verdict { padding: 22px 0 24px; margin-bottom: 32px; }
+    .verdict-num { font-size: 54px; }
+    .ns-title { font-size: 22px; }
+    .ns-big { font-size: 88px; }
+    .revenue-row { grid-template-columns: 1fr 1fr; }
+    .rev-card { border-right: 0; border-bottom: 0.5px solid var(--rule); padding: 16px 0; }
+    .rev-card:nth-child(2n) { border-bottom: 0.5px solid var(--rule); }
+    .rev-card:last-child, .rev-card:nth-last-child(2) { border-bottom: none; }
+    .rev-card + .rev-card { padding-left: 0; }
+    .rev-card:nth-child(2n) { padding-left: 22px; border-left: 0.5px solid var(--rule); }
+  }
   @media (max-width: 640px) {
-    .page { padding: 1.25rem 1rem; }
-    .dropdown-btn { font-size: 14px; padding: 8px 12px; }
-    .sync-btn { font-size: 14px; padding: 8px 14px; }
-    .hero-sync-note { font-size: 11px; }
-    /* North star — stay horizontal, further shrink */
-    .north-star { padding: 1.5rem 0; margin: 1.5rem 0; }
-    .ns-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-    .ns-big { font-size: 32px; line-height: 1; letter-spacing: -0.03em; }
-    .ns-headline { font-size: 18px; line-height: 1.25; margin-bottom: 20px; }
-    .ns-label { font-size: 9px; letter-spacing: 0.12em; }
-    .ns-sub-note { font-size: 13px; }
-    /* Ribbon — stay horizontal */
-    .ribbon { gap: 8px; padding: 14px 0; flex-direction: row; }
-    .ribbon-cell { padding: 0; border-right: 0; border-bottom: 0; flex: 1; }
-    .ribbon-num { font-size: 28px; }
-    .ribbon-label { font-size: 9px; letter-spacing: 0.12em; }
-    .ribbon-sub { display: none; }
-    /* Section headers */
-    .sec-num { font-size: 44px; }
-    .sec-title { font-size: 22px; }
-    .sec-sub { font-size: 14px; }
-    .sec-owner { font-size: 10px; }
-    /* Metric rows */
-    .mname { font-size: 16px; }
-    .metric-body { gap: 12px; }
-    .cell-label { font-size: 9px; letter-spacing: 0.12em; }
-    .cell-val { font-size: 22px; }
-    .wks { font-size: 11px; }
-    .pill { font-size: 10px; padding: 3px 8px; }
-    /* Dropdowns: allow scroll inside long menus (e.g., month list) */
-    .dropdown-menu { max-height: 60vh; overflow-y: auto; }
-    /* Revenue cards: tighter on phone */
-    .rev-card { padding: 16px 16px 14px; min-height: 0; }
-    .rev-value { font-size: 30px; }
-    .rev-label { font-size: 9px; }
-    /* Masthead top: stack cleanly on narrow viewports */
-    .masthead-top { flex-wrap: wrap; gap: 10px; }
-    .masthead-top-right { flex-wrap: wrap; row-gap: 8px; }
-    .hero-controls { flex-wrap: wrap; }
+    .page { padding: 1.25rem 1rem; margin: 0; }
+    .wordmark { font-size: 24px; }
+    .wordmark-tagline { font-size: 13px; margin-bottom: 20px; }
+    .verdict { padding: 18px 0 20px; }
+    .verdict-line { grid-template-columns: 1fr; gap: 14px; }
+    .verdict-cell { border-right: none; border-bottom: 0.5px solid var(--rule); padding: 0 0 12px; }
+    .verdict-cell:last-child { border-bottom: none; padding-bottom: 0; }
+    .verdict-num { font-size: 44px; }
+    .ns-panel { padding: 26px 20px; }
+    .ns-big { font-size: 72px; }
+    .ns-mid { font-size: 34px; }
+    .ns-title { font-size: 19px; }
+    .pillars-lede { grid-template-columns: 1fr; row-gap: 8px; }
+    .pillars-lede-text { font-size: 14px; }
+    .section-num { font-size: 42px; }
+    .section-title { font-size: 22px; }
+    .leading-name { font-size: 18px !important; }
+    .row { grid-template-columns: 1fr; row-gap: 10px; padding: 16px 0; }
+    .row > *:last-child { text-align: left; }
+    .wks { min-width: 0; }
+    .revenue-row { grid-template-columns: 1fr; }
+    .rev-card, .rev-card:nth-child(2n) { padding: 14px 0; border-left: 0; border-right: 0; }
   }
 </style>
 </head>
@@ -1469,696 +1097,407 @@
 
 <div class="page">
 
-  <!-- Masthead -->
-  <div class="masthead">
-    <div class="masthead-top">
-      <div class="masthead-top-left"></div>
-      <div class="masthead-top-right">
-        <div class="masthead-date" id="masthead-date">Saturday, April 18, 2026</div>
-        <div class="hero-controls">
-          <div class="dropdown-wrap">
-            <button class="dropdown active" onclick="toggleMenu('month-menu', this)">
-              <span id="month-label">Apr 2026</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="dropdown-menu" id="month-menu">
-              <div class="dropdown-header">Fiscal year 2026</div>
-              <div class="dropdown-item" onclick="selectMonth(this, 'Jan 2026')"><span>Jan 2026</span><span class="check">✓</span></div>
-              <div class="dropdown-item" onclick="selectMonth(this, 'Feb 2026')"><span>Feb 2026</span><span class="check">✓</span></div>
-              <div class="dropdown-item" onclick="selectMonth(this, 'Mar 2026')"><span>Mar 2026</span><span class="check">✓</span></div>
-              <div class="dropdown-item selected" onclick="selectMonth(this, 'Apr 2026')"><span>Apr 2026</span><span class="check">✓</span></div>
-              <div class="dropdown-item" onclick="selectMonth(this, 'May 2026')"><span>May 2026</span><span class="check">✓</span></div>
-              <div class="dropdown-item" onclick="selectMonth(this, 'Jun 2026')"><span>Jun 2026</span><span class="check">✓</span></div>
-              <div class="dropdown-item" onclick="selectMonth(this, 'Jul 2026')"><span>Jul 2026</span><span class="check">✓</span></div>
-            <div class="dropdown-item" onclick="selectMonth(this, 'Aug 2026')"><span>Aug 2026</span><span class="check">✓</span></div>
-            <div class="dropdown-item" onclick="selectMonth(this, 'Sep 2026')"><span>Sep 2026</span><span class="check">✓</span></div>
-            <div class="dropdown-item" onclick="selectMonth(this, 'Oct 2026')"><span>Oct 2026</span><span class="check">✓</span></div>
-            <div class="dropdown-item" onclick="selectMonth(this, 'Nov 2026')"><span>Nov 2026</span><span class="check">✓</span></div>
-            <div class="dropdown-item" onclick="selectMonth(this, 'Dec 2026')"><span>Dec 2026</span><span class="check">✓</span></div>
-            <div class="dropdown-divider"></div>
-            <div class="dropdown-item" onclick="selectMonth(this, 'FY 2026 YTD')"><span>Fiscal year to date</span><span class="check">✓</span></div>
-          </div>
-        </div>
-
-        <div class="dropdown-wrap">
-          <button class="dropdown" onclick="toggleMenu('week-menu', this)">
-            <span id="week-label">Week 16</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <div class="dropdown-menu" id="week-menu">
-            <div class="dropdown-header">Loading weeks…</div>
-          </div>
-        </div>
-
-        <button class="sync-btn" id="sync-btn" onclick="syncSheet(this)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-          <span id="sync-label">Sync</span>
+  <!-- ══════════════════════════════════════════════════
+       1. CONTROL STRIP — date + period selectors + sync
+       ══════════════════════════════════════════════════ -->
+  <div class="control-strip">
+    <div class="control-left">
+      <span class="control-date" id="masthead-date">Saturday, April 18, 2026</span>
+      <span class="control-sync-note"><span class="pulse-dot"></span><span id="sync-status">Last synced · Apr 17, 9:05 a.m.</span></span>
+    </div>
+    <div class="control-right">
+      <div class="dropdown-wrap">
+        <button class="dropdown active" onclick="toggleMenu('month-menu', this)">
+          <span id="month-label">Apr 2026</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
+        <div class="dropdown-menu" id="month-menu">
+          <div class="dropdown-header">Fiscal year 2026</div>
+          <div class="dropdown-item" onclick="selectMonth(this, 'Jan 2026')"><span>Jan 2026</span><span class="check">✓</span></div>
+          <div class="dropdown-item" onclick="selectMonth(this, 'Feb 2026')"><span>Feb 2026</span><span class="check">✓</span></div>
+          <div class="dropdown-item" onclick="selectMonth(this, 'Mar 2026')"><span>Mar 2026</span><span class="check">✓</span></div>
+          <div class="dropdown-item selected" onclick="selectMonth(this, 'Apr 2026')"><span>Apr 2026</span><span class="check">✓</span></div>
+          <div class="dropdown-item" onclick="selectMonth(this, 'May 2026')"><span>May 2026</span><span class="check">✓</span></div>
+          <div class="dropdown-item" onclick="selectMonth(this, 'Jun 2026')"><span>Jun 2026</span><span class="check">✓</span></div>
+          <div class="dropdown-item" onclick="selectMonth(this, 'Jul 2026')"><span>Jul 2026</span><span class="check">✓</span></div>
+          <div class="dropdown-item" onclick="selectMonth(this, 'Aug 2026')"><span>Aug 2026</span><span class="check">✓</span></div>
+          <div class="dropdown-item" onclick="selectMonth(this, 'Sep 2026')"><span>Sep 2026</span><span class="check">✓</span></div>
+          <div class="dropdown-item" onclick="selectMonth(this, 'Oct 2026')"><span>Oct 2026</span><span class="check">✓</span></div>
+          <div class="dropdown-item" onclick="selectMonth(this, 'Nov 2026')"><span>Nov 2026</span><span class="check">✓</span></div>
+          <div class="dropdown-item" onclick="selectMonth(this, 'Dec 2026')"><span>Dec 2026</span><span class="check">✓</span></div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="selectMonth(this, 'FY 2026 YTD')"><span>Fiscal year to date</span><span class="check">✓</span></div>
         </div>
-        <div class="sync-status-line">
-          <span class="pulse-dot"></span>
-          <span id="sync-status">Last synced from Google Sheets · Apr 17, 9:05 a.m.</span>
+      </div>
+      <div class="dropdown-wrap">
+        <button class="dropdown" onclick="toggleMenu('week-menu', this)">
+          <span id="week-label">Week 16</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dropdown-menu" id="week-menu">
+          <div class="dropdown-header">Loading weeks…</div>
         </div>
       </div>
-    </div>
-    <div class="masthead-rule"></div>
-    <div class="masthead-meta-row">
-      <p class="kicker">leadership scorecard</p>
-      <div class="hero-meta">
-        <span class="hero-meta-label">Volume</span>
-        <span class="hero-meta-sep">·</span>
-        <span class="hero-meta-val">FY 2026</span>
-        <span class="hero-meta-sep">·</span>
-        <span class="hero-meta-label">Issue</span>
-        <span class="hero-meta-sep">·</span>
-        <span class="hero-meta-val" id="hero-issue">Week 16</span>
-      </div>
-    </div>
-    <div class="hero">
-      <div class="hero-title-col">
-        <h1>Austin<br>Fitness<br>Group.</h1>
-      </div>
-    </div>
-    <p class="hero-tagline">High standards. Relentless execution. No shortcuts.</p>
-
-    <!-- Status legend anchored to the masthead as a nameplate closer -->
-    <div class="ribbon" role="list" aria-label="KPI status summary">
-      <div class="ribbon-cell cell-risk" role="listitem">
-        <span class="ribbon-label" style="color: var(--red-600);">at risk</span>
-        <span class="ribbon-num" style="color: var(--red-600);">1</span>
-        <span class="ribbon-sub">requires intervention</span>
-      </div>
-      <div class="ribbon-cell cell-narrow" role="listitem">
-        <span class="ribbon-label" style="color: var(--amber-600);">narrow</span>
-        <span class="ribbon-num" style="color: var(--amber-600);">4</span>
-        <span class="ribbon-sub">close, but not there</span>
-      </div>
-      <div class="ribbon-cell cell-ok" role="listitem">
-        <span class="ribbon-label" style="color: var(--teal-600);">on track</span>
-        <span class="ribbon-num" style="color: var(--teal-600);">9</span>
-        <span class="ribbon-sub">meeting the mark</span>
-      </div>
-    </div>
-  </div><!-- /masthead -->
-
-  <!-- North Star feature — stands alone -->
-  <div class="north-star">
-    <p class="kicker" style="margin-bottom: 20px;">the north star</p>
-    <p class="ns-headline" id="ns-title">Net recurring members per studio, on average.</p>
-    <div class="ns-grid">
-      <div class="ns-stat">
-        <div class="ns-big" id="ns-ytd">+17</div>
-        <p class="ns-label">year to date</p>
-      </div>
-      <div class="ns-stat">
-        <div class="ns-big" id="ns-target">+12</div>
-        <p class="ns-label">end-of-year target</p>
-      </div>
+      <button class="sync-btn" id="sync-btn" onclick="syncSheet(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        <span id="sync-label">Sync</span>
+      </button>
     </div>
   </div>
 
-  <!-- Revenue snapshot — sits directly below the North Star as its own strip.
-       Each card's data-kpi must match the KPI name in column A of your sheet. -->
-  <div class="revenue-row" id="revenue-row">
-    <div class="rev-card" data-kpi="Systemwide revenue">
-      <p class="rev-label">Systemwide revenue</p>
-      <div class="rev-value">—</div>
-      <p class="rev-target">—</p>
-      <span class="rev-status ontrack">On track</span>
+  <!-- ══════════════════════════════════════════════════
+       2. NAMEPLATE — small wordmark + kicker
+       ══════════════════════════════════════════════════ -->
+  <div class="nameplate">
+    <span class="nameplate-kicker">leadership scorecard</span>
+    <span class="nameplate-issue">Vol · FY 2026 &middot; Issue · <span id="hero-issue">Week 16</span></span>
+  </div>
+  <h1 class="wordmark">Austin Fitness Group.</h1>
+  <p class="wordmark-tagline">High standards. Relentless execution. No shortcuts.</p>
+
+  <!-- ══════════════════════════════════════════════════
+       3. VERDICT — the real hero: status at a glance
+       ══════════════════════════════════════════════════ -->
+  <section class="verdict" role="list" aria-label="KPI status summary">
+    <p class="verdict-kicker">the state of play &middot; week <span class="verdict-wk">16</span></p>
+    <div class="verdict-line ribbon">
+      <div class="verdict-cell v-ok ribbon-cell cell-ok" role="listitem">
+        <span class="verdict-label ribbon-label" style="color: var(--teal-600);">on pace</span>
+        <span class="verdict-num ribbon-num" style="color: var(--teal-600);">9</span>
+        <span class="verdict-sub ribbon-sub">drivers meeting the mark</span>
+      </div>
+      <div class="verdict-cell v-narrow ribbon-cell cell-narrow" role="listitem">
+        <span class="verdict-label ribbon-label" style="color: var(--amber-600);">narrow</span>
+        <span class="verdict-num ribbon-num" style="color: var(--amber-600);">4</span>
+        <span class="verdict-sub ribbon-sub">close, but not there</span>
+      </div>
+      <div class="verdict-cell v-risk ribbon-cell cell-risk" role="listitem">
+        <span class="verdict-label ribbon-label" style="color: var(--red-600);">at risk</span>
+        <span class="verdict-num ribbon-num" style="color: var(--red-600);">1</span>
+        <span class="verdict-sub ribbon-sub">requires intervention</span>
+      </div>
     </div>
-    <div class="rev-card" data-kpi="Recurring revenue">
-      <p class="rev-label">Recurring revenue</p>
-      <div class="rev-value">—</div>
-      <p class="rev-target">—</p>
-      <span class="rev-status ontrack">On track</span>
+    <div class="hero-weeks" id="hero-weeks"></div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       4. NORTH STAR — the dominant metric
+       ══════════════════════════════════════════════════ -->
+  <section class="ns-panel">
+    <div class="ns-head">
+      <span class="ns-kicker">the north star</span>
+      <span class="ns-meta">year to date &middot; tracking to EOY</span>
     </div>
-    <div class="rev-card" data-kpi="Prepaid package revenue">
-      <p class="rev-label">Prepaid package rev</p>
-      <div class="rev-value">—</div>
-      <p class="rev-target">—</p>
-      <span class="rev-status ontrack">On track</span>
+    <h2 class="ns-title" id="ns-title">Net recurring members per studio, on average.</h2>
+    <div class="ns-hero">
+      <div class="ns-big" id="ns-ytd">+17</div>
+      <p class="ns-hero-label">members / studio &middot; year to date</p>
     </div>
-    <div class="rev-card" data-kpi="Retail, fees &amp; other">
-      <p class="rev-label">Retail, fees &amp; other</p>
-      <div class="rev-value">—</div>
-      <p class="rev-target">—</p>
-      <span class="rev-status ontrack">On track</span>
+    <div class="ns-side">
+      <div>
+        <p class="ns-side-stat-label">end-of-year target</p>
+        <div class="ns-mid" id="ns-target">+12</div>
+      </div>
+      <div>
+        <p class="ns-side-stat-label">trajectory</p>
+        <div class="ns-track-bar"><span style="width: 100%;"></span></div>
+        <p class="ns-track-meta">YTD exceeds EOY target</p>
+      </div>
     </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       5. REVENUE STRAP — horizontal marquee, 4 KPIs
+       ══════════════════════════════════════════════════ -->
+  <section class="rev-strap">
+    <div class="rev-strap-head">
+      <span class="strap-kicker">revenue &middot; month to date</span>
+      <span class="strap-meta">vs plan</span>
+    </div>
+    <div class="revenue-row" id="revenue-row">
+      <div class="rev-card" data-kpi="Systemwide revenue">
+        <p class="rev-label">Systemwide</p>
+        <div class="rev-value">—</div>
+        <p class="rev-target">—</p>
+        <span class="rev-status ontrack">On track</span>
+      </div>
+      <div class="rev-card" data-kpi="Recurring revenue">
+        <p class="rev-label">Recurring</p>
+        <div class="rev-value">—</div>
+        <p class="rev-target">—</p>
+        <span class="rev-status ontrack">On track</span>
+      </div>
+      <div class="rev-card" data-kpi="Prepaid package revenue">
+        <p class="rev-label">Prepaid package</p>
+        <div class="rev-value">—</div>
+        <p class="rev-target">—</p>
+        <span class="rev-status ontrack">On track</span>
+      </div>
+      <div class="rev-card" data-kpi="Retail, fees &amp; other">
+        <p class="rev-label">Retail, fees &amp; other</p>
+        <div class="rev-value">—</div>
+        <p class="rev-target">—</p>
+        <span class="rev-status ontrack">On track</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       6. PILLARS LEDE — transition to sections
+       ══════════════════════════════════════════════════ -->
+  <div class="pillars-lede">
+    <span class="kicker">the pillars</span>
+    <p class="pillars-lede-text">Five outcomes. The leading drivers we watch every week to keep them on pace.</p>
   </div>
 
   <!-- Section 01 — Member Growth -->
-  <div class="section-head" data-section-key="Member growth">
-    <div class="section-num">01</div>
-    <div>
-      <h2 class="section-title">Member growth</h2>
-    </div>
-    <div class="section-owner">
-      <span>Chris &middot; sales ops</span>
-    </div>
-  </div>
-
-  <!-- Lagging outcome — same layout as Member engagement -->
-  <div class="leading" data-section-key="Member growth" data-kpi="Net recurring members / studio">
-    <div class="leading-text">
-      <span class="leading-tag">lagging &middot; outcome</span>
-      <div class="leading-name">Net recurring members / studio</div>
-      <p class="row-goal">+12 by EOY</p>
-    </div>
-    <div class="wks"></div>
-    <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
-  </div>
-
-  <p class="drivers-label">leading drivers &middot; weekly</p>
-
-  <div class="row">
-    <div>
-      <p class="mname">Intro conversion</p>
-      <p class="mdept">sales · conversion</p>
-    </div>
-    <div class="compare">
-      <div class="compare-col">
-        <p class="compare-label">Month actual</p>
-        <div class="compare-val">42.6%</div>
-        <p class="compare-sub">wk 15 of 17</p>
+  <section class="pillar">
+    <div class="pillar-left">
+      <div class="section-head" data-section-key="Member growth">
+        <div class="section-num">01</div>
+        <h2 class="section-title">Member growth</h2>
+        <p class="section-owner"><span>Chris &middot; sales ops</span></p>
       </div>
-      <div class="compare-col">
-        <p class="compare-label">Prior year</p>
-        <div class="compare-val">40.1%</div>
-        <p class="compare-sub">Apr 2025 final</p>
-      </div>
-      <div class="compare-col target">
-        <p class="compare-label">Target</p>
-        <div class="compare-val">40.0%</div>
-        <p class="compare-sub">monthly</p>
-      </div>
-      <div class="compare-col projection">
-        <p class="compare-label">Projection</p>
-        <div class="compare-val">42.4%</div>
-        <p class="compare-sub">projected to beat PY</p>
+      <div class="leading" data-section-key="Member growth" data-kpi="Net recurring members / studio">
+        <span class="leading-tag">lagging outcome</span>
+        <div class="leading-name">Net recurring members / studio</div>
+        <p class="row-goal">+12 by EOY</p>
+        <div class="wks"></div>
+        <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
       </div>
     </div>
-    <div style="text-align: right;">
-      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
-    </div>
-  </div>
-  <div class="row">
-    <div>
-      <p class="mname">Lead portal management</p>
-      <p class="mdept">sales · pipeline hygiene</p>
-    </div>
-    <div class="compare">
-      <div class="compare-col">
-        <p class="compare-label">Month actual</p>
-        <div class="compare-val">86.2%</div>
-        <p class="compare-sub">wk 15 of 17</p>
+    <div class="pillar-right">
+      <p class="drivers-label">Leading drivers &middot; weekly</p>
+      <div class="row">
+        <div><p class="mname">Intro conversion</p><p class="mdept">sales · conversion</p></div>
+        <div class="compare">
+          <div class="compare-col"><p class="compare-label">Month actual</p><div class="compare-val">42.6%</div><p class="compare-sub">wk 15 of 17</p></div>
+          <div class="compare-col"><p class="compare-label">Prior year</p><div class="compare-val">40.1%</div><p class="compare-sub">Apr 2025 final</p></div>
+          <div class="compare-col target"><p class="compare-label">Target</p><div class="compare-val">40.0%</div><p class="compare-sub">monthly</p></div>
+          <div class="compare-col projection"><p class="compare-label">Projection</p><div class="compare-val">42.4%</div><p class="compare-sub">projected to beat PY</p></div>
+        </div>
+        <div><span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span></div>
       </div>
-      <div class="compare-col">
-        <p class="compare-label">Prior year</p>
-        <div class="compare-val">84.8%</div>
-        <p class="compare-sub">Apr 2025 final</p>
+      <div class="row">
+        <div><p class="mname">Lead portal management</p><p class="mdept">sales · pipeline hygiene</p></div>
+        <div class="compare">
+          <div class="compare-col"><p class="compare-label">Month actual</p><div class="compare-val">86.2%</div><p class="compare-sub">wk 15 of 17</p></div>
+          <div class="compare-col"><p class="compare-label">Prior year</p><div class="compare-val">84.8%</div><p class="compare-sub">Apr 2025 final</p></div>
+          <div class="compare-col target"><p class="compare-label">Target</p><div class="compare-val">90.0%</div><p class="compare-sub">monthly</p></div>
+          <div class="compare-col projection warn"><p class="compare-label">Projection</p><div class="compare-val">86.5%</div><p class="compare-sub">projected to miss target</p></div>
+        </div>
+        <div><span class="pill" style="color: var(--amber-800); border-color: var(--amber-400); background: var(--amber-50);">narrow</span></div>
       </div>
-      <div class="compare-col target">
-        <p class="compare-label">Target</p>
-        <div class="compare-val">90.0%</div>
-        <p class="compare-sub">monthly</p>
+      <div class="row">
+        <div><p class="mname">Revenue portal management</p><p class="mdept">sales · revenue integrity</p></div>
+        <div class="compare">
+          <div class="compare-col"><p class="compare-label">Month actual</p><div class="compare-val">77.7%</div><p class="compare-sub">wk 15 of 17</p></div>
+          <div class="compare-col"><p class="compare-label">Prior year</p><div class="compare-val">79.2%</div><p class="compare-sub">Apr 2025 final</p></div>
+          <div class="compare-col target"><p class="compare-label">Target</p><div class="compare-val">90.0%</div><p class="compare-sub">monthly</p></div>
+          <div class="compare-col projection risk"><p class="compare-label">Projection</p><div class="compare-val">77.9%</div><p class="compare-sub">under PY and target</p></div>
+        </div>
+        <div><span class="pill" style="color: var(--red-800); border-color: var(--red-600); background: var(--red-50);">at risk</span></div>
       </div>
-      <div class="compare-col projection warn">
-        <p class="compare-label">Projection</p>
-        <div class="compare-val">86.5%</div>
-        <p class="compare-sub">projected to miss target</p>
-      </div>
-    </div>
-    <div style="text-align: right;">
-      <span class="pill" style="color: var(--amber-800); border-color: var(--amber-400); background: var(--amber-50);">narrow</span>
-    </div>
-  </div>
-  <div class="row">
-    <div>
-      <p class="mname">Revenue portal management</p>
-      <p class="mdept">sales · revenue integrity</p>
-    </div>
-    <div class="compare">
-      <div class="compare-col">
-        <p class="compare-label">Month actual</p>
-        <div class="compare-val">77.7%</div>
-        <p class="compare-sub">wk 15 of 17</p>
-      </div>
-      <div class="compare-col">
-        <p class="compare-label">Prior year</p>
-        <div class="compare-val">79.2%</div>
-        <p class="compare-sub">Apr 2025 final</p>
-      </div>
-      <div class="compare-col target">
-        <p class="compare-label">Target</p>
-        <div class="compare-val">90.0%</div>
-        <p class="compare-sub">monthly</p>
-      </div>
-      <div class="compare-col projection risk">
-        <p class="compare-label">Projection</p>
-        <div class="compare-val">77.9%</div>
-        <p class="compare-sub">under PY and target</p>
+      <div class="row terminal">
+        <div><p class="mname">Weekend sales, no zeros</p><p class="mdept">sales · coverage</p></div>
+        <div class="compare">
+          <div class="compare-col"><p class="compare-label">Month actual</p><div class="compare-val">95.8%</div><p class="compare-sub">wk 15 of 17</p></div>
+          <div class="compare-col"><p class="compare-label">Prior year</p><div class="compare-val">93.5%</div><p class="compare-sub">Apr 2025 final</p></div>
+          <div class="compare-col target"><p class="compare-label">Target</p><div class="compare-val">100.0%</div><p class="compare-sub">monthly</p></div>
+          <div class="compare-col projection warn"><p class="compare-label">Projection</p><div class="compare-val">95.9%</div><p class="compare-sub">ahead of PY</p></div>
+        </div>
+        <div><span class="pill" style="color: var(--amber-800); border-color: var(--amber-400); background: var(--amber-50);">narrow</span></div>
       </div>
     </div>
-    <div style="text-align: right;">
-      <span class="pill" style="color: var(--red-800); border-color: var(--red-600); background: var(--red-50);">at risk</span>
-    </div>
-  </div>
-  <div class="row terminal">
-    <div>
-      <p class="mname">Weekend sales, no zeros</p>
-      <p class="mdept">sales · coverage</p>
-    </div>
-    <div class="compare">
-      <div class="compare-col">
-        <p class="compare-label">Month actual</p>
-        <div class="compare-val">95.8%</div>
-        <p class="compare-sub">wk 15 of 17</p>
-      </div>
-      <div class="compare-col">
-        <p class="compare-label">Prior year</p>
-        <div class="compare-val">93.5%</div>
-        <p class="compare-sub">Apr 2025 final</p>
-      </div>
-      <div class="compare-col target">
-        <p class="compare-label">Target</p>
-        <div class="compare-val">100.0%</div>
-        <p class="compare-sub">monthly</p>
-      </div>
-      <div class="compare-col projection warn">
-        <p class="compare-label">Projection</p>
-        <div class="compare-val">95.9%</div>
-        <p class="compare-sub">ahead of PY</p>
-      </div>
-    </div>
-    <div style="text-align: right;">
-      <span class="pill" style="color: var(--amber-800); border-color: var(--amber-400); background: var(--amber-50);">narrow</span>
-    </div>
-  </div>
+  </section>
 
   <!-- Section 02 — Member Engagement -->
-  <div class="section-head">
-    <div class="section-num">02</div>
-    <div>
-      <h2 class="section-title">Member engagement</h2>
-    </div>
-    <div class="section-owner">
-      <span>Vic · fitness</span>
-    </div>
-  </div>
-  <div class="leading" data-kpi="Workouts per member / week">
-    <div class="leading-text">
-      <span class="leading-tag">lagging · outcome</span>
-      <div class="leading-name">Workouts per member, per week</div>
-      <p class="row-goal">&gt; 1.5×</p>
-    </div>
-    <div class="wks"></div>
-    <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
-  </div>
-
-  <p class="drivers-label">leading drivers &middot; weekly</p>
-
-  <div class="row">
-    <div>
-      <p class="mname">HRM usage</p>
-      <p class="mdept">fitness · tech adoption</p>
-    </div>
-    <div class="compare">
-      <div class="compare-col">
-        <p class="compare-label">Month actual</p>
-        <div class="compare-val">76.8%</div>
-        <p class="compare-sub">wk 15 of 17</p>
+  <section class="pillar">
+    <div class="pillar-left">
+      <div class="section-head" data-section-key="Member engagement">
+        <div class="section-num">02</div>
+        <h2 class="section-title">Member engagement</h2>
+        <p class="section-owner"><span>Vic &middot; fitness</span></p>
       </div>
-      <div class="compare-col">
-        <p class="compare-label">Prior year</p>
-        <div class="compare-val">73.2%</div>
-        <p class="compare-sub">Apr 2025 final</p>
-      </div>
-      <div class="compare-col target">
-        <p class="compare-label">Target</p>
-        <div class="compare-val">75.0%</div>
-        <p class="compare-sub">monthly</p>
-      </div>
-      <div class="compare-col projection">
-        <p class="compare-label">Projection</p>
-        <div class="compare-val">76.9%</div>
-        <p class="compare-sub">ahead of PY and target</p>
+      <div class="leading" data-kpi="Workouts per member / week">
+        <span class="leading-tag">lagging outcome</span>
+        <div class="leading-name">Workouts per member, per week</div>
+        <p class="row-goal">&gt; 1.5×</p>
+        <div class="wks"></div>
+        <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
       </div>
     </div>
-    <div style="text-align: right;">
-      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
-    </div>
-  </div>
-  <div class="row">
-    <div>
-      <p class="mname">120-day retention</p>
-      <p class="mdept">fitness · stickiness</p>
-    </div>
-    <div class="compare">
-      <div class="compare-col">
-        <p class="compare-label">Month actual</p>
-        <div class="compare-val">71.7%</div>
-        <p class="compare-sub">wk 15 of 17</p>
+    <div class="pillar-right">
+      <p class="drivers-label">Leading drivers &middot; weekly</p>
+      <div class="row">
+        <div><p class="mname">HRM usage</p><p class="mdept">fitness · tech adoption</p></div>
+        <div class="compare">
+          <div class="compare-col"><p class="compare-label">Month actual</p><div class="compare-val">76.8%</div><p class="compare-sub">wk 15 of 17</p></div>
+          <div class="compare-col"><p class="compare-label">Prior year</p><div class="compare-val">73.2%</div><p class="compare-sub">Apr 2025 final</p></div>
+          <div class="compare-col target"><p class="compare-label">Target</p><div class="compare-val">75.0%</div><p class="compare-sub">monthly</p></div>
+          <div class="compare-col projection"><p class="compare-label">Projection</p><div class="compare-val">76.9%</div><p class="compare-sub">ahead of PY and target</p></div>
+        </div>
+        <div><span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span></div>
       </div>
-      <div class="compare-col">
-        <p class="compare-label">Prior year</p>
-        <div class="compare-val">69.8%</div>
-        <p class="compare-sub">Apr 2025 final</p>
+      <div class="row">
+        <div><p class="mname">120-day retention</p><p class="mdept">fitness · stickiness</p></div>
+        <div class="compare">
+          <div class="compare-col"><p class="compare-label">Month actual</p><div class="compare-val">71.7%</div><p class="compare-sub">wk 15 of 17</p></div>
+          <div class="compare-col"><p class="compare-label">Prior year</p><div class="compare-val">69.8%</div><p class="compare-sub">Apr 2025 final</p></div>
+          <div class="compare-col target"><p class="compare-label">Target</p><div class="compare-val">70.0%</div><p class="compare-sub">monthly</p></div>
+          <div class="compare-col projection"><p class="compare-label">Projection</p><div class="compare-val">71.8%</div><p class="compare-sub">ahead of PY and target</p></div>
+        </div>
+        <div><span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span></div>
       </div>
-      <div class="compare-col target">
-        <p class="compare-label">Target</p>
-        <div class="compare-val">70.0%</div>
-        <p class="compare-sub">monthly</p>
+      <div class="row">
+        <div><p class="mname">Member portal management</p><p class="mdept">fitness · engagement</p></div>
+        <div class="compare">
+          <div class="compare-col"><p class="compare-label">Month actual</p><div class="compare-val">83.8%</div><p class="compare-sub">wk 15 of 17</p></div>
+          <div class="compare-col"><p class="compare-label">Prior year</p><div class="compare-val">81.2%</div><p class="compare-sub">Apr 2025 final</p></div>
+          <div class="compare-col target"><p class="compare-label">Target</p><div class="compare-val">90.0%</div><p class="compare-sub">monthly</p></div>
+          <div class="compare-col projection warn"><p class="compare-label">Projection</p><div class="compare-val">84.0%</div><p class="compare-sub">ahead of PY, under target</p></div>
+        </div>
+        <div><span class="pill" style="color: var(--amber-800); border-color: var(--amber-400); background: var(--amber-50);">narrow</span></div>
       </div>
-      <div class="compare-col projection">
-        <p class="compare-label">Projection</p>
-        <div class="compare-val">71.8%</div>
-        <p class="compare-sub">ahead of PY and target</p>
-      </div>
-    </div>
-    <div style="text-align: right;">
-      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
-    </div>
-  </div>
-  <div class="row">
-    <div>
-      <p class="mname">Member portal management</p>
-      <p class="mdept">fitness · engagement</p>
-    </div>
-    <div class="compare">
-      <div class="compare-col">
-        <p class="compare-label">Month actual</p>
-        <div class="compare-val">83.8%</div>
-        <p class="compare-sub">wk 15 of 17</p>
-      </div>
-      <div class="compare-col">
-        <p class="compare-label">Prior year</p>
-        <div class="compare-val">81.2%</div>
-        <p class="compare-sub">Apr 2025 final</p>
-      </div>
-      <div class="compare-col target">
-        <p class="compare-label">Target</p>
-        <div class="compare-val">90.0%</div>
-        <p class="compare-sub">monthly</p>
-      </div>
-      <div class="compare-col projection warn">
-        <p class="compare-label">Projection</p>
-        <div class="compare-val">84.0%</div>
-        <p class="compare-sub">ahead of PY, under target</p>
+      <div class="row terminal">
+        <div><p class="mname">Fitness event achievement</p><p class="mdept">fitness · community</p></div>
+        <div class="compare">
+          <div class="compare-col"><p class="compare-label">Month actual</p><div class="compare-val">3 of 4</div><p class="compare-sub">Apr 2026</p></div>
+          <div class="compare-col"><p class="compare-label">Prior year</p><div class="compare-val">3 of 4</div><p class="compare-sub">Apr 2025 final</p></div>
+          <div class="compare-col target"><p class="compare-label">Target</p><div class="compare-val">4 / mo</div><p class="compare-sub">monthly</p></div>
+          <div class="compare-col projection"><p class="compare-label">Projection</p><div class="compare-val">4 of 4</div><p class="compare-sub">on pace to hit target</p></div>
+        </div>
+        <div><span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span></div>
       </div>
     </div>
-    <div style="text-align: right;">
-      <span class="pill" style="color: var(--amber-800); border-color: var(--amber-400); background: var(--amber-50);">narrow</span>
-    </div>
-  </div>
-  <div class="row terminal">
-    <div>
-      <p class="mname">Fitness event achievement</p>
-      <p class="mdept">fitness · community</p>
-    </div>
-    <div class="compare">
-      <div class="compare-col">
-        <p class="compare-label">Month actual</p>
-        <div class="compare-val">3 of 4</div>
-        <p class="compare-sub">Apr 2026</p>
-      </div>
-      <div class="compare-col">
-        <p class="compare-label">Prior year</p>
-        <div class="compare-val">3 of 4</div>
-        <p class="compare-sub">Apr 2025 final</p>
-      </div>
-      <div class="compare-col target">
-        <p class="compare-label">Target</p>
-        <div class="compare-val">4 / mo</div>
-        <p class="compare-sub">monthly</p>
-      </div>
-      <div class="compare-col projection">
-        <p class="compare-label">Projection</p>
-        <div class="compare-val">4 of 4</div>
-        <p class="compare-sub">on pace to hit target</p>
-      </div>
-    </div>
-    <div style="text-align: right;">
-      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
-    </div>
-  </div>
+  </section>
 
   <!-- Section 03 — Brand Awareness -->
-  <div class="section-head" data-section-key="Brand awareness">
-    <div class="section-num">03</div>
-    <div>
-      <h2 class="section-title">Brand awareness</h2>
-    </div>
-    <div class="section-owner">
-      <span>Christy · marketing</span>
-    </div>
-  </div>
-  <div class="leading" data-kpi="PSA leads, YoY change">
-    <div class="leading-text">
-      <span class="leading-tag">lagging · outcome</span>
-      <div class="leading-name">PSA leads, year-over-year</div>
-      <p class="row-goal">&gt; +0%</p>
-    </div>
-    <div class="wks"></div>
-    <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
-  </div>
-
-  <p class="drivers-label">leading drivers &middot; paid media</p>
-
-  <div class="row">
-    <div>
-      <p class="mname">Cost per booking, Meta</p>
-      <p class="mdept">marketing · paid social</p>
-    </div>
-    <div class="compare">
-      <div class="compare-col">
-        <p class="compare-label">Month actual</p>
-        <div class="compare-val">$162</div>
-        <p class="compare-sub">Apr 2026</p>
+  <section class="pillar">
+    <div class="pillar-left">
+      <div class="section-head" data-section-key="Brand awareness">
+        <div class="section-num">03</div>
+        <h2 class="section-title">Brand awareness</h2>
+        <p class="section-owner"><span>Christy &middot; marketing</span></p>
       </div>
-      <div class="compare-col">
-        <p class="compare-label">Prior year</p>
-        <div class="compare-val">$178</div>
-        <p class="compare-sub">Apr 2025 final</p>
-      </div>
-      <div class="compare-col target">
-        <p class="compare-label">Target</p>
-        <div class="compare-val">< $170</div>
-        <p class="compare-sub">monthly</p>
-      </div>
-      <div class="compare-col projection">
-        <p class="compare-label">Projection</p>
-        <div class="compare-val">$164</div>
-        <p class="compare-sub">under target and PY</p>
+      <div class="leading" data-kpi="PSA leads, YoY change">
+        <span class="leading-tag">lagging outcome</span>
+        <div class="leading-name">PSA leads, year-over-year</div>
+        <p class="row-goal">&gt; +0%</p>
+        <div class="wks"></div>
+        <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
       </div>
     </div>
-    <div style="text-align: right;">
-      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
-    </div>
-  </div>
-  <div class="row terminal">
-    <div>
-      <p class="mname">Cost per lead, Meta</p>
-      <p class="mdept">marketing · paid social</p>
-    </div>
-    <div class="compare">
-      <div class="compare-col">
-        <p class="compare-label">Month actual</p>
-        <div class="compare-val">$84</div>
-        <p class="compare-sub">Apr 2026</p>
+    <div class="pillar-right">
+      <p class="drivers-label">Leading drivers &middot; paid media</p>
+      <div class="row">
+        <div><p class="mname">Cost per booking, Meta</p><p class="mdept">marketing · paid social</p></div>
+        <div class="compare">
+          <div class="compare-col"><p class="compare-label">Month actual</p><div class="compare-val">$162</div><p class="compare-sub">Apr 2026</p></div>
+          <div class="compare-col"><p class="compare-label">Prior year</p><div class="compare-val">$178</div><p class="compare-sub">Apr 2025 final</p></div>
+          <div class="compare-col target"><p class="compare-label">Target</p><div class="compare-val">&lt; $170</div><p class="compare-sub">monthly</p></div>
+          <div class="compare-col projection"><p class="compare-label">Projection</p><div class="compare-val">$164</div><p class="compare-sub">under target and PY</p></div>
+        </div>
+        <div><span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span></div>
       </div>
-      <div class="compare-col">
-        <p class="compare-label">Prior year</p>
-        <div class="compare-val">$77</div>
-        <p class="compare-sub">Apr 2025 final</p>
-      </div>
-      <div class="compare-col target">
-        <p class="compare-label">Target</p>
-        <div class="compare-val">< $80</div>
-        <p class="compare-sub">monthly</p>
-      </div>
-      <div class="compare-col projection warn">
-        <p class="compare-label">Projection</p>
-        <div class="compare-val">$84</div>
-        <p class="compare-sub">over target, up vs PY</p>
+      <div class="row terminal">
+        <div><p class="mname">Cost per lead, Meta</p><p class="mdept">marketing · paid social</p></div>
+        <div class="compare">
+          <div class="compare-col"><p class="compare-label">Month actual</p><div class="compare-val">$84</div><p class="compare-sub">Apr 2026</p></div>
+          <div class="compare-col"><p class="compare-label">Prior year</p><div class="compare-val">$77</div><p class="compare-sub">Apr 2025 final</p></div>
+          <div class="compare-col target"><p class="compare-label">Target</p><div class="compare-val">&lt; $80</div><p class="compare-sub">monthly</p></div>
+          <div class="compare-col projection warn"><p class="compare-label">Projection</p><div class="compare-val">$84</div><p class="compare-sub">over target, up vs PY</p></div>
+        </div>
+        <div><span class="pill" style="color: var(--amber-800); border-color: var(--amber-400); background: var(--amber-50);">narrow</span></div>
       </div>
     </div>
-    <div style="text-align: right;">
-      <span class="pill" style="color: var(--amber-800); border-color: var(--amber-400); background: var(--amber-50);">narrow</span>
-    </div>
-  </div>
+  </section>
 
   <!-- Section 04 — Studio Refresh -->
-  <div class="section-head" data-section-key="Studio refresh">
-    <div class="section-num">04</div>
-    <div>
-      <h2 class="section-title">Studio refresh</h2>
-    </div>
-    <div class="section-owner">
-      <span>Scott · finance</span>
-    </div>
-  </div>
-  <div class="leading" data-kpi="Studio remodels">
-    <div class="leading-text">
-      <span class="leading-tag">lagging · outcome</span>
-      <div class="leading-name">Capex program completion</div>
-      <p class="row-goal">53 total</p>
-    </div>
-    <div class="wks"></div>
-    <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
-  </div>
-
-  <p class="drivers-label">leading drivers &middot; quarterly milestones</p>
-
-  <div class="row">
-    <div>
-      <p class="mname">Studio remodels</p>
-      <p class="mdept">capex · annual plan</p>
-    </div>
-    <div class="compare">
-      <div class="compare-col">
-        <p class="compare-label">Month actual</p>
-        <div class="compare-val">5 / 21</div>
-        <p class="compare-sub">YTD complete</p>
+  <section class="pillar">
+    <div class="pillar-left">
+      <div class="section-head" data-section-key="Studio refresh">
+        <div class="section-num">04</div>
+        <h2 class="section-title">Studio refresh</h2>
+        <p class="section-owner"><span>Scott &middot; finance</span></p>
       </div>
-      <div class="compare-col">
-        <p class="compare-label">Prior year</p>
-        <div class="compare-val">4 / 21</div>
-        <p class="compare-sub">FY25 same pt</p>
-      </div>
-      <div class="compare-col target">
-        <p class="compare-label">Target</p>
-        <div class="compare-val">21 annual</div>
-        <p class="compare-sub">monthly</p>
-      </div>
-      <div class="compare-col projection">
-        <p class="compare-label">Projection</p>
-        <div class="compare-val">21 / 21</div>
-        <p class="compare-sub">on pace vs plan</p>
+      <div class="leading" data-kpi="Studio remodels">
+        <span class="leading-tag">lagging outcome</span>
+        <div class="leading-name">Capex program completion</div>
+        <p class="row-goal">53 total</p>
+        <div class="wks"></div>
+        <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
       </div>
     </div>
-    <div style="text-align: right;">
-      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
-    </div>
-  </div>
-  <div class="row terminal">
-    <div>
-      <p class="mname">Treadmill refreshes</p>
-      <p class="mdept">capex · annual plan</p>
-    </div>
-    <div class="compare">
-      <div class="compare-col">
-        <p class="compare-label">Month actual</p>
-        <div class="compare-val">9 / 32</div>
-        <p class="compare-sub">YTD complete</p>
+    <div class="pillar-right">
+      <p class="drivers-label">Leading drivers &middot; quarterly milestones</p>
+      <div class="row">
+        <div><p class="mname">Studio remodels</p><p class="mdept">capex · annual plan</p></div>
+        <div class="compare">
+          <div class="compare-col"><p class="compare-label">Month actual</p><div class="compare-val">5 / 21</div><p class="compare-sub">YTD complete</p></div>
+          <div class="compare-col"><p class="compare-label">Prior year</p><div class="compare-val">4 / 21</div><p class="compare-sub">FY25 same pt</p></div>
+          <div class="compare-col target"><p class="compare-label">Target</p><div class="compare-val">21 annual</div><p class="compare-sub">monthly</p></div>
+          <div class="compare-col projection"><p class="compare-label">Projection</p><div class="compare-val">21 / 21</div><p class="compare-sub">on pace vs plan</p></div>
+        </div>
+        <div><span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span></div>
       </div>
-      <div class="compare-col">
-        <p class="compare-label">Prior year</p>
-        <div class="compare-val">7 / 32</div>
-        <p class="compare-sub">FY25 same pt</p>
-      </div>
-      <div class="compare-col target">
-        <p class="compare-label">Target</p>
-        <div class="compare-val">32 annual</div>
-        <p class="compare-sub">monthly</p>
-      </div>
-      <div class="compare-col projection">
-        <p class="compare-label">Projection</p>
-        <div class="compare-val">32 / 32</div>
-        <p class="compare-sub">ahead of PY pace</p>
+      <div class="row terminal">
+        <div><p class="mname">Treadmill refreshes</p><p class="mdept">capex · annual plan</p></div>
+        <div class="compare">
+          <div class="compare-col"><p class="compare-label">Month actual</p><div class="compare-val">9 / 32</div><p class="compare-sub">YTD complete</p></div>
+          <div class="compare-col"><p class="compare-label">Prior year</p><div class="compare-val">7 / 32</div><p class="compare-sub">FY25 same pt</p></div>
+          <div class="compare-col target"><p class="compare-label">Target</p><div class="compare-val">32 annual</div><p class="compare-sub">monthly</p></div>
+          <div class="compare-col projection"><p class="compare-label">Projection</p><div class="compare-val">32 / 32</div><p class="compare-sub">ahead of PY pace</p></div>
+        </div>
+        <div><span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span></div>
       </div>
     </div>
-    <div style="text-align: right;">
-      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
-    </div>
-  </div>
+  </section>
 
   <!-- Section 05 — People & Culture -->
-  <div class="section-head" data-section-key="People & culture">
-    <div class="section-num">05</div>
-    <div>
-      <h2 class="section-title">People &amp; culture</h2>
+  <section class="pillar">
+    <div class="pillar-left">
+      <div class="section-head" data-section-key="People & culture">
+        <div class="section-num">05</div>
+        <h2 class="section-title">People &amp; culture</h2>
+        <p class="section-owner"><span>Deana &middot; people ops</span></p>
+      </div>
+      <div class="leading" data-kpi="Glassdoor rating">
+        <span class="leading-tag">lagging outcome</span>
+        <div class="leading-name">Glassdoor rating</div>
+        <p class="row-goal">&gt; 3.5</p>
+        <div class="wks"></div>
+        <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
+      </div>
     </div>
-    <div class="section-owner">
-      <span>Deana · people ops</span>
+    <div class="pillar-right">
+      <p class="drivers-label">Leading drivers &middot; monthly / YTD</p>
+      <div class="row">
+        <div><p class="mname">Glassdoor rating</p><p class="mdept">culture · employer brand</p></div>
+        <div class="compare">
+          <div class="compare-col"><p class="compare-label">Month actual</p><div class="compare-val">3.7</div><p class="compare-sub">Apr current</p></div>
+          <div class="compare-col"><p class="compare-label">Prior year</p><div class="compare-val">3.4</div><p class="compare-sub">Apr 2025 final</p></div>
+          <div class="compare-col target"><p class="compare-label">Target</p><div class="compare-val">&gt; 3.5</div><p class="compare-sub">monthly</p></div>
+          <div class="compare-col projection"><p class="compare-label">Projection</p><div class="compare-val">3.7</div><p class="compare-sub">above PY and target</p></div>
+        </div>
+        <div><span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span></div>
+      </div>
+      <div class="row terminal">
+        <div><p class="mname">Internal promotions</p><p class="mdept">culture · growth pipeline</p></div>
+        <div class="compare">
+          <div class="compare-col"><p class="compare-label">Month actual</p><div class="compare-val">8 / 30</div><p class="compare-sub">YTD total</p></div>
+          <div class="compare-col"><p class="compare-label">Prior year</p><div class="compare-val">6 / 30</div><p class="compare-sub">FY25 same pt</p></div>
+          <div class="compare-col target"><p class="compare-label">Target</p><div class="compare-val">&gt; 30 annual</div><p class="compare-sub">monthly</p></div>
+          <div class="compare-col projection"><p class="compare-label">Projection</p><div class="compare-val">32 / 30</div><p class="compare-sub">on pace to beat target</p></div>
+        </div>
+        <div><span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span></div>
+      </div>
     </div>
-  </div>
-  <div class="leading" data-kpi="Glassdoor rating">
-    <div class="leading-text">
-      <span class="leading-tag">lagging · outcome</span>
-      <div class="leading-name">Glassdoor rating</div>
-      <p class="row-goal">&gt; 3.5</p>
-    </div>
-    <div class="wks"></div>
-    <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
-  </div>
+  </section>
 
-  <p class="drivers-label">leading drivers &middot; monthly / ytd</p>
-
-  <div class="row">
-    <div>
-      <p class="mname">Glassdoor rating</p>
-      <p class="mdept">culture · employer brand</p>
-    </div>
-    <div class="compare">
-      <div class="compare-col">
-        <p class="compare-label">Month actual</p>
-        <div class="compare-val">3.7</div>
-        <p class="compare-sub">Apr current</p>
-      </div>
-      <div class="compare-col">
-        <p class="compare-label">Prior year</p>
-        <div class="compare-val">3.4</div>
-        <p class="compare-sub">Apr 2025 final</p>
-      </div>
-      <div class="compare-col target">
-        <p class="compare-label">Target</p>
-        <div class="compare-val">> 3.5</div>
-        <p class="compare-sub">monthly</p>
-      </div>
-      <div class="compare-col projection">
-        <p class="compare-label">Projection</p>
-        <div class="compare-val">3.7</div>
-        <p class="compare-sub">above PY and target</p>
-      </div>
-    </div>
-    <div style="text-align: right;">
-      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
-    </div>
-  </div>
-  <div class="row terminal">
-    <div>
-      <p class="mname">Internal promotions</p>
-      <p class="mdept">culture · growth pipeline</p>
-    </div>
-    <div class="compare">
-      <div class="compare-col">
-        <p class="compare-label">Month actual</p>
-        <div class="compare-val">8 / 30</div>
-        <p class="compare-sub">YTD total</p>
-      </div>
-      <div class="compare-col">
-        <p class="compare-label">Prior year</p>
-        <div class="compare-val">6 / 30</div>
-        <p class="compare-sub">FY25 same pt</p>
-      </div>
-      <div class="compare-col target">
-        <p class="compare-label">Target</p>
-        <div class="compare-val">> 30 annual</div>
-        <p class="compare-sub">monthly</p>
-      </div>
-      <div class="compare-col projection">
-        <p class="compare-label">Projection</p>
-        <div class="compare-val">32 / 30</div>
-        <p class="compare-sub">on pace to beat target</p>
-      </div>
-    </div>
-    <div style="text-align: right;">
-      <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
-    </div>
-  </div>
-
-  <!-- Subtle footer: single admin link replaces the top view-switcher -->
+  <!-- Colophon / footer -->
   <div class="page-footer">
+    <p class="page-footer-left">Austin Fitness Group &middot; Leadership Scorecard &middot; FY 2026</p>
     <a href="austin_fitness_group_admin.html" class="admin-link">Open admin →</a>
   </div>
 
@@ -2530,6 +1869,25 @@
     if (targetEl) targetEl.textContent = fmt(nsTarget);
     const issueEl = document.getElementById('hero-issue');
     if (issueEl) issueEl.textContent = 'Week ' + currentWeekNum;
+
+    // Verdict kicker: echo the current week
+    document.querySelectorAll('.verdict-wk').forEach(el => el.textContent = currentWeekNum);
+
+    // NS trajectory bar: YTD as % of EOY target (clamped 0–120%).
+    // Over-attainment stays at 100% bar width; the caption carries the "exceeds" message.
+    const trackFill = document.querySelector('.ns-track-bar span');
+    const trackMeta = document.querySelector('.ns-track-meta');
+    if (trackFill && nsTarget) {
+      const pctOfTarget = Math.max(0, (ytd / nsTarget) * 100);
+      trackFill.style.width = Math.min(100, pctOfTarget).toFixed(0) + '%';
+      if (trackMeta) {
+        if (pctOfTarget >= 100) {
+          trackMeta.textContent = `YTD is ${pctOfTarget.toFixed(0)}% of EOY target — exceeded`;
+        } else {
+          trackMeta.textContent = `Tracking ${pctOfTarget.toFixed(0)}% of EOY target`;
+        }
+      }
+    }
   }
 
   // Parse + normalize admin-saved targets once per render (not per row).

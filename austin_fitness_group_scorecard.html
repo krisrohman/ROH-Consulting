@@ -1557,18 +1557,21 @@
         el.classList.add('selected');
       }
     });
-    // Immediately populate week menu with FAKE_DATA structure so dropdowns work before sync
-    window.__kpiData = window.__kpiData || {
-      actuals: FAKE_DATA.sheet.actuals,
-      priorYear: FAKE_DATA.sheet.priorYear,
-      targets: FAKE_DATA.sheet.targets,
-      weekly: FAKE_DATA.sheet.weekly,
-      config: FAKE_DATA.kpis,
-      settings: FAKE_DATA.settings
-    };
+    // Immediately populate FAKE_DATA (the raw API shape) so helpers that
+    // read data.sheet.* / data.kpis / data.settings work before /api/dashboard
+    // returns. Never flatten this — helpers expect the raw shape.
+    window.__kpiData = window.__kpiData || FAKE_DATA;
     repopulateWeekMenu(window.__kpiData);
     rebuildHeroWeekStrip();
     renderDashboard(window.__kpiData);
+
+    // Date in masthead — set to today's local date, long form.
+    const mhd = document.getElementById('masthead-date');
+    if (mhd) {
+      mhd.textContent = new Date().toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      });
+    }
   });
 
   // ============================================================
@@ -1701,7 +1704,9 @@
   function repopulateWeekMenu(data) {
     const weekMenu = document.getElementById('week-menu');
     if (!weekMenu) return;
-    const weekly = data.weekly || { columns: [], months: [], rows: [] };
+    // Tolerate both raw API shape and flattened legacy shape
+    const weekly = (data && data.sheet && data.sheet.weekly) || data.weekly ||
+                   { columns: [], months: [], rows: [] };
 
     // A week has "data" if ANY KPI row has a non-null, non-empty value for it.
     // Empty string, null, and undefined all mean "no data yet."
@@ -1766,28 +1771,16 @@
       const payload = await res.json();
       if (!payload.ok) throw new Error(payload.error || 'Sync failed');
 
-      // Store full payload for re-renders when dropdowns change
-      window.__kpiData = {
-        actuals: payload.sheet.actuals,
-        priorYear: payload.sheet.priorYear,
-        targets: payload.sheet.targets,
-        weekly: payload.sheet.weekly,
-        config: payload.kpis,
-        settings: payload.settings
-      };
+      // Keep the raw payload shape. Helpers read data.sheet.* and data.kpis —
+      // flattening here was silently breaking ribbon tally, lagging data,
+      // and revenue cards whenever the dropdowns triggered a re-render.
+      window.__kpiData = payload;
       repopulateWeekMenu(window.__kpiData);
       renderDashboard(window.__kpiData);
       updateSyncStatus(true);
     } catch (err) {
       console.error('API unreachable, using preview data:', err.message);
-      window.__kpiData = {
-        actuals: FAKE_DATA.sheet.actuals,
-        priorYear: FAKE_DATA.sheet.priorYear,
-        targets: FAKE_DATA.sheet.targets,
-        weekly: FAKE_DATA.sheet.weekly,
-        config: FAKE_DATA.kpis,
-        settings: FAKE_DATA.settings
-      };
+      window.__kpiData = FAKE_DATA;
       repopulateWeekMenu(window.__kpiData);
       renderDashboard(window.__kpiData);
       document.getElementById('sync-status').textContent = 'Preview mode · connect to live API to sync';
@@ -1823,8 +1816,9 @@
     const nsKpi = settings.north_star_kpi || 'Net recurring members / studio';
     const nsTarget = parseFloat(settings.north_star_eoy_target) || 12;
 
-    // Find the actual row for north star KPI
-    const actualRow = (data.actuals || []).find(r => r.kpi === nsKpi);
+    // Find the actual row for north star KPI (raw shape: data.sheet.actuals)
+    const sheet = data.sheet || {};
+    const actualRow = (sheet.actuals || data.actuals || []).find(r => r.kpi === nsKpi);
     if (!actualRow) return;
 
     const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1846,7 +1840,7 @@
 
     // Trend — percentage change over last 4 weeks (same logic as lagging rows).
     // Flat when |change| < 1%.
-    const weeklyRow = ((data.weekly && data.weekly.rows) || []).find(r => r.kpi === nsKpi);
+    const weeklyRow = (((sheet.weekly && sheet.weekly.rows) || (data.weekly && data.weekly.rows) || [])).find(r => r.kpi === nsKpi);
     let trendText = '—';
 
     if (weeklyRow && weeklyRow.weeks) {
@@ -1922,32 +1916,40 @@
 
   function renderDashboard(data) {
     renderNorthStar(data);
-    // Build lookup from all 4 sources (actuals, PY, targets, weekly)
+    // Unified data paths — prefer raw API shape (data.sheet.*, data.kpis);
+    // fall back to the old flattened shape so nothing breaks in transition.
+    const sheet = data.sheet || {};
+    const actualsSrc   = sheet.actuals   || data.actuals   || [];
+    const priorYearSrc = sheet.priorYear || data.priorYear || [];
+    const targetsSrc   = sheet.targets   || data.targets   || [];
+    const weeklySrc    = sheet.weekly    || data.weekly    || { columns: [], months: [], rows: [] };
+    const configSrc    = data.kpis       || data.config    || [];
+
     const lookup = {};
-    (data.actuals || []).forEach(row => {
+    actualsSrc.forEach(row => {
       const cfg = row.config || {};
       lookup[row.kpi] = lookup[row.kpi] || { unit: cfg.unit, section: cfg.section, owner: cfg.owner, tier: cfg.tier };
       lookup[row.kpi].mtd = row.months[currentMonth];
       lookup[row.kpi].allMonths = row.months;
-      lookup[row.kpi].trend = row.trend || null;            // 'up' | 'down' | 'flat' | null
+      lookup[row.kpi].trend = row.trend || null;
       lookup[row.kpi].math_type = row.math_type || 'avg';
     });
-    (data.priorYear || []).forEach(row => {
+    priorYearSrc.forEach(row => {
       lookup[row.kpi] = lookup[row.kpi] || {};
       lookup[row.kpi].py = row.months[currentMonth];
     });
-    (data.targets || []).forEach(row => {
+    targetsSrc.forEach(row => {
       lookup[row.kpi] = lookup[row.kpi] || {};
       lookup[row.kpi].target = row.months[currentMonth];
     });
-    (data.config || []).forEach(c => {
+    configSrc.forEach(c => {
       lookup[c.kpi_name] = lookup[c.kpi_name] || {};
       lookup[c.kpi_name].goal_direction = c.goal_direction || 'higher';
       lookup[c.kpi_name].unit = lookup[c.kpi_name].unit || c.unit;
     });
 
     // Weekly data (all 52 weeks in Weekly2026, filtered to current month)
-    const weeklyData = data.weekly || { columns: [], months: [], rows: [] };
+    const weeklyData = weeklySrc;
     const allWeekCols = weeklyData.columns || [];
     const weekMonthMap = weeklyData.months || [];
 
@@ -2143,6 +2145,12 @@
 
     const rowsByKpi = Object.fromEntries(rows.map(r => [normalizeKpi(r.kpi), r]));
 
+    // Targets lookup so we can compute the outcome-level status pill.
+    const targets = (data && data.sheet && data.sheet.targets) || data.targets || [];
+    const targetsByKpi = Object.fromEntries(
+      targets.map(t => [normalizeKpi(t.kpi), t])
+    );
+
     document.querySelectorAll('.leading[data-kpi]').forEach(el => {
       const wksEl = el.querySelector('.wks');
       if (!wksEl) return;
@@ -2157,12 +2165,11 @@
                           || fuzzyMatchKpi(r.kpi, nameEl ? nameEl.textContent : ''));
       }
 
-      // ALWAYS render the weekly cell structure — even if no matching row,
-      // the labels + em-dashes still show so the layout stays consistent
-      // with driver rows. User explicitly asked for weekly cells to appear
-      // on every lagging callout regardless of match state.
       el.classList.remove('no-weekly');
       const unit = (row && row.config && row.config.unit) || 'count';
+      const currentVal = row && row.weeks ? row.weeks['W' + currentWeekNum] : null;
+      const hasCurrent = typeof currentVal === 'number';
+
       wksEl.innerHTML = weekWindow.map(col => {
         const n = parseInt(String(col).replace(/[^0-9]/g, ''), 10);
         const timeClass = n < currentWeekNum ? 'past' : (n > currentWeekNum ? 'future' : 'current');
@@ -2178,6 +2185,32 @@
           </div>
         `;
       }).join('');
+
+      // Status pill on the outcome panel: update based on real data so we
+      // don't keep flashing the shipped static green when there's no data.
+      const pill = el.querySelector('.pill');
+      if (pill) {
+        pill.classList.remove('unknown');
+        const tgtRow = targetsByKpi[normalizeKpi(row ? row.kpi : (el.dataset.kpi || ''))];
+        const target = tgtRow && tgtRow.months ? tgtRow.months[currentMonth] : null;
+        const canStatus = hasCurrent && typeof target === 'number' && target !== 0;
+        if (!canStatus) {
+          pill.removeAttribute('style');
+          pill.classList.add('unknown');
+        } else {
+          const lowerIsBetter = /cost|turnover|cpl|cpb/i.test(row ? row.kpi : '');
+          const ratio = lowerIsBetter ? target / currentVal : currentVal / target;
+          let style;
+          if (ratio >= 1.0) {
+            style = 'color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);';
+          } else if (ratio >= 0.92) {
+            style = 'color: var(--amber-800); border-color: var(--amber-400); background: var(--amber-50);';
+          } else {
+            style = 'color: var(--red-800); border-color: var(--red-600); background: var(--red-50);';
+          }
+          pill.setAttribute('style', style);
+        }
+      }
     });
   }
 
@@ -2211,7 +2244,7 @@
         card.classList.remove('miss', 'over');
         if (pill) {
           pill.className = 'rev-status unknown';
-          pill.textContent = 'No data';
+          pill.textContent = '';
         }
       };
 
@@ -2228,7 +2261,7 @@
         card.classList.remove('miss', 'over');
         if (pill) {
           pill.className = 'rev-status unknown';
-          pill.textContent = 'No data';
+          pill.textContent = '';
         }
         return;
       }

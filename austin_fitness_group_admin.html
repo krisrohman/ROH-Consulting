@@ -233,7 +233,7 @@
   }
   .kpi-row-header, .kpi-row {
     display: grid;
-    grid-template-columns: 38px minmax(260px, 2.4fr) minmax(0, 1fr) 70px 70px 86px 100px 66px 66px minmax(0, 0.85fr) 92px 32px 32px;
+    grid-template-columns: 38px minmax(260px, 2.4fr) minmax(0, 1fr) 70px 70px 86px 100px 66px 66px minmax(0, 0.85fr) 32px 32px;
     gap: 8px;
     align-items: center;
     padding: 10px 14px;
@@ -671,7 +671,6 @@
               <span title="Minimum % of goal required for on-track. 100 = must hit goal. 95 = 95%+ is on-track. Default 100.">On-track %</span>
               <span title="Minimum % of goal for narrow. Below this = at-risk. Must be ≤ On-track. Default 92.">Narrow %</span>
               <span>Owner</span>
-              <span>Tier</span>
               <span></span>
               <span></span>
             </div>
@@ -876,13 +875,16 @@
           </div>
           <div class="panel-body">
             <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-              <button class="btn" id="seed-btn" onclick="runSeed(this, false)">
+              <button class="btn" id="seed-btn" onclick="runSeed(this, false, false)">
                 <span id="seed-btn-label">Seed defaults</span>
               </button>
-              <button class="btn ghost" id="seed-force-btn" onclick="runSeed(this, true)" title="Overwrites existing values — use only if you want to reset to the shipped defaults.">
+              <button class="btn ghost" id="seed-force-btn" onclick="runSeed(this, true, false)" title="Overwrites existing values — use only if you want to reset to the shipped defaults.">
                 <span id="seed-force-btn-label">Overwrite with defaults</span>
               </button>
-              <span style="font-size: 11px; font-style: italic; color: var(--ink-3);">One-time action for a new environment.</span>
+              <button class="btn ghost" id="seed-prune-btn" onclick="runSeed(this, false, true)" title="Soft-deletes any KPI whose name isn't in the canonical list. Useful for clearing test rows, renamed duplicates, and empty New KPI leftovers.">
+                <span id="seed-prune-btn-label">Prune to canonical</span>
+              </button>
+              <span style="font-size: 11px; font-style: italic; color: var(--ink-3);">Seed fills gaps · Overwrite resets values · Prune removes non-canonical rows.</span>
             </div>
             <div id="seed-result" style="margin-top: 12px; font-size: 12px; color: var(--ink-2); display: none;"></div>
           </div>
@@ -1116,26 +1118,29 @@
   // SEED — one-shot populate DB with canonical scorecard defaults.
   // force=true overwrites existing values; default is merge-only.
   // ============================================================
-  async function runSeed(btn, force) {
+  async function runSeed(btn, force, prune) {
     if (!btn || btn.disabled) return;
-    const labelId = btn.id === 'seed-force-btn' ? 'seed-force-btn-label' : 'seed-btn-label';
-    const label = document.getElementById(labelId);
-    const prev = label ? label.textContent : 'Seed defaults';
+    const labelId = (btn.id || '') + '-label';
+    const label = document.getElementById(labelId) || btn.querySelector('span');
+    const prev = label ? label.textContent : 'Seed';
     if (force) {
       if (!confirm('Overwrite with canonical defaults?\n\nThis will REPLACE section copy, goals, and base settings with the shipped values. Any edits you made in admin will be lost.')) return;
     }
+    if (prune) {
+      if (!confirm('Prune to canonical KPIs?\n\nAny KPI whose name isn\'t in the canonical list (test rows, renamed duplicates, empty "New KPI" placeholders) will be deactivated. You can restore them by re-adding in admin. Continue?')) return;
+    }
     btn.disabled = true;
-    if (label) label.textContent = force ? 'Overwriting…' : 'Seeding…';
+    if (label) label.textContent = force ? 'Overwriting…' : (prune ? 'Pruning…' : 'Seeding…');
     const resultEl = document.getElementById('seed-result');
     try {
       const res = await fetch(API.seed || '/api/seed', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ actor: CURRENT_USER, force: !!force })
+        body: JSON.stringify({ actor: CURRENT_USER, force: !!force, prune: !!prune })
       });
       const payload = await res.json();
       if (!payload.ok) throw new Error(payload.error || 'Seed failed');
-      const summary = `KPIs: ${payload.kpis_added || 0} added, ${payload.kpis_skipped || 0} skipped. Sections: ${payload.sections_added} added, ${payload.sections_skipped} skipped. Targets merged: ${payload.targets_merged}. Thresholds merged: ${payload.thresholds_merged || 0}. Settings filled: ${payload.settings_added}.`;
+      const summary = `KPIs: ${payload.kpis_added || 0} added, ${payload.kpis_reactivated || 0} reactivated, ${payload.kpis_skipped || 0} skipped, ${payload.kpis_pruned || 0} pruned. Sections: ${payload.sections_added} added, ${payload.sections_skipped} skipped. Targets merged: ${payload.targets_merged}. Thresholds merged: ${payload.thresholds_merged || 0}. Settings filled: ${payload.settings_added}.`;
       if (resultEl) {
         resultEl.style.display = 'block';
         resultEl.textContent = summary;
@@ -1517,10 +1522,6 @@
         <input class="inline-input" value="${escape(k.ontrack_pct === '' || k.ontrack_pct == null ? '' : k.ontrack_pct)}" type="number" min="0" max="200" step="1" placeholder="100" onchange="updateKpi(${idx}, 'ontrack_pct', this.value)" title="Minimum % of goal required for on-track. 100 = must hit goal. 95 = 95%+ is on-track. Blank = 100." style="text-align: right;" />
         <input class="inline-input" value="${escape(k.narrow_pct === '' || k.narrow_pct == null ? '' : k.narrow_pct)}" type="number" min="0" max="200" step="1" placeholder="92" onchange="updateKpi(${idx}, 'narrow_pct', this.value)" title="Minimum % of goal for narrow. Below = at-risk. Must be ≤ On-track. Revenue often 90; tight KPIs 95. Blank = 92." style="text-align: right;" />
         <input class="inline-input" value="${escape(k.owner)}" maxlength="60" onchange="updateKpi(${idx}, 'owner', this.value)" />
-        <div class="tier-toggle ${k.tier === 'leading' ? 'leading' : ''}" onclick="toggleTier(${idx})" title="Toggle: outcomes (lagging) vs drivers (leading)">
-          <span class="lead">lagging</span>
-          <span class="lag">leading</span>
-        </div>
         <button class="hide-btn ${isHidden ? 'is-on' : ''}" onclick="toggleHideKpi(${idx})" title="${hideTitle}">
           ${isHidden
             ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'

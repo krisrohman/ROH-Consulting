@@ -132,16 +132,21 @@ export default async (request) => {
     const body = await request.json().catch(() => ({}));
     const actor = body.actor || 'seed';
     const force = body.force === true;
-    const report = { kpis_added: 0, kpis_skipped: 0, sections_added: 0, sections_skipped: 0, settings_added: 0, targets_merged: 0, thresholds_merged: 0 };
+    const prune = body.prune === true;
+    const report = { kpis_added: 0, kpis_reactivated: 0, kpis_skipped: 0, kpis_pruned: 0,
+                     sections_added: 0, sections_skipped: 0,
+                     settings_added: 0, targets_merged: 0, thresholds_merged: 0 };
 
     // 0) KPIs — every row the scorecard and sheet expect. In merge mode,
-    //    skip KPIs that already have a row (so user edits survive). In
-    //    force mode, overwrite unit/owner/section/etc. back to the shipped
-    //    canonical config.
+    //    skip KPIs that already exist AND are active. Soft-deleted rows
+    //    get reactivated so accidentally-deleted canonical KPIs (e.g.
+    //    eNPS, Voluntary turnover) come back on next Seed without needing
+    //    a force-overwrite. Force mode resets everything canonical.
     for (let i = 0; i < KPIS.length; i++) {
       const k = KPIS[i];
-      const existing = await sql`SELECT kpi_name FROM kpis WHERE kpi_name = ${k.kpi_name}`;
-      if (existing.length && !force) {
+      const existing = await sql`SELECT active FROM kpis WHERE kpi_name = ${k.kpi_name}`;
+      const existsActive = existing.length && existing[0].active;
+      if (existsActive && !force) {
         report.kpis_skipped++;
         continue;
       }
@@ -161,8 +166,27 @@ export default async (request) => {
       if (!existing.length) {
         await audit(actor, 'kpi.seed', k.kpi_name, null, k);
         report.kpis_added++;
+      } else if (!existsActive) {
+        await audit(actor, 'kpi.reactivate', k.kpi_name, null, k);
+        report.kpis_reactivated++;
       } else {
         await audit(actor, 'kpi.seed-overwrite', k.kpi_name, null, k);
+      }
+    }
+
+    // 0b) Prune — soft-delete any active KPI whose name isn't in the
+    //     canonical list. Only runs when caller passes prune=true.
+    //     Use this to wipe junk test rows, duplicate renames, and
+    //     accumulated 'New KPI' leftovers in one shot.
+    if (prune) {
+      const canonicalNames = new Set(KPIS.map(k => k.kpi_name));
+      const activeRows = await sql`SELECT kpi_name FROM kpis WHERE active = TRUE`;
+      for (const row of activeRows) {
+        if (!canonicalNames.has(row.kpi_name)) {
+          await sql`UPDATE kpis SET active = FALSE WHERE kpi_name = ${row.kpi_name}`;
+          await audit(actor, 'kpi.prune', row.kpi_name, { kpi_name: row.kpi_name }, null);
+          report.kpis_pruned++;
+        }
       }
     }
 

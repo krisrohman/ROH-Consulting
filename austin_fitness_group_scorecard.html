@@ -1126,6 +1126,7 @@
     color: var(--ink-3);
     margin: 0;
     text-transform: uppercase;
+    display: none; /* dropped — redundant with the KPI name + section header */
   }
 
   /* Four-column comparison grid */
@@ -1292,6 +1293,10 @@
     border: none;
     border-radius: 2px;
   }
+  /* Collapse the middle column when we don't have weekly data to show
+     so the callout doesn't leave a big blank gap in the middle. */
+  .leading.no-weekly { grid-template-columns: 1fr auto; }
+  .leading.no-weekly .wks { display: none; }
   .leading-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .leading-text .row-goal { margin-top: 12px; }
   .leading .wks { margin-top: 0; }
@@ -2698,16 +2703,29 @@
       const wksEl = el.querySelector('.wks');
       if (!wksEl) return;
       const kpi = normalizeKpi(el.dataset.kpi || '');
-      const row = rowsByKpi[kpi];
+      const nameEl = el.querySelector('.leading-name');
+      const nameKpi = normalizeKpi(nameEl ? nameEl.textContent : '');
+
+      // Exact match first, then fuzzy: same normalized name, then any row
+      // whose name shares a word with data-kpi or the displayed name.
+      let row = rowsByKpi[kpi] || rowsByKpi[nameKpi];
       if (!row) {
-        wksEl.innerHTML = weekWindow.map(col => `
-          <div class="wk ${col === 'W' + currentWeekNum ? 'current' : ''}">
-            <p class="wk-label">${col.toLowerCase()}</p>
-            <p class="wk-val empty"><span class="empty">—</span></p>
-          </div>
-        `).join('');
+        row = rows.find(r => {
+          const rn = normalizeKpi(r.kpi);
+          return (kpi && (rn.includes(kpi) || kpi.includes(rn)))
+              || (nameKpi && (rn.includes(nameKpi) || nameKpi.includes(rn)));
+        });
+      }
+
+      if (!row) {
+        // No matching sheet row — collapse the weekly column so the
+        // callout doesn't leave a big empty middle.
+        wksEl.innerHTML = '';
+        el.classList.add('no-weekly');
         return;
       }
+      el.classList.remove('no-weekly');
+
       const unit = (row.config && row.config.unit) || 'count';
       wksEl.innerHTML = weekWindow.map(col => {
         const isCurrent = col === 'W' + currentWeekNum;

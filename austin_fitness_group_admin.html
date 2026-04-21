@@ -668,8 +668,8 @@
               <span>Math</span>
               <span>Goal dir</span>
               <span>Target</span>
-              <span title="How far below goal still counts as on track. 0 = must meet goal exactly. Default 0.">On-track %</span>
-              <span title="How far below goal counts as a narrow miss. Beyond this = at risk. Default 8.">Narrow %</span>
+              <span title="Minimum % of goal required for on-track. 100 = must hit goal. 95 = 95%+ is on-track. Default 100.">On-track %</span>
+              <span title="Minimum % of goal for narrow. Below this = at-risk. Must be ≤ On-track. Default 92.">Narrow %</span>
               <span>Owner</span>
               <span>Tier</span>
               <span></span>
@@ -1514,8 +1514,8 @@
           <option value="lower"  ${goalDir === 'lower'  ? 'selected' : ''}>lower ↓</option>
         </select>
         <input class="inline-input" value="${escape(k.target || '')}" maxlength="40" placeholder="e.g. >50% or <$170" onchange="updateKpi(${idx}, 'target', this.value)" title="Target value shown on the scorecard (free-form, e.g. >50%, <$170, +12 by EOY)" />
-        <input class="inline-input" value="${escape(k.ontrack_pct === '' || k.ontrack_pct == null ? '' : k.ontrack_pct)}" type="number" min="0" max="100" step="0.5" placeholder="0" onchange="updateKpi(${idx}, 'ontrack_pct', this.value)" title="How far below goal still counts as on track. 0 = must meet goal exactly. Blank = default 0." style="text-align: right;" />
-        <input class="inline-input" value="${escape(k.narrow_pct === '' || k.narrow_pct == null ? '' : k.narrow_pct)}" type="number" min="0" max="100" step="0.5" placeholder="8" onchange="updateKpi(${idx}, 'narrow_pct', this.value)" title="How far below goal counts as a narrow miss. Must be ≥ On-track %. Blank = default 8. Revenue often uses 10; tight KPIs like Intro close often use 5." style="text-align: right;" />
+        <input class="inline-input" value="${escape(k.ontrack_pct === '' || k.ontrack_pct == null ? '' : k.ontrack_pct)}" type="number" min="0" max="200" step="1" placeholder="100" onchange="updateKpi(${idx}, 'ontrack_pct', this.value)" title="Minimum % of goal required for on-track. 100 = must hit goal. 95 = 95%+ is on-track. Blank = 100." style="text-align: right;" />
+        <input class="inline-input" value="${escape(k.narrow_pct === '' || k.narrow_pct == null ? '' : k.narrow_pct)}" type="number" min="0" max="200" step="1" placeholder="92" onchange="updateKpi(${idx}, 'narrow_pct', this.value)" title="Minimum % of goal for narrow. Below = at-risk. Must be ≤ On-track. Revenue often 90; tight KPIs 95. Blank = 92." style="text-align: right;" />
         <input class="inline-input" value="${escape(k.owner)}" maxlength="60" onchange="updateKpi(${idx}, 'owner', this.value)" />
         <div class="tier-toggle ${k.tier === 'leading' ? 'leading' : ''}" onclick="toggleTier(${idx})" title="Toggle: outcomes (lagging) vs drivers (leading)">
           <span class="lead">lagging</span>
@@ -1554,23 +1554,28 @@
 
   function updateKpi(idx, field, value) {
     if (field === 'narrow_pct' || field === 'ontrack_pct') {
-      // Keep as string so '' means "clear / use default" — don't coerce
-      // blank to 0. Enforce the 0..100 range on input. Also guard that
-      // ontrack_pct never exceeds narrow_pct (silently clamps).
+      // Both fields = 'minimum % of goal'. Keep as string so '' = "use
+      // scorecard default" (100 for on-track, 92 for narrow). Range 0..200
+      // so someone can set an over-attainment definition > 100 if needed.
       const raw = String(value == null ? '' : value).trim();
       if (raw === '') { kpis[idx][field] = ''; }
       else {
         const n = Number(raw);
-        if (!Number.isNaN(n) && n >= 0 && n <= 100) kpis[idx][field] = String(n);
+        if (!Number.isNaN(n) && n >= 0 && n <= 200) kpis[idx][field] = String(n);
       }
-      // Cross-validate: on-track tolerance can't exceed narrow tolerance
-      const ontrack = Number(kpis[idx].ontrack_pct);
-      const narrow  = Number(kpis[idx].narrow_pct);
-      if (!Number.isNaN(ontrack) && !Number.isNaN(narrow) && ontrack > narrow) {
-        // Clamp the one the user just edited
-        if (field === 'ontrack_pct') kpis[idx].ontrack_pct = String(narrow);
-        else kpis[idx].narrow_pct = String(ontrack);
-        renderKpis();
+      // Cross-validate: narrow must be ≤ ontrack (narrow is the lower
+      // floor). If the row now violates that, clamp the field the user
+      // just edited to restore the invariant.
+      const ontrackStr = kpis[idx].ontrack_pct;
+      const narrowStr  = kpis[idx].narrow_pct;
+      if (ontrackStr !== '' && narrowStr !== '') {
+        const ontrack = Number(ontrackStr);
+        const narrow  = Number(narrowStr);
+        if (!Number.isNaN(ontrack) && !Number.isNaN(narrow) && narrow > ontrack) {
+          if (field === 'ontrack_pct') kpis[idx].ontrack_pct = String(narrow);
+          else kpis[idx].narrow_pct = String(ontrack);
+          renderKpis();
+        }
       }
       markDirty();
       return;

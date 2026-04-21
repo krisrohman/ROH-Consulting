@@ -1830,15 +1830,21 @@
     return m ? parseFloat(m[0]) : null;
   }
 
+  // On-track % and Narrow % are both expressed as 'minimum % of goal'
+  // the actual must reach to qualify for that band.
+  //   on-track default: 100 (must meet goal)
+  //   narrow default:    92 (within 8% of goal)
+  //   at-risk:           below narrow
+  // narrow must be ≤ ontrack (narrow is the lower floor).
   function computeStatus(value, target, lowerIsBetter, narrowPct, ontrackPct) {
     if (typeof value !== 'number' || typeof target !== 'number') return 'unknown';
-    const narrow = (typeof narrowPct === 'number' && narrowPct >= 0 && narrowPct <= 100)
-      ? narrowPct : 8;
-    let ontrack = (typeof ontrackPct === 'number' && ontrackPct >= 0 && ontrackPct <= 100)
-      ? ontrackPct : 0;
-    if (ontrack > narrow) ontrack = narrow; // guard — on-track tolerance can't exceed narrow tolerance
-    const onTrackFloor = 1 - (ontrack / 100);
-    const narrowFloor  = 1 - (narrow  / 100);
+    let ontrack = (typeof ontrackPct === 'number' && ontrackPct >= 0 && ontrackPct <= 200)
+      ? ontrackPct : 100;
+    let narrow  = (typeof narrowPct  === 'number' && narrowPct  >= 0 && narrowPct  <= 200)
+      ? narrowPct  : 92;
+    if (narrow > ontrack) narrow = ontrack;
+    const onTrackFloor = ontrack / 100;
+    const narrowFloor  = narrow  / 100;
     if (target === 0) {
       if (lowerIsBetter) return value <= 0 ? 'on-track' : 'at-risk';
       if (value > 0)    return 'on-track';

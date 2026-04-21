@@ -584,42 +584,110 @@
     animation: pulse 2s ease-in-out infinite;
   }
 
-  /* Status ribbon — inline editorial headline */
+  /* Section-level lagging outcome — weekly tracker (sits between
+     section header and the leading-drivers list). Mirrors the editorial
+     North-Star treatment but at section scope and weekly cadence. */
+  .section-lag {
+    background: #f4ede0;
+    border-radius: 4px;
+    padding: 18px 22px;
+    margin: 0 0 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+  .section-lag-head { flex: 1 1 240px; min-width: 0; }
+  .lag-tag {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--coral-600);
+    font-weight: 500;
+    margin: 0 0 4px;
+    font-family: var(--sans);
+  }
+  .lag-name {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .lag-stats {
+    display: flex;
+    gap: 32px;
+    align-items: baseline;
+  }
+  .lag-stat { text-align: right; }
+  .lag-label {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0 0 4px;
+    font-weight: 500;
+  }
+  .lag-val {
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  @media (max-width: 640px) {
+    .section-lag { padding: 14px 16px; gap: 14px; }
+    .lag-stats { gap: 18px; width: 100%; justify-content: space-between; }
+    .lag-val { font-size: 24px; }
+  }
+
+  /* Status legend — compact key showing what each row dot means */
   .ribbon {
     display: flex;
-    align-items: baseline;
-    justify-content: space-around;
-    gap: 24px;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 22px;
     flex-wrap: wrap;
+    padding: 12px 0 14px;
+    margin: 0 0 1.25rem;
     border-bottom: 0.5px solid var(--rule);
-    padding: 32px 0;
-    margin: 0 0 2rem;
   }
   .ribbon-cell {
-    display: flex;
-    align-items: baseline;
-    gap: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     padding: 0;
     border-right: 0;
   }
+  .ribbon-cell::before {
+    content: '';
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+  }
   .ribbon-label {
-    font-size: 11px;
-    letter-spacing: 0.22em;
+    font-size: 10px;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    font-weight: 600;
+    font-weight: 500;
     margin: 0;
+    font-family: var(--sans);
   }
   .ribbon-num {
     font-family: var(--serif);
-    font-size: 48px;
+    font-size: 13px;
     font-weight: 500;
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
     margin: 0;
+    font-variant-numeric: tabular-nums;
   }
-  .ribbon-sub {
-    display: none;
-  }
+  .ribbon-sub { display: none; }
 
   /* North Star feature */
   /* North Star — editorial feature */
@@ -1056,39 +1124,47 @@
   .wk.current .wk-val { color: var(--coral-700); font-weight: 500; }
 
   /* Right-column: trend percentage + goal subtitle */
-  .row-trend {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 3px;
+  /* Trend (and percent) hidden by request — left-side Goal carries the
+     "what we're aiming at" message instead. CSS keeps the JS logic intact
+     so we can flip it back on later without touching markup. */
+  .row-trend { display: none; }
+  .row-trend-label, .trend-pct { display: none; }
+  .row-goal {
+    display: block;
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    margin: 6px 0 0;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
   }
-  .row-trend-label {
+  .row-goal::before {
+    content: 'Goal ';
+    font-family: var(--sans);
     font-size: 9px;
     letter-spacing: 0.22em;
-    color: var(--ink-3);
     text-transform: uppercase;
-    font-family: var(--sans);
-    margin: 0 0 2px;
-  }
-  .trend-pct {
-    font-family: var(--serif);
-    font-size: 16px;
+    color: var(--ink-3);
     font-weight: 500;
-    line-height: 1;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em;
+    display: block;
+    margin-bottom: 2px;
   }
-  .trend-pct.up   { color: var(--teal-700); }
-  .trend-pct.down { color: var(--red-700); }
-  .trend-pct.flat { color: var(--ink-3); opacity: 0.55; font-weight: 400; }
-  .trend-pct.up.inverted   { color: var(--red-700); }
-  .trend-pct.down.inverted { color: var(--teal-700); }
-  .row-goal {
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    color: var(--ink-3);
-    text-transform: uppercase;
-    font-family: var(--sans);
+
+  /* Per-row status: a small filled dot instead of a verbose pill.
+     Hovering / tap shows the full status (title attr is added by JS). */
+  .pill {
+    display: inline-block;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: currentColor !important;
+    border: none !important;
+    text-indent: -9999px;
+    overflow: hidden;
+    vertical-align: middle;
+    padding: 0 !important;
+    flex: 0 0 auto;
   }
 
   /* Leading metric callout (between section header and driver rows) */
@@ -1381,6 +1457,28 @@
     </div>
     <div class="section-owner">
       <span>Chris &middot; sales ops</span>
+    </div>
+  </div>
+
+  <!-- Lagging outcome · weekly tracker -->
+  <div class="section-lag" id="mg-lag" data-section-key="Member growth">
+    <div class="section-lag-head">
+      <p class="lag-tag">lagging outcome &middot; weekly</p>
+      <p class="lag-name">Net recurring members / studio</p>
+    </div>
+    <div class="lag-stats">
+      <div class="lag-stat">
+        <p class="lag-label">Week to date</p>
+        <div class="lag-val" id="mg-lag-wtd">+3</div>
+      </div>
+      <div class="lag-stat">
+        <p class="lag-label">Last 4 weeks</p>
+        <div class="lag-val" id="mg-lag-4w">+11</div>
+      </div>
+      <div class="lag-stat">
+        <p class="lag-label">Year to date</p>
+        <div class="lag-val" id="mg-lag-ytd">+14</div>
+      </div>
     </div>
   </div>
 
@@ -2396,55 +2494,29 @@
         }).join('');
       }
 
-      // Right-column: 4-week percent change + goal subtitle
-      const rightCol = rowEl.children[rowEl.children.length - 1];
-      if (rightCol) {
-        const goalDir = d.goal_direction || 'higher';
+      // Goal display: prefer the per-KPI target string from settings.kpi_targets
+      // (e.g. ">50%", "<$170"). Fall back to the numeric monthly target.
+      const settingsTargets = (data.settings && data.settings.kpi_targets) || {};
+      let kpiTargetMap = {};
+      if (typeof settingsTargets === 'string') {
+        try { kpiTargetMap = JSON.parse(settingsTargets) || {}; } catch (_) { kpiTargetMap = {}; }
+      } else {
+        kpiTargetMap = settingsTargets || {};
+      }
+      const goalText = kpiTargetMap[d.kpi]
+        || ((d.target !== undefined && d.target !== null && d.target !== '')
+              ? formatVal(d.target, d.unit) : null);
 
-        // Walk backwards from current week, collect last 4 weeks with data
-        const recent = [];
-        if (d.weekly) {
-          for (let wn = currentWeekNum; wn >= 1 && recent.length < 4; wn--) {
-            const v = d.weekly['W' + wn];
-            if (typeof v === 'number') recent.push(v); // recent[0] = newest
-          }
+      // Left-side prominent goal: insert/update inside the metric cell
+      const leftCol = rowEl.children[0];
+      if (leftCol && goalText) {
+        let goalEl = leftCol.querySelector('.row-goal');
+        if (!goalEl) {
+          goalEl = document.createElement('p');
+          goalEl.className = 'row-goal';
+          leftCol.appendChild(goalEl);
         }
-
-        let pctText = '—';
-        let direction = 'flat';
-        if (recent.length >= 2) {
-          const newest = recent[0];
-          const oldest = recent[recent.length - 1];
-          if (oldest !== 0) {
-            const pctChange = ((newest - oldest) / Math.abs(oldest)) * 100;
-            // Flat threshold: < 1% magnitude (real-world ops metrics move in small amounts)
-            if (Math.abs(pctChange) < 1) {
-              direction = 'flat';
-              pctText = '±0%';
-            } else {
-              direction = pctChange > 0 ? 'up' : 'down';
-              const sign = pctChange > 0 ? '+' : '−';
-              pctText = sign + Math.abs(pctChange).toFixed(1) + '%';
-            }
-          } else if (newest !== 0) {
-            // Edge case: baseline zero → show direction without %
-            direction = newest > 0 ? 'up' : 'down';
-            pctText = (newest > 0 ? '+' : '−') + Math.abs(newest).toFixed(0);
-          }
-        }
-
-        const invertedClass = (goalDir === 'lower') ? 'inverted' : '';
-        const goalVal = (d.target !== undefined && d.target !== null && d.target !== '')
-          ? formatVal(d.target, d.unit)
-          : null;
-
-        rightCol.innerHTML = `
-          <div class="row-trend">
-            <p class="row-trend-label">trend</p>
-            <div class="trend-pct ${direction} ${invertedClass}">${pctText}</div>
-            ${goalVal ? `<p class="row-goal">goal ${goalVal}</p>` : ''}
-          </div>
-        `;
+        goalEl.textContent = goalText;
       }
     });
 

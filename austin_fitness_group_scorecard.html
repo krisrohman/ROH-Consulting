@@ -671,11 +671,14 @@
     content: '';
     width: 8px; height: 8px;
     border-radius: 50%;
-    background: currentColor;
+    background: var(--ink-3);
     display: inline-block;
     flex: 0 0 auto;
     transform: translateY(-1px);
   }
+  .ribbon-cell.cell-risk::before   { background: var(--red-400); }
+  .ribbon-cell.cell-narrow::before { background: var(--amber-400); }
+  .ribbon-cell.cell-ok::before     { background: var(--teal-400); }
   .ribbon-label {
     font-size: 10px;
     letter-spacing: 0.22em;
@@ -1222,17 +1225,17 @@
      so we can flip it back on later without touching markup. */
   .row-trend { display: none; }
   .row-trend-label, .trend-pct { display: none; }
-  /* Goal — prominent but neutral (was coral; too much orange competing
-     with the brand accents elsewhere). Using ink + bold instead. */
+  /* Goal — sized down so it sits BELOW the metric name in hierarchy
+     (metric name is 16px serif 500; goal now 13px serif 500). */
   .row-goal {
     display: block;
     font-family: var(--serif);
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--ink);
-    letter-spacing: -0.01em;
-    margin: 6px 0 0;
-    line-height: 1.1;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-2);
+    letter-spacing: -0.005em;
+    margin: 10px 0 0;
+    line-height: 1.2;
     font-variant-numeric: tabular-nums;
   }
   .row-goal::before {
@@ -1245,9 +1248,8 @@
     font-weight: 500;
     display: block;
     margin-bottom: 2px;
-    letter-spacing: 0.22em;
   }
-  .row-goal .pct { font-size: 13px; font-weight: 500; color: var(--ink-2); }
+  .row-goal .pct { font-size: 11px; font-weight: 500; color: var(--ink-3); }
 
   /* Per-row status: a small filled dot instead of a verbose pill.
      Hovering / tap shows the full status (title attr is added by JS). */
@@ -1270,27 +1272,30 @@
   .pill[style*="--teal"]  { background: var(--teal-400)  !important; }
 
   /* Leading metric callout (between section header and driver rows) */
-  /* Lagging outcome callout — quiet inline line, no card chrome.
-     Reads as editorial furniture between the section head and the
-     drivers label, not a boxed UI component. */
+  /* Lagging outcome callout — structurally mirrors a driver row:
+     [text block (tag + name + sub + goal)] [big actual] [status dot]
+     so Goal sits on the left in both rows and lagging outcomes. */
   .leading {
     display: grid;
-    grid-template-columns: auto 1fr auto auto;
+    grid-template-columns: 1fr auto auto;
     gap: 24px;
-    align-items: baseline;
-    padding: 14px 0 16px;
+    align-items: center;
+    padding: 14px 0 18px;
     margin: 0;
     background: transparent;
     border: none;
     border-radius: 0;
   }
+  .leading-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .leading-text .row-goal { margin-top: 10px; }
   .leading-tag {
     font-size: 9px;
-    letter-spacing: 0.26em;
+    letter-spacing: 0.24em;
     color: var(--ink-3);
     text-transform: uppercase;
     font-weight: 500;
     white-space: nowrap;
+    margin: 0 0 4px;
   }
   .leading-name {
     font-family: var(--serif);
@@ -1491,17 +1496,17 @@
 
     <!-- Status legend anchored to the masthead as a nameplate closer -->
     <div class="ribbon" role="list" aria-label="KPI status summary">
-      <div class="ribbon-cell" style="color: var(--red-400);" role="listitem">
+      <div class="ribbon-cell cell-risk" role="listitem">
         <span class="ribbon-label" style="color: var(--red-600);">at risk</span>
         <span class="ribbon-num" style="color: var(--red-600);">1</span>
         <span class="ribbon-sub">requires intervention</span>
       </div>
-      <div class="ribbon-cell" style="color: var(--amber-400);" role="listitem">
+      <div class="ribbon-cell cell-narrow" role="listitem">
         <span class="ribbon-label" style="color: var(--amber-600);">narrow</span>
         <span class="ribbon-num" style="color: var(--amber-600);">4</span>
         <span class="ribbon-sub">close, but not there</span>
       </div>
-      <div class="ribbon-cell" style="color: var(--teal-400);" role="listitem">
+      <div class="ribbon-cell cell-ok" role="listitem">
         <span class="ribbon-label" style="color: var(--teal-600);">on track</span>
         <span class="ribbon-num" style="color: var(--teal-600);">9</span>
         <span class="ribbon-sub">meeting the mark</span>
@@ -1566,15 +1571,13 @@
 
   <!-- Lagging outcome — same layout as Member engagement -->
   <div class="leading" data-section-key="Member growth">
-    <span class="leading-tag">lagging &middot; outcome</span>
-    <div>
+    <div class="leading-text">
+      <span class="leading-tag">lagging &middot; outcome</span>
       <div class="leading-name">Net recurring members / studio</div>
       <div class="leading-sub">Net weekly change in recurring members per studio.</div>
+      <p class="row-goal">+12 by EOY</p>
     </div>
-    <div class="leading-va">
-      <span class="leading-target">target <strong>+12 by EOY</strong></span>
-      <span class="leading-actual" id="mg-lag-actual" style="color: var(--teal-600);">+3</span>
-    </div>
+    <span class="leading-actual" id="mg-lag-actual" style="color: var(--teal-600);">+3</span>
     <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
   </div>
 
@@ -1716,15 +1719,13 @@
     </div>
   </div>
   <div class="leading">
-    <span class="leading-tag">lagging · outcome</span>
-    <div>
+    <div class="leading-text">
+      <span class="leading-tag">lagging · outcome</span>
       <div class="leading-name">Workouts per member, per week</div>
       <div class="leading-sub">The outcome members feel — driven by HRM usage, retention, and engagement below.</div>
+      <p class="row-goal">&gt; 1.5×</p>
     </div>
-    <div class="leading-va">
-      <span class="leading-target">target <strong>&gt; 1.5×</strong></span>
-      <span class="leading-actual" style="color: var(--teal-600);">1.58×</span>
-    </div>
+    <span class="leading-actual" style="color: var(--teal-600);">1.58×</span>
     <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
   </div>
 
@@ -1866,15 +1867,13 @@
     </div>
   </div>
   <div class="leading">
-    <span class="leading-tag">lagging · outcome</span>
-    <div>
+    <div class="leading-text">
+      <span class="leading-tag">lagging · outcome</span>
       <div class="leading-name">PSA leads, year-over-year</div>
       <div class="leading-sub">The top-of-funnel signal — driven by cost efficiency below.</div>
+      <p class="row-goal">&gt; +0%</p>
     </div>
-    <div class="leading-va">
-      <span class="leading-target">target <strong>&gt; +0%</strong></span>
-      <span class="leading-actual" style="color: var(--teal-600);">+8.4%</span>
-    </div>
+    <span class="leading-actual" style="color: var(--teal-600);">+8.4%</span>
     <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
   </div>
 
@@ -1954,15 +1953,13 @@
     </div>
   </div>
   <div class="leading">
-    <span class="leading-tag">lagging · outcome</span>
-    <div>
+    <div class="leading-text">
+      <span class="leading-tag">lagging · outcome</span>
       <div class="leading-name">Capex program completion</div>
       <div class="leading-sub">Combined studio + treadmill refreshes on annual plan.</div>
+      <p class="row-goal">53 total</p>
     </div>
-    <div class="leading-va">
-      <span class="leading-target">target <strong>53 total</strong></span>
-      <span class="leading-actual" style="color: var(--teal-600);">14 / 53</span>
-    </div>
+    <span class="leading-actual" style="color: var(--teal-600);">14 / 53</span>
     <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">26% · on pace</span>
   </div>
 
@@ -2042,15 +2039,13 @@
     </div>
   </div>
   <div class="leading">
-    <span class="leading-tag">lagging · outcome</span>
-    <div>
+    <div class="leading-text">
+      <span class="leading-tag">lagging · outcome</span>
       <div class="leading-name">Glassdoor rating</div>
       <div class="leading-sub">Employer-brand outcome — driven by growth and culture inputs below.</div>
+      <p class="row-goal">&gt; 3.5</p>
     </div>
-    <div class="leading-va">
-      <span class="leading-target">target <strong>&gt; 3.5</strong></span>
-      <span class="leading-actual" style="color: var(--teal-600);">3.7</span>
-    </div>
+    <span class="leading-actual" style="color: var(--teal-600);">3.7</span>
     <span class="pill" style="color: var(--teal-800); border-color: var(--teal-400); background: var(--teal-50);">on track</span>
   </div>
 

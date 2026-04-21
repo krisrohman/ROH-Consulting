@@ -151,12 +151,15 @@
   }
 
   .page {
-    max-width: 1440px;
+    max-width: calc(100vw - 48px);
     margin: 20px auto 24px;
     padding: 1.75rem 3rem 2rem;
     background: var(--paper);
     border-top: 4px solid var(--coral-400);
     box-shadow: 0 4px 40px rgba(0,0,0,0.06);
+  }
+  @media (min-width: 1800px) {
+    .page { max-width: 1760px; }
   }
 
   /* Control bar */

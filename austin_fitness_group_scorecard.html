@@ -507,8 +507,9 @@
   .ns-panel {
     position: relative;
     background: #eadfc6;
-    border-radius: 3px;
-    padding: 32px 44px 40px;
+    border-radius: 0;
+    border-top: 1.5px solid var(--ink);
+    padding: 28px 44px 40px;
     margin: 0;
     display: grid;
     grid-template-columns: minmax(0, 1.5fr) minmax(220px, 1fr);
@@ -731,9 +732,11 @@
   .ns-track-meta {
     font-family: var(--serif);
     font-style: italic;
-    font-size: 13px;
-    color: var(--ink-2);
-    letter-spacing: -0.005em;
+    font-size: 16px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    margin: 0;
+    line-height: 1.3;
   }
 
   /* ─── 5. Revenue strap — compact horizontal marquee ─── */
@@ -948,23 +951,28 @@
   }
 
   /* The lagging outcome panel (left col) */
+  /* Lagging outcome callout — paper editorial pull, not a card.
+     Coral rule on the left does the visual identification; a top hairline
+     ties it to the section. No background, no rounded corners. */
   .leading {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    background: #eadfc6;
-    padding: 22px 24px 24px;
-    border-radius: 3px;
+    gap: 10px;
+    background: transparent;
+    padding: 16px 22px 18px;
+    border-top: 0.5px solid var(--rule);
+    border-bottom: 0.5px solid var(--rule);
     border-left: 3px solid var(--coral-400);
+    border-radius: 0;
     margin: 0;
   }
   /* Status dot sits at the top-right of the panel, level with the kicker —
      it's a header-level indicator, not a trailing afterthought. */
   .leading > .pill {
     position: absolute;
-    top: 22px;
-    right: 22px;
+    top: 18px;
+    right: 18px;
     margin: 0;
   }
   .leading-tag {
@@ -1344,7 +1352,6 @@
         </div>
         <div>
           <p class="ns-side-stat-label">trajectory</p>
-          <div class="ns-track-bar"><span style="width: 100%;"></span></div>
           <p class="ns-track-meta">YTD exceeds EOY target</p>
         </div>
       </div>

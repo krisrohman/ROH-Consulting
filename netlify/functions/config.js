@@ -11,6 +11,22 @@
 import { neon } from '@netlify/neon';
 const sql = neon();
 
+// Defense-in-depth input caps. The admin UI enforces these too,
+// but we validate server-side so scripted / malicious clients can't sneak past.
+const LIMITS = {
+  kpi_name: 100,
+  section: 80,
+  unit: 20,
+  owner: 60,
+  department: 80,
+  tier: 20,
+};
+
+function cleanString(v, max) {
+  if (v == null) return '';
+  return String(v).trim().slice(0, max);
+}
+
 export default async (request) => {
   const method = request.method;
   const url = new URL(request.url);
@@ -30,19 +46,45 @@ export default async (request) => {
       const actor = body.actor || 'unknown';
       const incoming = body.kpis || [];
 
+      // Validate and normalize every KPI before touching the DB. Reject the whole
+      // batch if any row is invalid — partial saves are worse than no save.
+      const cleaned = [];
+      const seenNames = new Set();
+      for (let i = 0; i < incoming.length; i++) {
+        const raw = incoming[i] || {};
+        const name = cleanString(raw.kpi_name, LIMITS.kpi_name);
+        if (!name) {
+          return json({ ok: false, error: `KPI name is required (row ${i + 1})` }, 400);
+        }
+        const nameKey = name.toLowerCase();
+        if (seenNames.has(nameKey)) {
+          return json({ ok: false, error: `Duplicate KPI name: "${name}"` }, 400);
+        }
+        seenNames.add(nameKey);
+
+        cleaned.push({
+          kpi_name: name,
+          section: cleanString(raw.section, LIMITS.section),
+          unit: cleanString(raw.unit, LIMITS.unit),
+          owner: cleanString(raw.owner, LIMITS.owner),
+          department: cleanString(raw.department, LIMITS.department),
+          tier: cleanString(raw.tier, LIMITS.tier) || 'lagging',
+          math_type: ['sum','avg','latest'].includes(raw.math_type) ? raw.math_type : 'avg',
+          goal_direction: ['higher','lower'].includes(raw.goal_direction) ? raw.goal_direction : 'higher',
+        });
+      }
+
       // Fetch current state for diffing
       const current = await sql`SELECT * FROM kpis WHERE active = TRUE`;
       const currentByName = Object.fromEntries(current.map(r => [r.kpi_name, r]));
-      const incomingByName = Object.fromEntries(incoming.map(r => [r.kpi_name, r]));
+      const incomingByName = Object.fromEntries(cleaned.map(r => [r.kpi_name, r]));
 
       // Upsert incoming rows
-      for (let i = 0; i < incoming.length; i++) {
-        const k = incoming[i];
+      for (let i = 0; i < cleaned.length; i++) {
+        const k = cleaned[i];
         const before = currentByName[k.kpi_name] || null;
-
-        // Validate math_type and goal_direction
-        const mathType = ['sum','avg','latest'].includes(k.math_type) ? k.math_type : 'avg';
-        const goalDir  = ['higher','lower'].includes(k.goal_direction) ? k.goal_direction : 'higher';
+        const mathType = k.math_type;
+        const goalDir  = k.goal_direction;
 
         await sql`
           INSERT INTO kpis (kpi_name, section, unit, owner, department, tier, math_type, goal_direction, sort_order)
@@ -73,7 +115,7 @@ export default async (request) => {
         }
       }
 
-      return json({ ok: true, count: incoming.length });
+      return json({ ok: true, count: cleaned.length });
     }
 
     if (method === 'PATCH') {

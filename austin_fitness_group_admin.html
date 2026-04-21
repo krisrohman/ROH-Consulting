@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AFG Dashboard — Admin</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23D85A30'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='500' text-anchor='middle' fill='%23fff'%3EA%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
@@ -436,6 +437,35 @@
     font-family: var(--serif); font-style: italic;
     display: flex; align-items: center; gap: 8px;
   }
+
+  /* Toast notifications */
+  .toast-container {
+    position: fixed; bottom: 90px; right: 20px;
+    display: flex; flex-direction: column; gap: 8px;
+    z-index: 9999; pointer-events: none;
+  }
+  .toast {
+    min-width: 220px; max-width: 360px;
+    background: var(--ink); color: #fff;
+    font-family: var(--serif); font-size: 13px;
+    padding: 12px 16px; border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 180ms ease, transform 180ms ease;
+    pointer-events: auto;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.success { background: var(--teal-800, #0b5f56); }
+  .toast.error   { background: var(--red-600, #c03030); }
+  .toast.warn    { background: #9a6611; }
+
+  /* Inline hint under a field */
+  .field-hint {
+    font-size: 11px; color: var(--amber-600, #a06a0c);
+    font-style: italic; margin-top: 6px;
+    display: none;
+  }
+  .field-hint.show { display: block; }
 </style>
 </head>
 <body>
@@ -593,7 +623,7 @@
                 <span class="sub">shown in the hero</span>
               </div>
               <div class="field-control">
-                <input class="input" id="set-title" value="Austin Fitness Group" />
+                <input class="input" id="set-title" value="Austin Fitness Group" maxlength="80" />
               </div>
 
               <div class="field-label">
@@ -601,7 +631,7 @@
                 <span class="sub">used throughout</span>
               </div>
               <div class="field-control">
-                <input class="input" id="set-fy" value="FY 2026" style="min-width: 140px;" />
+                <input class="input" id="set-fy" value="FY 2026" maxlength="20" style="min-width: 140px;" />
               </div>
 
               <div class="field-label">
@@ -610,7 +640,7 @@
               </div>
               <div class="field-control">
                 <input type="color" class="color-chip" id="set-color-picker" value="#D85A30" />
-                <input class="input" id="set-color" value="#D85A30" style="min-width: 140px; font-family: var(--serif); font-variant-numeric: tabular-nums;" />
+                <input class="input" id="set-color" value="#D85A30" maxlength="7" pattern="#[0-9A-Fa-f]{6}" style="min-width: 140px; font-family: var(--serif); font-variant-numeric: tabular-nums;" />
                 <span style="font-size: 11px; color: var(--ink-3); font-style: italic;">AFG orange by default</span>
               </div>
 
@@ -619,7 +649,7 @@
                 <span class="sub">appears under the dashboard title</span>
               </div>
               <div class="field-control">
-                <input class="input" id="set-hero-tagline" value="High standards. Relentless execution. No shortcuts." style="min-width: 100%; width: 100%; font-family: var(--serif);" />
+                <input class="input" id="set-hero-tagline" value="High standards. Relentless execution. No shortcuts." maxlength="200" style="min-width: 100%; width: 100%; font-family: var(--serif);" />
               </div>
             </div>
           </div>
@@ -652,7 +682,8 @@
                 <span class="sub">the line above the three numbers</span>
               </div>
               <div class="field-control">
-                <input class="input" id="ns-headline" value="Net recurring members per studio, on average." style="min-width: 100%; width: 100%; font-family: var(--serif);" />
+                <input class="input" id="ns-headline" value="Net recurring members per studio, on average." maxlength="200" style="min-width: 100%; width: 100%; font-family: var(--serif);" />
+                <p id="ns-stale-hint" class="field-hint">Heads up — you just changed the North Star KPI. Update Headline, Target, and Projection to match the new KPI before saving.</p>
               </div>
 
               <div class="field-label">
@@ -660,7 +691,7 @@
                 <span class="sub">shown on the north star card</span>
               </div>
               <div class="field-control">
-                <input class="input" id="ns-target" value="12" style="min-width: 140px; font-family: var(--serif); font-variant-numeric: tabular-nums;" />
+                <input class="input" id="ns-target" value="12" maxlength="20" inputmode="decimal" style="min-width: 140px; font-family: var(--serif); font-variant-numeric: tabular-nums;" />
               </div>
 
               <div class="field-label">
@@ -668,7 +699,7 @@
                 <span class="sub">overridden if calculated automatically</span>
               </div>
               <div class="field-control">
-                <input class="input" id="ns-projection" value="24" style="min-width: 140px; font-family: var(--serif); font-variant-numeric: tabular-nums;" />
+                <input class="input" id="ns-projection" value="24" maxlength="20" inputmode="decimal" style="min-width: 140px; font-family: var(--serif); font-variant-numeric: tabular-nums;" />
                 <label style="font-size: 12px; color: var(--ink-2); display: flex; align-items: center; gap: 6px;">
                   <input type="checkbox" id="ns-auto" checked />
                   calculate automatically from MTD run rate
@@ -695,9 +726,9 @@
                 <span class="sub">apps script endpoint</span>
               </div>
               <div class="field-control" style="flex-direction: column; align-items: stretch; gap: 8px;">
-                <input class="input" id="sheet-url" placeholder="https://script.google.com/macros/s/XXXXX/exec" style="min-width: 100%; width: 100%; font-family: var(--serif); font-size: 12px; font-variant-numeric: tabular-nums;" />
+                <input class="input" id="sheet-url" placeholder="https://script.google.com/macros/s/XXXXX/exec" maxlength="500" style="min-width: 100%; width: 100%; font-family: var(--serif); font-size: 12px; font-variant-numeric: tabular-nums;" />
                 <div style="display: flex; gap: 8px;">
-                  <button class="btn ghost" onclick="navigator.clipboard.writeText(document.getElementById('sheet-url').value)">Copy URL</button>
+                  <button class="btn ghost" onclick="copySheetUrl()">Copy URL</button>
                   <span style="font-size: 11px; font-style: italic; color: var(--ink-3); align-self: center;">Connection status shown at top of page.</span>
                 </div>
               </div>
@@ -715,7 +746,7 @@
                 <span class="sub">read-only</span>
               </div>
               <div class="field-control">
-                <span style="font-family: var(--serif); font-style: italic; font-size: 13px; color: var(--ink-2);">Apr 17, 9:05 a.m. &middot; 19 KPIs loaded</span>
+                <span id="sync-time-admin" style="font-family: var(--serif); font-style: italic; font-size: 13px; color: var(--ink-2);">Checking…</span>
               </div>
             </div>
           </div>
@@ -739,11 +770,11 @@
             <div style="display: flex; gap: 8px; align-items: flex-end; padding-top: 10px; border-top: 0.5px solid var(--rule);">
               <div style="flex: 2;">
                 <div class="field-label" style="margin-bottom: 4px;">Email</div>
-                <input class="input" id="new-user-email" placeholder="name@company.com" style="width: 100%;" />
+                <input class="input" id="new-user-email" placeholder="name@company.com" maxlength="120" type="email" style="width: 100%;" />
               </div>
               <div style="flex: 1.5;">
                 <div class="field-label" style="margin-bottom: 4px;">Name</div>
-                <input class="input" id="new-user-name" placeholder="Full name" style="width: 100%;" />
+                <input class="input" id="new-user-name" placeholder="Full name" maxlength="80" style="width: 100%;" />
               </div>
               <div style="flex: 1;">
                 <div class="field-label" style="margin-bottom: 4px;">Role</div>
@@ -770,7 +801,7 @@
               <h2 class="panel-title">Audit log</h2>
               <p class="panel-sub">Recent changes to the dashboard configuration.</p>
             </div>
-            <button class="btn ghost">Export CSV</button>
+            <button class="btn ghost" onclick="exportAuditCsv()">Export CSV</button>
           </div>
           <div class="panel-body" style="padding: 0 8px;">
             <div class="audit-row">
@@ -804,6 +835,9 @@
 
     </div>
   </div>
+
+  <!-- Toast container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
   <!-- Bottom save bar -->
   <div class="savebar">
@@ -872,6 +906,41 @@
   };
 
   let isDirty = false;
+
+  // Input length limits (mirror the HTML maxlength attrs; enforced on save too)
+  const LIMITS = {
+    kpi_name: 100,
+    owner: 60,
+    department: 80,
+    section_name: 80,
+    section_key: 80,
+    section_display_number: 3,
+    tagline: 200,
+    owner_badge: 100,
+    display_label: 80,
+    description: 200,
+    settings_value: 500,
+    user_email: 120,
+    user_name: 80,
+  };
+
+  // ============================================================
+  // TOAST notifications
+  // ============================================================
+  function showToast(message, kind) {
+    const host = document.getElementById('toast-container');
+    if (!host) return;
+    const el = document.createElement('div');
+    el.className = 'toast' + (kind ? ' ' + kind : '');
+    el.textContent = message;
+    host.appendChild(el);
+    // Force reflow so the transition triggers
+    requestAnimationFrame(() => el.classList.add('show'));
+    setTimeout(() => {
+      el.classList.remove('show');
+      setTimeout(() => el.remove(), 220);
+    }, 3200);
+  }
 
   // ============================================================
   // LOAD config from Neon via /api/config
@@ -949,6 +1018,7 @@
       if (!ct.includes('application/json')) return; // guard against HTML 404 pages
       const dashData = await dashRes.json();
       renderSheetSyncBanner(dashData);
+      updateSyncTimeDisplay(dashData.syncedAt);
     } catch (e) {
       // Silent — sheet sync is a nice-to-have, not critical
       console.log('Sheet sync check skipped:', e.message);
@@ -1066,12 +1136,12 @@
       const goalDir = k.goal_direction || 'higher';
       return `
       <div class="kpi-row" data-idx="${idx}">
-        <input class="inline-input" value="${escape(k.kpi)}" onchange="updateKpi(${idx}, 'kpi', this.value)" style="font-family: var(--serif); font-weight: 500;" />
+        <input class="inline-input" value="${escape(k.kpi)}" maxlength="100" onchange="updateKpi(${idx}, 'kpi', this.value)" style="font-family: var(--serif); font-weight: 500;" />
         <select class="inline-input" onchange="updateKpi(${idx}, 'section', this.value)">
-          ${SECTIONS.map(s => `<option ${s === k.section ? 'selected' : ''}>${s}</option>`).join('')}
+          ${SECTIONS.map(s => `<option ${s === k.section ? 'selected' : ''}>${escape(s)}</option>`).join('')}
         </select>
         <select class="inline-input" onchange="updateKpi(${idx}, 'unit', this.value)">
-          ${UNITS.map(u => `<option ${u === k.unit ? 'selected' : ''}>${u}</option>`).join('')}
+          ${UNITS.map(u => `<option ${u === k.unit ? 'selected' : ''}>${escape(u)}</option>`).join('')}
         </select>
         <select class="inline-input" onchange="updateKpi(${idx}, 'math_type', this.value)" title="How weekly values roll up to month/YTD">
           <option value="avg"    ${mathType === 'avg'    ? 'selected' : ''}>avg</option>
@@ -1082,7 +1152,7 @@
           <option value="higher" ${goalDir === 'higher' ? 'selected' : ''}>higher ↑</option>
           <option value="lower"  ${goalDir === 'lower'  ? 'selected' : ''}>lower ↓</option>
         </select>
-        <input class="inline-input" value="${escape(k.owner)}" onchange="updateKpi(${idx}, 'owner', this.value)" />
+        <input class="inline-input" value="${escape(k.owner)}" maxlength="60" onchange="updateKpi(${idx}, 'owner', this.value)" />
         <div class="tier-toggle ${k.tier === 'leading' ? 'leading' : ''}" onclick="toggleTier(${idx})">
           <span class="lead">leading</span>
           <span class="lag">lagging</span>
@@ -1097,14 +1167,37 @@
     }).join('');
   }
 
+  // Safe for both HTML content and double-quoted attributes.
+  // Previously only escaped `"` which was an XSS hole on any textContent injection.
   function escape(s) {
-    return String(s || '').replace(/"/g, '&quot;');
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function truncate(s, max) {
+    s = String(s == null ? '' : s);
+    return s.length > max ? s.slice(0, max) : s;
   }
 
   function updateKpi(idx, field, value) {
+    if (typeof value === 'string') {
+      const limit = (field === 'kpi') ? LIMITS.kpi_name
+                  : (field === 'owner') ? LIMITS.owner
+                  : (field === 'department') ? LIMITS.department
+                  : 500;
+      value = truncate(value.trim(), limit);
+    }
     kpis[idx][field] = value;
     markDirty();
     if (field === 'section') renderOwners();
+    if (field === 'kpi') {
+      // Keep the North Star dropdown in sync with renamed KPI names
+      renderNorthStarKpis();
+    }
   }
 
   function toggleTier(idx) {
@@ -1113,24 +1206,38 @@
     renderKpis();
   }
 
+  // Debounce guard: prevent double-click creating duplicate KPI rows
+  let _addKpiBusy = false;
   function addKpi() {
-    kpis.push({
-      kpi: 'New KPI',
-      section: SECTIONS[0],
-      unit: 'percent',
-      owner: '',
-      department: '',
-      tier: 'lagging'
-    });
-    markDirty();
-    renderKpis();
+    if (_addKpiBusy) return;
+    _addKpiBusy = true;
+    try {
+      kpis.push({
+        kpi: 'New KPI',
+        section: SECTIONS[0],
+        unit: 'percent',
+        owner: '',
+        department: '',
+        tier: 'lagging',
+        math_type: 'avg',
+        goal_direction: 'higher'
+      });
+      markDirty();
+      renderKpis();
+      renderNorthStarKpis();
+    } finally {
+      setTimeout(() => { _addKpiBusy = false; }, 400);
+    }
   }
 
   function removeKpi(idx) {
-    if (!confirm('Remove "' + kpis[idx].kpi + '"? This will also remove it from the dashboard on next sync.')) return;
+    const name = kpis[idx].kpi;
+    if (!confirm('Remove "' + name + '"?\n\nNote: the dashboard will stop showing it after the next save, but the row will remain in the Google Sheet until you also delete it there.')) return;
     kpis.splice(idx, 1);
     markDirty();
     renderKpis();
+    renderNorthStarKpis();
+    showToast('Removed "' + name + '". Save to apply, then remove the row from your Google Sheet to finish syncing.', 'warn');
   }
 
   // ============================================================
@@ -1174,11 +1281,11 @@
         <div style="display: grid; grid-template-columns: 70px 1fr auto; gap: 12px; align-items: start;">
           <div>
             <div class="field-label" style="margin-bottom: 4px;">Number</div>
-            <input class="inline-input" value="${escape(s.display_number)}" placeholder="01" onchange="updateSection(${idx}, 'display_number', this.value)" style="font-family: var(--serif); font-weight: 500; width: 100%;" />
+            <input class="inline-input" type="text" inputmode="numeric" pattern="[0-9]{1,3}" value="${escape(s.display_number)}" placeholder="01" maxlength="3" onchange="updateSection(${idx}, 'display_number', this.value)" style="font-family: var(--serif); font-weight: 500; width: 100%;" />
           </div>
           <div>
             <div class="field-label" style="margin-bottom: 4px;">Section name</div>
-            <input class="inline-input" value="${escape(s.display_name)}" onchange="updateSection(${idx}, 'display_name', this.value)" style="font-family: var(--serif); font-size: 15px; font-weight: 500; width: 100%;" />
+            <input class="inline-input" value="${escape(s.display_name)}" maxlength="80" onchange="updateSection(${idx}, 'display_name', this.value)" style="font-family: var(--serif); font-size: 15px; font-weight: 500; width: 100%;" />
             <div style="font-size: 10px; color: var(--ink-3); margin-top: 3px; font-style: italic;">Data key: <code style="font-family: ui-monospace, monospace;">${escape(s.section_key)}</code> (can't change — it links KPIs to this section)</div>
           </div>
           <button class="icon-btn danger" onclick="removeSection(${idx})" title="Remove section" style="margin-top: 22px;">
@@ -1188,12 +1295,12 @@
 
         <div style="margin-top: 14px;">
           <div class="field-label" style="margin-bottom: 4px;">Tagline / subtitle</div>
-          <input class="inline-input" value="${escape(s.tagline)}" placeholder="How we grow the recurring member base." onchange="updateSection(${idx}, 'tagline', this.value)" style="width: 100%;" />
+          <input class="inline-input" value="${escape(s.tagline)}" placeholder="How we grow the recurring member base." maxlength="200" onchange="updateSection(${idx}, 'tagline', this.value)" style="width: 100%;" />
         </div>
 
         <div style="margin-top: 14px;">
           <div class="field-label" style="margin-bottom: 4px;">Owner badge</div>
-          <input class="inline-input" value="${escape(s.owner_badge)}" placeholder="Chris · Sales Ops" onchange="updateSection(${idx}, 'owner_badge', this.value)" style="width: 100%;" />
+          <input class="inline-input" value="${escape(s.owner_badge)}" placeholder="Chris · Sales Ops" maxlength="100" onchange="updateSection(${idx}, 'owner_badge', this.value)" style="width: 100%;" />
         </div>
 
         <div style="margin-top: 18px; padding-top: 14px; border-top: 0.5px solid var(--rule);">
@@ -1208,12 +1315,12 @@
             </div>
             <div>
               <div class="field-label" style="margin-bottom: 4px;">Display label</div>
-              <input class="inline-input" value="${escape(s.leading_display_label)}" placeholder="Members per studio" onchange="updateSection(${idx}, 'leading_display_label', this.value)" style="width: 100%;" />
+              <input class="inline-input" value="${escape(s.leading_display_label)}" placeholder="Members per studio" maxlength="80" onchange="updateSection(${idx}, 'leading_display_label', this.value)" style="width: 100%;" />
             </div>
           </div>
           <div style="margin-top: 10px;">
             <div class="field-label" style="margin-bottom: 4px;">Callout description</div>
-            <input class="inline-input" value="${escape(s.leading_description)}" placeholder="Running 4-week average" onchange="updateSection(${idx}, 'leading_description', this.value)" style="width: 100%;" />
+            <input class="inline-input" value="${escape(s.leading_description)}" placeholder="Running 4-week average" maxlength="200" onchange="updateSection(${idx}, 'leading_description', this.value)" style="width: 100%;" />
           </div>
         </div>
       </div>
@@ -1221,6 +1328,19 @@
   }
 
   function updateSection(idx, field, value) {
+    if (typeof value === 'string') {
+      value = value.trim();
+      if (field === 'display_number') {
+        // Only digits; strip anything else (including leading minus)
+        value = value.replace(/[^0-9]/g, '').slice(0, LIMITS.section_display_number);
+      } else {
+        const limit = (field === 'display_name' || field === 'leading_display_label') ? LIMITS.section_name
+                    : (field === 'tagline' || field === 'leading_description') ? LIMITS.tagline
+                    : (field === 'owner_badge') ? LIMITS.owner_badge
+                    : 500;
+        value = truncate(value, limit);
+      }
+    }
     sections[idx][field] = value;
     markDirty();
   }
@@ -1309,20 +1429,24 @@
     }).join('');
   }
 
+  let _inviteBusy = false;
   async function inviteUser() {
-    const email = document.getElementById('new-user-email').value.trim().toLowerCase();
-    const name  = document.getElementById('new-user-name').value.trim();
+    if (_inviteBusy) return;
+    const email = truncate(document.getElementById('new-user-email').value.trim().toLowerCase(), LIMITS.user_email);
+    const name  = truncate(document.getElementById('new-user-name').value.trim(), LIMITS.user_name);
     const role  = document.getElementById('new-user-role').value;
 
-    if (!email || !email.includes('@')) {
-      alert('Enter a valid email.');
+    // Basic email shape check — one "@", a dot after the @, and no spaces.
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showToast('Enter a valid email address.', 'error');
       return;
     }
     if (users.some(u => u.email === email)) {
-      alert(email + ' already has access.');
+      showToast(email + ' already has access.', 'warn');
       return;
     }
 
+    _inviteBusy = true;
     try {
       const res = await fetch(API.users, {
         method: 'POST',
@@ -1330,12 +1454,15 @@
         body: JSON.stringify({ actor: CURRENT_USER, email, name: name || email.split('@')[0], role })
       });
       const result = await res.json();
-      if (!result.ok) throw new Error(result.error);
+      if (!result.ok) throw new Error(result.error || 'Invite failed');
       document.getElementById('new-user-email').value = '';
       document.getElementById('new-user-name').value = '';
-      loadUsers();
+      await loadUsers();
+      showToast('Invited ' + email + ' as ' + role + '.', 'success');
     } catch (err) {
-      alert('Invite failed: ' + err.message);
+      showToast('Invite failed: ' + err.message, 'error');
+    } finally {
+      _inviteBusy = false;
     }
   }
 
@@ -1395,7 +1522,7 @@
             <div style="font-size: 12px; color: var(--ink-3); margin-top: 2px;">${rows.length} KPIs &middot; owner: <strong style="color: var(--ink);">${primary}</strong> &middot; ${firstDept}</div>
           </div>
           <div style="display: flex; gap: 6px;">
-            <input class="inline-input" value="${escape(primary)}" placeholder="Owner name" style="width: 140px; border: 0.5px solid var(--rule);" onchange="reassignOwner('${section}', this.value)" />
+            <input class="inline-input" value="${escape(primary)}" placeholder="Owner name" maxlength="60" style="width: 140px; border: 0.5px solid var(--rule);" onchange="reassignOwner('${escape(section)}', this.value)" />
           </div>
         </div>
       `;
@@ -1403,8 +1530,9 @@
   }
 
   function reassignOwner(section, newOwner) {
+    const cleanOwner = truncate(String(newOwner || '').trim(), LIMITS.owner);
     kpis.forEach(k => {
-      if (k.section === section) k.owner = newOwner;
+      if (k.section === section) k.owner = cleanOwner;
     });
     markDirty();
     renderKpis();
@@ -1417,9 +1545,14 @@
   function renderNorthStarKpis() {
     const select = document.getElementById('ns-kpi');
     if (!select) return;
+    const currentValue = select.value;
     select.innerHTML = kpis.map(k =>
-      `<option ${k.kpi === 'Net recurring members / studio' ? 'selected' : ''}>${k.kpi}</option>`
+      `<option value="${escape(k.kpi)}" ${k.kpi === currentValue ? 'selected' : ''}>${escape(k.kpi)}</option>`
     ).join('');
+    // Preserve selection if possible, else keep whatever the default is
+    if (currentValue && kpis.some(k => k.kpi === currentValue)) {
+      select.value = currentValue;
+    }
   }
 
   // ============================================================
@@ -1446,20 +1579,67 @@
     document.getElementById('save-dot').style.background = 'var(--amber-400)';
   }
 
+  // Validate the in-memory KPI/section state before attempting a save.
+  // Returns {ok: true} on success, or {ok: false, error: '...'} with a user-facing message.
+  function validateBeforeSave() {
+    // KPI names: required, unique, within length
+    const seen = new Set();
+    for (let i = 0; i < kpis.length; i++) {
+      const name = String(kpis[i].kpi || '').trim();
+      if (!name) {
+        return { ok: false, error: 'KPI name can’t be empty (row ' + (i + 1) + ').' };
+      }
+      if (name.length > LIMITS.kpi_name) {
+        return { ok: false, error: 'KPI name too long (row ' + (i + 1) + ', max ' + LIMITS.kpi_name + ' chars).' };
+      }
+      const key = name.toLowerCase();
+      if (seen.has(key)) {
+        return { ok: false, error: 'Duplicate KPI name: "' + name + '" (each KPI must be unique).' };
+      }
+      seen.add(key);
+    }
+
+    // Sections: display_number must be non-negative integer
+    for (let i = 0; i < sections.length; i++) {
+      const dn = String(sections[i].display_number || '').trim();
+      if (dn && !/^\d+$/.test(dn)) {
+        return { ok: false, error: 'Section number must be a positive whole number (section "' + (sections[i].display_name || sections[i].section_key) + '").' };
+      }
+      if (!sections[i].section_key) {
+        return { ok: false, error: 'Section is missing its data key.' };
+      }
+    }
+
+    return { ok: true };
+  }
+
   async function saveChanges() {
     try {
+      // Client-side validation first — stops bad data before we hit the DB.
+      const v = validateBeforeSave();
+      if (!v.ok) {
+        showToast(v.error, 'error');
+        return;
+      }
+
       document.getElementById('save-status').textContent = 'Saving…';
       document.getElementById('save-dot').style.background = 'var(--amber-400)';
 
-      // Save KPI config
+      // Soft-warn (but allow) for KPIs without an owner assigned.
+      const missingOwner = kpis.filter(k => !String(k.owner || '').trim()).map(k => k.kpi);
+      if (missingOwner.length) {
+        showToast(missingOwner.length + ' KPI' + (missingOwner.length === 1 ? ' has' : 's have') + ' no owner set. Saving anyway.', 'warn');
+      }
+
+      // Save KPI config — trim + truncate defensively on the way out.
       const cfgPayload = {
         actor: CURRENT_USER,
         kpis: kpis.map(k => ({
-          kpi_name: k.kpi,
+          kpi_name: truncate(String(k.kpi || '').trim(), LIMITS.kpi_name),
           section: k.section,
           unit: k.unit,
-          owner: k.owner,
-          department: k.department,
+          owner: truncate(String(k.owner || '').trim(), LIMITS.owner),
+          department: truncate(String(k.department || '').trim(), LIMITS.department),
           tier: k.tier,
           math_type: k.math_type || 'avg',
           goal_direction: k.goal_direction || 'higher'
@@ -1475,15 +1655,15 @@
 
       // Save settings
       const settings = {
-        dashboard_title: document.getElementById('set-title').value,
-        fiscal_year: document.getElementById('set-fy').value,
-        brand_color: document.getElementById('set-color').value,
+        dashboard_title: truncate(document.getElementById('set-title').value.trim(), LIMITS.settings_value),
+        fiscal_year: truncate(document.getElementById('set-fy').value.trim(), 20),
+        brand_color: truncate(document.getElementById('set-color').value.trim(), 7),
         north_star_kpi: document.getElementById('ns-kpi').value,
-        north_star_eoy_target: document.getElementById('ns-target').value,
-        north_star_projection: document.getElementById('ns-projection').value,
-        apps_script_url: document.getElementById('sheet-url').value,
-        hero_tagline: (document.getElementById('set-hero-tagline') || {}).value || '',
-        north_star_headline: (document.getElementById('ns-headline') || {}).value || ''
+        north_star_eoy_target: truncate(document.getElementById('ns-target').value.trim(), 20),
+        north_star_projection: truncate(document.getElementById('ns-projection').value.trim(), 20),
+        apps_script_url: truncate(document.getElementById('sheet-url').value.trim(), LIMITS.settings_value),
+        hero_tagline: truncate(((document.getElementById('set-hero-tagline') || {}).value || '').trim(), 200),
+        north_star_headline: truncate(((document.getElementById('ns-headline') || {}).value || '').trim(), 200)
       };
       const setRes = await fetch(API.settings, {
         method: 'POST',
@@ -1507,22 +1687,106 @@
       isDirty = false;
       document.getElementById('save-status').textContent = 'Saved';
       document.getElementById('save-dot').style.background = 'var(--teal-400)';
+      // Hide the stale-north-star hint now that the user has saved
+      const nsHint = document.getElementById('ns-stale-hint');
+      if (nsHint) nsHint.classList.remove('show');
       loadAudit();
       // Re-check sheet sync after save (safe/bulletproof)
       checkSheetSync();
+      showToast('Changes saved.', 'success');
     } catch (err) {
-      document.getElementById('save-status').innerHTML = '⚠ Save failed: ' + err.message;
+      document.getElementById('save-status').innerHTML = '⚠ Save failed: ' + escape(err.message);
       document.getElementById('save-dot').style.background = 'var(--red-600)';
+      showToast('Save failed: ' + err.message, 'error');
     }
   }
 
-  function discardChanges() {
+  async function discardChanges() {
     if (!isDirty) return;
-    if (!confirm('Discard all unsaved changes?')) return;
-    refreshConfig();
-    isDirty = false;
-    document.getElementById('save-status').textContent = 'All changes saved to Google Sheet';
-    document.getElementById('save-dot').style.background = 'var(--teal-400)';
+    if (!confirm('Discard all unsaved changes?\n\nThis reloads the last saved state from the database. It does NOT undo changes that were already saved.')) return;
+    document.getElementById('save-status').textContent = 'Reloading…';
+    document.getElementById('save-dot').style.background = 'var(--amber-400)';
+    try {
+      await refreshConfig();
+      const nsHint = document.getElementById('ns-stale-hint');
+      if (nsHint) nsHint.classList.remove('show');
+      isDirty = false;
+      document.getElementById('save-status').textContent = 'Saved';
+      document.getElementById('save-dot').style.background = 'var(--teal-400)';
+      showToast('Unsaved changes discarded.', 'success');
+    } catch (err) {
+      document.getElementById('save-status').textContent = 'Reload failed';
+      document.getElementById('save-dot').style.background = 'var(--red-600)';
+      showToast('Reload failed: ' + err.message, 'error');
+    }
+  }
+
+  // ============================================================
+  // Small UX helpers: Copy URL + Export CSV + dynamic sync timestamp
+  // ============================================================
+  async function copySheetUrl() {
+    const val = document.getElementById('sheet-url').value;
+    if (!val) {
+      showToast('Nothing to copy — paste the Apps Script URL first.', 'warn');
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(val);
+      showToast('Sheet URL copied to clipboard.', 'success');
+    } catch (err) {
+      showToast('Copy failed — select the field and press ⌘C / Ctrl+C.', 'error');
+    }
+  }
+
+  async function exportAuditCsv() {
+    try {
+      const res = await fetch(API.audit + '?limit=200');
+      const payload = await res.json();
+      if (!payload.ok) throw new Error(payload.error || 'Audit fetch failed');
+      const rows = payload.entries || [];
+      if (!rows.length) {
+        showToast('Audit log is empty — nothing to export.', 'warn');
+        return;
+      }
+      const header = ['created_at', 'actor', 'action', 'entity'];
+      const csvEscape = v => {
+        const s = String(v == null ? '' : v);
+        return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      };
+      const csv = [header.join(',')]
+        .concat(rows.map(r => header.map(h => csvEscape(r[h])).join(',')))
+        .join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'afg-audit-log-' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast('Exported ' + rows.length + ' audit rows.', 'success');
+    } catch (err) {
+      showToast('Export failed: ' + err.message, 'error');
+    }
+  }
+
+  function updateSyncTimeDisplay(isoString) {
+    const el = document.getElementById('sync-time-admin');
+    if (!el) return;
+    if (!isoString) {
+      el.textContent = 'Never synced';
+      return;
+    }
+    try {
+      const d = new Date(isoString);
+      const when = d.toLocaleString('en-US', {
+        month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+      });
+      el.textContent = when + ' · ' + kpis.length + ' KPIs loaded';
+    } catch (_) {
+      el.textContent = 'Unknown';
+    }
   }
 
   async function testConnection() {
@@ -1547,6 +1811,38 @@
       const el = document.getElementById(id);
       if (el) el.addEventListener('change', markDirty);
     });
+
+    // North Star KPI change: flag the headline/target/projection as potentially stale
+    const nsKpi = document.getElementById('ns-kpi');
+    const nsHint = document.getElementById('ns-stale-hint');
+    if (nsKpi && nsHint) {
+      nsKpi.addEventListener('change', () => {
+        nsHint.classList.add('show');
+      });
+      // Any edit to the dependent fields clears the hint
+      ['ns-headline', 'ns-target', 'ns-projection'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', () => nsHint.classList.remove('show'));
+      });
+    }
+
+    // Enter-to-invite on the access panel
+    const inviteEmail = document.getElementById('new-user-email');
+    const inviteName = document.getElementById('new-user-name');
+    [inviteEmail, inviteName].forEach(el => {
+      if (el) el.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); inviteUser(); }
+      });
+    });
+
+    // Multi-tab safety: when this tab becomes visible again and has no unsaved
+    // changes, refresh from DB so it doesn't drift from another tab's saves.
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && !isDirty) {
+        refreshConfig();
+      }
+    });
+
     renderKpis();
     renderOwners();
     renderNorthStarKpis();

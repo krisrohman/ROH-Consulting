@@ -23,20 +23,28 @@ export default async (request) => {
       const actor = body.actor || 'unknown';
       const incoming = body.settings || {};
 
+      // Defense-in-depth cap on any single setting value. The admin UI already
+      // limits most of these, but we enforce here too.
+      const VALUE_LIMIT = 500;
+
       const before = await sql`SELECT key, value FROM settings`;
       const beforeMap = Object.fromEntries(before.map(r => [r.key, r.value]));
 
-      for (const [key, value] of Object.entries(incoming)) {
+      for (const [key, rawValue] of Object.entries(incoming)) {
+        const cleanKey = String(key || '').trim().slice(0, 80);
+        if (!cleanKey) continue;
+        const value = String(rawValue == null ? '' : rawValue).trim().slice(0, VALUE_LIMIT);
+
         await sql`
-          INSERT INTO settings (key, value) VALUES (${key}, ${String(value)})
+          INSERT INTO settings (key, value) VALUES (${cleanKey}, ${value})
           ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`;
 
-        if (beforeMap[key] !== String(value)) {
+        if (beforeMap[cleanKey] !== value) {
           await sql`
             INSERT INTO audit_log (actor, action, entity, before_val, after_val)
-            VALUES (${actor}, 'settings.change', ${key},
-                    ${JSON.stringify({ value: beforeMap[key] || null })}::jsonb,
-                    ${JSON.stringify({ value: String(value) })}::jsonb)`;
+            VALUES (${actor}, 'settings.change', ${cleanKey},
+                    ${JSON.stringify({ value: beforeMap[cleanKey] || null })}::jsonb,
+                    ${JSON.stringify({ value })}::jsonb)`;
         }
       }
 

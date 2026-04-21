@@ -434,11 +434,11 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
-    padding: 4px 20px 4px 0;
-    border-right: 0.5px solid var(--rule);
+    gap: 8px;
+    padding: 4px 0;
+    border: none;
   }
-  .verdict-cell:last-child { border-right: none; padding-right: 0; }
+  .verdict-cell:last-child { padding-right: 0; }
   .verdict-num {
     font-family: var(--serif);
     font-size: 46px;
@@ -500,20 +500,24 @@
   .ns-feature {
     display: grid;
     grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr);
-    column-gap: 32px;
-    margin: 0 0 40px;
+    column-gap: 0;
+    margin: 0 0 48px;
     align-items: stretch;
+    /* Shared top + bottom rules span the entire hero — binds the NS
+       panel and the Revenue column into one editorial block. */
+    border-top: 1.5px solid var(--ink);
+    border-bottom: 0.5px solid var(--rule);
   }
   .ns-panel {
     position: relative;
     background: #eadfc6;
     border-radius: 0;
-    border-top: 1.5px solid var(--ink);
+    border: none;
     padding: 28px 44px 40px;
     margin: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1.5fr) minmax(220px, 1fr);
-    column-gap: 56px;
+    grid-template-columns: minmax(0, 1.2fr) minmax(160px, 0.8fr);
+    column-gap: 40px;
     row-gap: 0;
     align-items: end;
   }
@@ -557,13 +561,19 @@
   .ns-title {
     grid-column: 1 / -1;
     font-family: var(--serif);
-    font-size: 32px;
+    font-size: 42px;
     font-weight: 500;
-    line-height: 1.15;
-    margin: 10px 0 36px;
+    line-height: 1.08;
+    margin: 16px 0 44px;
     color: var(--ink);
-    letter-spacing: -0.022em;
-    max-width: 720px;
+    letter-spacing: -0.028em;
+    max-width: 820px;
+  }
+  /* Editorial drop-cap on the NS headline — just the first letter scales up,
+     the rest reads normal. Same move as sections but more restrained. */
+  .ns-title::first-letter {
+    font-size: 1.15em;
+    letter-spacing: -0.04em;
   }
   .ns-hero {
     grid-column: 1;
@@ -623,18 +633,18 @@
   .rev-sidebar {
     display: flex;
     flex-direction: column;
-    justify-content: stretch;
+    padding: 28px 4px 40px 44px;
+    background: transparent;
   }
   .rev-sidebar-head {
     font-family: var(--sans);
     font-size: 10px;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.32em;
     text-transform: uppercase;
     color: var(--ink-3);
     font-weight: 500;
-    padding: 0 0 12px;
-    border-bottom: 0.5px solid var(--rule);
-    margin-bottom: 4px;
+    padding: 0;
+    margin: 0 0 22px;
   }
   .rev-sidebar .revenue-row {
     display: flex;
@@ -642,40 +652,47 @@
     gap: 0;
     flex: 1;
   }
+  /* Each rev card: kicker + tiny dot on one line, then the $value line
+     with vs-target floating beneath. Dot is right next to the kicker so
+     the status is adjacent to the label, not marooned far right. */
   .rev-sidebar .rev-card {
     flex: 1;
-    padding: 14px 0;
+    padding: 16px 0 14px;
     border-right: none;
-    border-bottom: 0.5px solid var(--rule);
+    border-bottom: 0.5px dashed rgba(0,0,0,0.14);
     display: grid;
     grid-template-columns: 1fr auto;
     grid-template-rows: auto auto;
-    column-gap: 14px;
-    row-gap: 2px;
+    column-gap: 10px;
+    row-gap: 4px;
     align-items: baseline;
   }
+  .rev-sidebar .rev-card:first-child { padding-top: 4px; }
   .rev-sidebar .rev-card:last-child { border-bottom: none; }
   .rev-sidebar .rev-card + .rev-card { padding-left: 0; }
   .rev-sidebar .rev-label {
     grid-column: 1;
     grid-row: 1;
     font-size: 10px;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.24em;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
   }
   .rev-sidebar .rev-value {
     grid-column: 1;
     grid-row: 2;
-    font-size: 22px;
+    font-size: 26px;
+    font-variant-numeric: tabular-nums lining-nums;
   }
   .rev-sidebar .rev-target {
     grid-column: 2;
     grid-row: 2;
     text-align: right;
-    align-self: center;
+    align-self: baseline;
+    font-size: 11px;
   }
-  /* In the revenue sidebar, the status is communicated by the dot alone —
-     no 'On track' / 'Narrow miss' / 'Below target' text. Collapse text
-     to zero width while keeping the ::before dot visible. */
+  /* Dot sits NEXT TO the kicker, not right-aligned. */
   .rev-sidebar .rev-status {
     grid-column: 2;
     grid-row: 1;
@@ -686,8 +703,8 @@
     gap: 0;
   }
   .rev-sidebar .rev-status::before {
-    width: 9px;
-    height: 9px;
+    width: 8px;
+    height: 8px;
   }
   .ns-head {
     grid-column: 1 / -1;
@@ -737,6 +754,63 @@
     letter-spacing: -0.01em;
     margin: 0;
     line-height: 1.3;
+  }
+
+  /* 13-week sparkline: spans the full NS panel width below the numerals.
+     Coral polyline, a small filled circle on the current week. Gives the
+     panel a heartbeat so it's not just static big numbers. */
+  .ns-spark {
+    grid-column: 1 / -1;
+    margin-top: 28px;
+    padding-top: 16px;
+    border-top: 0.5px solid rgba(0,0,0,0.18);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .ns-spark-svg {
+    width: 100%;
+    height: 56px;
+    display: block;
+    overflow: visible;
+  }
+  .ns-spark-svg .spark-line {
+    fill: none;
+    stroke: var(--coral-400);
+    stroke-width: 1.25;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+  .ns-spark-svg .spark-area {
+    fill: var(--coral-400);
+    fill-opacity: 0.1;
+    stroke: none;
+  }
+  .ns-spark-svg .spark-target-line {
+    stroke: rgba(0,0,0,0.24);
+    stroke-width: 0.6;
+    stroke-dasharray: 3 4;
+    fill: none;
+    vector-effect: non-scaling-stroke;
+  }
+  .ns-spark-svg .spark-dot-past {
+    fill: rgba(0,0,0,0.32);
+  }
+  .ns-spark-svg .spark-dot-current {
+    fill: var(--coral-400);
+    stroke: #eadfc6;
+    stroke-width: 2;
+  }
+  .ns-spark-axis {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
   }
 
   /* ─── 5. Revenue strap — compact horizontal marquee ─── */
@@ -1354,6 +1428,10 @@
           <p class="ns-side-stat-label">trajectory</p>
           <p class="ns-track-meta">YTD exceeds EOY target</p>
         </div>
+      </div>
+      <div class="ns-spark" id="ns-spark" aria-hidden="true">
+        <svg viewBox="0 0 320 56" preserveAspectRatio="none" class="ns-spark-svg"></svg>
+        <div class="ns-spark-axis"><span class="ns-spark-axis-start">w1</span><span class="ns-spark-axis-end">w17</span></div>
       </div>
     </section>
 
@@ -2111,21 +2189,72 @@
     // Verdict kicker: echo the current week
     document.querySelectorAll('.verdict-wk').forEach(el => el.textContent = currentWeekNum);
 
-    // NS trajectory bar: YTD as % of EOY target (clamped 0–120%).
-    // Over-attainment stays at 100% bar width; the caption carries the "exceeds" message.
-    const trackFill = document.querySelector('.ns-track-bar span');
+    // NS trajectory caption: short editorial statement. No bar anymore.
     const trackMeta = document.querySelector('.ns-track-meta');
-    if (trackFill && nsTarget) {
+    if (trackMeta && nsTarget) {
       const pctOfTarget = Math.max(0, (ytd / nsTarget) * 100);
-      trackFill.style.width = Math.min(100, pctOfTarget).toFixed(0) + '%';
-      if (trackMeta) {
-        if (pctOfTarget >= 100) {
-          trackMeta.textContent = `YTD is ${pctOfTarget.toFixed(0)}% of EOY target — exceeded`;
-        } else {
-          trackMeta.textContent = `Tracking ${pctOfTarget.toFixed(0)}% of EOY target`;
-        }
+      if (pctOfTarget >= 100) {
+        trackMeta.textContent = `YTD is ${pctOfTarget.toFixed(0)}% of EOY target — exceeded`;
+      } else {
+        trackMeta.textContent = `Tracking ${pctOfTarget.toFixed(0)}% of EOY target`;
       }
     }
+
+    // NS sparkline — render up to last 13 weeks of the KPI's weekly values.
+    // Coral polyline, soft filled area underneath, current week dot highlighted,
+    // target line as a dashed horizontal reference.
+    renderNSSpark(weeklyRow, nsTarget);
+  }
+
+  // Renders the 13-week NS sparkline into #ns-spark svg.
+  function renderNSSpark(weeklyRow, targetVal) {
+    const spark = document.getElementById('ns-spark');
+    if (!spark) return;
+    const svg = spark.querySelector('svg');
+    const axisStart = spark.querySelector('.ns-spark-axis-start');
+    const axisEnd = spark.querySelector('.ns-spark-axis-end');
+    if (!svg || !weeklyRow || !weeklyRow.weeks) {
+      if (svg) svg.innerHTML = '';
+      return;
+    }
+    // Build a series ending at currentWeekNum, up to 13 points.
+    const points = [];
+    for (let wn = Math.max(1, currentWeekNum - 12); wn <= currentWeekNum; wn++) {
+      const v = weeklyRow.weeks['W' + wn];
+      if (typeof v === 'number') points.push({ wn, v });
+    }
+    if (points.length < 2) { svg.innerHTML = ''; return; }
+    if (axisStart) axisStart.textContent = 'w' + points[0].wn;
+    if (axisEnd)   axisEnd.textContent   = 'w' + points[points.length - 1].wn;
+
+    // viewBox is 320 x 56 (see CSS). Pad 4px top/bottom, 2px left/right.
+    const W = 320, H = 56, padY = 4, padX = 2;
+    const allVals = points.map(p => p.v);
+    if (typeof targetVal === 'number') allVals.push(targetVal);
+    const min = Math.min.apply(null, allVals);
+    const max = Math.max.apply(null, allVals);
+    const range = max - min || 1;
+    const x = (i) => padX + (i / (points.length - 1)) * (W - 2 * padX);
+    const y = (v) => H - padY - ((v - min) / range) * (H - 2 * padY);
+
+    const pathD = points.map((p, i) => (i === 0 ? 'M' : 'L') + x(i).toFixed(1) + ',' + y(p.v).toFixed(1)).join(' ');
+    const areaD = pathD + ` L${x(points.length - 1).toFixed(1)},${H - padY} L${x(0).toFixed(1)},${H - padY} Z`;
+    const targetY = typeof targetVal === 'number' ? y(targetVal).toFixed(1) : null;
+
+    let html = '';
+    html += `<path class="spark-area" d="${areaD}"/>`;
+    if (targetY !== null) {
+      html += `<line class="spark-target-line" x1="${padX}" y1="${targetY}" x2="${W - padX}" y2="${targetY}"/>`;
+    }
+    html += `<path class="spark-line" d="${pathD}"/>`;
+    // Tiny dots on all past points + coral dot on the current week
+    points.forEach((p, i) => {
+      const isCurrent = i === points.length - 1;
+      const cls = isCurrent ? 'spark-dot-current' : 'spark-dot-past';
+      const r = isCurrent ? 3.5 : 1.6;
+      html += `<circle class="${cls}" cx="${x(i).toFixed(1)}" cy="${y(p.v).toFixed(1)}" r="${r}"/>`;
+    });
+    svg.innerHTML = html;
   }
 
   // Parse + normalize admin-saved targets once per render (not per row).

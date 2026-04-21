@@ -826,6 +826,7 @@
 
   /* The lagging outcome panel (left col) */
   .leading {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -833,6 +834,14 @@
     padding: 22px 24px 24px;
     border-radius: 3px;
     border-left: 3px solid var(--coral-400);
+    margin: 0;
+  }
+  /* Status dot sits at the top-right of the panel, level with the kicker —
+     it's a header-level indicator, not a trailing afterthought. */
+  .leading > .pill {
+    position: absolute;
+    top: 22px;
+    right: 22px;
     margin: 0;
   }
   .leading-tag {
@@ -882,11 +891,6 @@
     margin: 6px 0 0;
     padding: 10px 0 0;
     border-top: 0.5px solid rgba(0,0,0,0.14);
-  }
-  /* Status pill at the end of the outcome panel */
-  .leading > .pill {
-    align-self: flex-start;
-    margin-top: 2px;
   }
   .leading.no-weekly .wks { display: none; }
 

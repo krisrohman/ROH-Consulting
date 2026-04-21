@@ -1090,15 +1090,17 @@
   /* Weekly strip per metric row — primary display */
   .wks {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
     gap: 0;
     margin-top: 2px;
+    min-width: 0;
   }
   .wk {
     text-align: center;
     position: relative;
-    padding: 0 24px;
+    padding: 0 14px;
     border-right: 0.5px solid var(--rule);
+    min-width: 0;
   }
   .wk:first-child { padding-left: 0; }
   .wk:last-child { border-right: 0; padding-right: 0; }
@@ -1129,12 +1131,14 @@
      so we can flip it back on later without touching markup. */
   .row-trend { display: none; }
   .row-trend-label, .trend-pct { display: none; }
+  /* Goal — prominent but neutral (was coral; too much orange competing
+     with the brand accents elsewhere). Using ink + bold instead. */
   .row-goal {
     display: block;
     font-family: var(--serif);
     font-size: 18px;
-    font-weight: 500;
-    color: var(--coral-400);
+    font-weight: 600;
+    color: var(--ink);
     letter-spacing: -0.01em;
     margin: 6px 0 0;
     line-height: 1.1;
@@ -1150,8 +1154,9 @@
     font-weight: 500;
     display: block;
     margin-bottom: 2px;
+    letter-spacing: 0.22em;
   }
-  .row-goal .pct { font-size: 13px; font-weight: 500; }
+  .row-goal .pct { font-size: 13px; font-weight: 500; color: var(--ink-2); }
 
   /* Per-row status: a small filled dot instead of a verbose pill.
      Hovering / tap shows the full status (title attr is added by JS). */
@@ -1183,13 +1188,13 @@
     margin: 12px 0 4px;
     background: #fff;
     border: 0.5px solid var(--rule);
-    border-left: 3px solid var(--coral-400);
-    border-radius: 6px;
+    border-top: 2px solid var(--ink);
+    border-radius: 2px;
   }
   .leading-tag {
     font-size: 9px;
     letter-spacing: 0.26em;
-    color: var(--coral-600);
+    color: var(--ink-3);
     text-transform: uppercase;
     font-weight: 500;
     white-space: nowrap;
@@ -1251,7 +1256,7 @@
     margin: 0;
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 1000px) {
     .top-nav { padding: 0 1rem; height: auto; flex-wrap: wrap; gap: 10px; padding-top: 10px; padding-bottom: 10px; }
     .nav-links { display: none; }
     .page { padding: 2rem 1.5rem; margin: 0; }
@@ -1261,8 +1266,13 @@
     .ns-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
     .ns-big { font-size: 48px; letter-spacing: -0.02em; }
     .ribbon-num { font-size: 40px; }
+    /* Rows stack: metric + goal on top, weekly strip below on its own */
     .row { grid-template-columns: 1fr; gap: 16px; }
-    .wks { grid-column: span 1; padding-left: 0; border-left: 0; border-top: 0.5px solid var(--rule); padding-top: 14px; }
+    .metric-body { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .wks { grid-column: span 1; padding-left: 0; border-left: 0; border-top: 0.5px solid var(--rule); padding-top: 14px; min-width: 480px; }
+    /* Leading callout stacks nicely when cramped */
+    .leading { grid-template-columns: 1fr; gap: 8px; }
+    .leading-va { align-self: start; }
   }
 
   /* Mobile — phones under 640px */
@@ -2431,6 +2441,16 @@
     const totalWeeks = weeklyCols.length || 4;
     const weekInMonth = Math.max(1, currentWeekNum - (firstWeekOfMonth[currentMonth] || 1) + 1);
 
+    // Parse hidden-KPI list (set by admin, stored in settings.hidden_kpis
+     // as a JSON array of KPI names). These rows are completely removed from
+     // view on the scorecard.
+    let hiddenNames = new Set();
+    try {
+      if (data.settings && data.settings.hidden_kpis) {
+        hiddenNames = new Set(JSON.parse(data.settings.hidden_kpis) || []);
+      }
+    } catch (_) { hiddenNames = new Set(); }
+
     document.querySelectorAll('.row').forEach(rowEl => {
       const nameEl = rowEl.querySelector('.mname');
       if (!nameEl) return;
@@ -2441,6 +2461,14 @@
       );
       if (!matchKey) return;
       const d = lookup[matchKey];
+
+      // Hide rows whose KPI name is in the admin's hidden list
+      const isHidden = [...hiddenNames].some(h =>
+        h.toLowerCase() === name.toLowerCase() ||
+        h.toLowerCase() === matchKey.toLowerCase()
+      );
+      rowEl.style.display = isHidden ? 'none' : '';
+      if (isHidden) return;
 
       const projection = projectValue(d.mtd, d.unit, weekInMonth, totalWeeks);
       const status = projectionStatus(projection, d.target, d.unit, name);

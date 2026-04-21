@@ -1034,6 +1034,16 @@
         if (s.kpi_targets) targetsByName = JSON.parse(s.kpi_targets) || {};
       } catch (_) { targetsByName = {}; }
 
+      // Hydrate hidden-KPI list from server (authoritative) so other devices
+      // stay in sync. Local storage is just a cache of the last loaded state.
+      try {
+        if (s.hidden_kpis) {
+          const serverHidden = JSON.parse(s.hidden_kpis) || [];
+          hiddenKpiSet = new Set(serverHidden);
+          persistHiddenKpis();
+        }
+      } catch (_) { /* keep local set */ }
+
       // Map Neon column names to the shape our UI expects
       kpis = (cfgPayload.kpis || []).map(r => ({
         kpi: r.kpi_name,
@@ -1210,6 +1220,9 @@
   // Hidden-KPI state is local to this admin (per-device), stored in
   // localStorage. Hiding a row doesn't delete it — it just collapses
   // it out of sight so you can focus on the ones you're editing.
+  // Hidden KPIs: persisted to the `hidden_kpis` setting so hiding propagates
+  // to the public scorecard. Local copy kept for instant UI response; dirty
+  // flag ensures Save pushes the list to the server.
   const HIDDEN_KPIS_KEY = 'afg_admin_hidden_kpis';
   let hiddenKpiSet = new Set();
   try {
@@ -1228,10 +1241,13 @@
     if (!name) return;
     if (hiddenKpiSet.has(name)) {
       hiddenKpiSet.delete(name);
+      showToast('"' + name + '" will show on the dashboard after save.', 'success');
     } else {
       hiddenKpiSet.add(name);
+      showToast('"' + name + '" will be hidden from the dashboard after save.', 'warn');
     }
     persistHiddenKpis();
+    markDirty();
     renderKpis();
   }
 
@@ -1790,7 +1806,8 @@
         apps_script_url: truncate(document.getElementById('sheet-url').value.trim(), LIMITS.settings_value),
         hero_tagline: truncate(((document.getElementById('set-hero-tagline') || {}).value || '').trim(), 200),
         north_star_headline: truncate(((document.getElementById('ns-headline') || {}).value || '').trim(), 200),
-        kpi_targets: JSON.stringify(kpiTargetsMap)
+        kpi_targets: JSON.stringify(kpiTargetsMap),
+        hidden_kpis: JSON.stringify([...hiddenKpiSet])
       };
       const setRes = await fetch(API.settings, {
         method: 'POST',

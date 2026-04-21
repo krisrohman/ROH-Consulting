@@ -26,7 +26,7 @@ export default async (request) => {
       // Defense-in-depth cap on any single setting value. Most settings are
       // short strings; `kpi_targets` is a JSON blob and needs more room.
       const DEFAULT_LIMIT = 500;
-      const LARGE_VALUE_KEYS = new Set(['kpi_targets']);
+      const LARGE_VALUE_KEYS = new Set(['kpi_targets', 'hidden_kpis']);
       const LARGE_LIMIT = 8000;
 
       const before = await sql`SELECT key, value FROM settings`;

@@ -1620,14 +1620,10 @@
   }
 
   // Determine status based on projection vs target, respecting "lower is better" units
-  function projectionStatus(projection, target, unit, kpiName) {
-    if (projection === null || target === null) return 'unknown';
+  function projectionStatus(projection, target, unit, kpiName, narrowPct) {
     const lowerIsBetter = ['USD'].includes(unit) ||
       /cost|turnover|cpl|cpb/i.test(kpiName);
-    const ratio = lowerIsBetter ? target / projection : projection / target;
-    if (ratio >= 1.0) return 'on-track';
-    if (ratio >= 0.92) return 'narrow';
-    return 'at-risk';
+    return computeStatus(projection, target, lowerIsBetter, narrowPct);
   }
 
   // Human-readable projection note
@@ -1844,21 +1840,35 @@
     return m ? parseFloat(m[0]) : null;
   }
 
-  function computeStatus(value, target, lowerIsBetter) {
+  function computeStatus(value, target, lowerIsBetter, narrowPct) {
     if (typeof value !== 'number' || typeof target !== 'number') return 'unknown';
+    const pct = (typeof narrowPct === 'number' && narrowPct >= 0 && narrowPct <= 100)
+      ? narrowPct : 8;
+    const narrowFloor = 1 - (pct / 100);
     if (target === 0) {
-      if (lowerIsBetter) {
-        if (value <= 0) return 'on-track';
-        return 'at-risk';
-      }
-      if (value > 0) return 'on-track';
-      if (value === 0) return 'narrow';
+      if (lowerIsBetter) return value <= 0 ? 'on-track' : 'at-risk';
+      if (value > 0)    return 'on-track';
+      if (value === 0)  return 'narrow';
       return 'at-risk';
     }
     const ratio = lowerIsBetter ? target / value : value / target;
-    if (ratio >= 1.0)  return 'on-track';
-    if (ratio >= 0.92) return 'narrow';
+    if (ratio >= 1.0)         return 'on-track';
+    if (ratio >= narrowFloor) return 'narrow';
     return 'at-risk';
+  }
+
+  // Parse settings.kpi_thresholds into a normalized {normName: number} map
+  // so per-KPI narrow overrides are cheap to look up per render.
+  function buildThresholdMap(data) {
+    const raw = (data && data.settings && data.settings.kpi_thresholds) || {};
+    let parsed = raw;
+    if (typeof raw === 'string') { try { parsed = JSON.parse(raw) || {}; } catch (_) { parsed = {}; } }
+    const out = {};
+    for (const [k, v] of Object.entries(parsed || {})) {
+      const n = Number(v);
+      if (!Number.isNaN(n) && n >= 0 && n <= 100) out[normalizeKpi(k)] = n;
+    }
+    return out;
   }
 
   // Paint a .pill element per status — or a hollow ring if unknown.
@@ -1957,17 +1967,10 @@
       const pctOfTarget = Math.max(0, (ytd / nsTarget) * 100);
       trackFill.style.width = Math.min(100, pctOfTarget).toFixed(0) + '%';
       if (trackMeta) {
-        // Projection — admin-editable (settings.north_star_projection).
-        // Shown as '· projected N by EOY' when set.
-        const projRaw = settings.north_star_projection;
-        const proj = (projRaw !== undefined && projRaw !== null && String(projRaw).trim() !== '')
-          ? Number(projRaw) : null;
-        const projTail = (typeof proj === 'number' && !Number.isNaN(proj))
-          ? ` · projected ${fmt(Math.round(proj))} by EOY` : '';
         if (pctOfTarget >= 100) {
-          trackMeta.textContent = `YTD is ${pctOfTarget.toFixed(0)}% of EOY target — exceeded${projTail}`;
+          trackMeta.textContent = `YTD is ${pctOfTarget.toFixed(0)}% of EOY target — exceeded`;
         } else {
-          trackMeta.textContent = `Tracking ${pctOfTarget.toFixed(0)}% of EOY target${projTail}`;
+          trackMeta.textContent = `Tracking ${pctOfTarget.toFixed(0)}% of EOY target`;
         }
       }
     }
@@ -2051,6 +2054,7 @@
      // view on the scorecard.
     // Admin targets (normalized for fuzzy matching against sheet KPI names)
     const normTargets = buildNormalizedTargetMap(data);
+    const thresholdMap = buildThresholdMap(data);
 
     let hiddenNames = new Set();
     try {
@@ -2083,7 +2087,8 @@
       if (isHidden) return;
 
       const projection = projectValue(d.mtd, d.unit, weekInMonth, totalWeeks);
-      const status = projectionStatus(projection, d.target, d.unit, name);
+      const narrowPct = thresholdMap[normalizeKpi(matchKey)] ?? thresholdMap[normalizeKpi(name)];
+      const status = projectionStatus(projection, d.target, d.unit, name, narrowPct);
       const note = projectionNote(projection, d.py, d.target, d.unit, name);
 
       const cols = rowEl.querySelectorAll('.compare-col');
@@ -2209,6 +2214,7 @@
     const targetsByKpi = Object.fromEntries(
       targets.map(t => [normalizeKpi(t.kpi), t])
     );
+    const thresholdMap = buildThresholdMap(data);
 
     document.querySelectorAll('.leading[data-kpi]').forEach(el => {
       const wksEl = el.querySelector('.wks');
@@ -2252,7 +2258,9 @@
         const tgtRow = targetsByKpi[normalizeKpi(row ? row.kpi : (el.dataset.kpi || ''))];
         const target = tgtRow && tgtRow.months ? tgtRow.months[currentMonth] : null;
         const lowerIsBetter = /cost|turnover|cpl|cpb/i.test(row ? row.kpi : '');
-        const status = computeStatus(currentVal, target, lowerIsBetter);
+        const narrowPct = thresholdMap[normalizeKpi(row ? row.kpi : '')]
+                       ?? thresholdMap[normalizeKpi(el.dataset.kpi || '')];
+        const status = computeStatus(currentVal, target, lowerIsBetter, narrowPct);
         applyPillStyle(pill, status);
       }
     });
@@ -2277,6 +2285,7 @@
     const tgtByKpi    = Object.fromEntries(targets.map(r => [normalizeKpi(r.kpi), r]));
     const weeklyByKpi = Object.fromEntries(weeklyRows.map(r => [normalizeKpi(r.kpi), r]));
     const adminTargetStrings = buildNormalizedTargetMap(data);
+    const thresholdMap = buildThresholdMap(data);
 
     // How many weeks of the selected month have been recorded up through
     // the selected week, and how many weeks are in the month total? Used
@@ -2366,10 +2375,12 @@
 
       card.classList.remove('miss', 'over');
       if (pill) pill.classList.remove('ontrack', 'miss', 'unknown');
-      const ratio = mtdActual / paceTarget;
-      if (ratio >= 0.98) {
+      const lowerIsBetter = false; // revenue is always higher-is-better
+      const narrowPct = thresholdMap[wanted];
+      const status = computeStatus(mtdActual, paceTarget, lowerIsBetter, narrowPct);
+      if (status === 'on-track') {
         if (pill) { pill.className = 'rev-status ontrack'; pill.textContent = 'On track'; }
-      } else if (ratio >= 0.93) {
+      } else if (status === 'narrow') {
         card.classList.add('miss');
         if (pill) { pill.className = 'rev-status miss'; pill.textContent = 'Narrow miss'; }
       } else {
@@ -2491,6 +2502,7 @@
     // Admin-side target strings (parsed into numbers) as a fallback when
     // the Sheet's Targets tab doesn't cover a KPI or a month.
     const adminTargetStrings = buildNormalizedTargetMap(data);
+    const thresholdMap = buildThresholdMap(data);
 
     // Count weeks elapsed vs total-in-month — used to pro-rate sum-type
     // targets so W14 of a 5-week April isn't treated as 'Below target'
@@ -2564,7 +2576,8 @@
         paceTarget = monthlyTarget * (weeksElapsed / weeksInMonth);
       }
 
-      const status = computeStatus(mtd, paceTarget, lowerIsBetter);
+      const narrowPct = thresholdMap[nameKey];
+      const status = computeStatus(mtd, paceTarget, lowerIsBetter, narrowPct);
       if (status === 'on-track') onTrack++;
       else if (status === 'narrow') narrow++;
       else if (status === 'at-risk') risk++;

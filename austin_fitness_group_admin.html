@@ -226,11 +226,24 @@
   }
   .kpi-row-header, .kpi-row {
     display: grid;
-    grid-template-columns: minmax(0, 2.0fr) minmax(0, 1.1fr) 74px 74px 90px 110px minmax(0, 0.9fr) 100px 44px;
-    gap: 10px;
+    grid-template-columns: minmax(0, 2.0fr) minmax(0, 1.1fr) 74px 74px 90px 110px minmax(0, 0.9fr) 100px 36px 36px;
+    gap: 8px;
     align-items: center;
     padding: 10px 14px;
   }
+  .kpi-row.is-hidden { opacity: 0.45; }
+  .kpi-row.is-hidden .inline-input,
+  .kpi-row.is-hidden .tier-toggle { pointer-events: none; }
+  .hide-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px;
+    border: 0.5px solid var(--rule); border-radius: 6px;
+    background: #fff; color: var(--ink-3);
+    cursor: pointer; padding: 0;
+    transition: color 120ms ease, border-color 120ms ease;
+  }
+  .hide-btn:hover { color: var(--ink); border-color: var(--rule-strong); }
+  .hide-btn.is-on { color: var(--coral-600); border-color: var(--coral-200); background: var(--coral-50); }
   .kpi-row-header {
     font-size: 9px; letter-spacing: 0.22em;
     color: var(--ink-3); text-transform: uppercase;
@@ -592,10 +605,16 @@
               <h2 class="panel-title">KPIs</h2>
               <p class="panel-sub">Manage every KPI's name, section, unit, and whether it's a leading or lagging indicator.</p>
             </div>
-            <button class="btn primary" onclick="addKpi()">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Add KPI
-            </button>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <button class="btn ghost" id="show-hidden-toggle" onclick="toggleShowHidden()" style="display: none;" title="Show or hide rows that have been collapsed">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span id="show-hidden-label">Show hidden (0)</span>
+              </button>
+              <button class="btn primary" onclick="addKpi()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add KPI
+              </button>
+            </div>
           </div>
           <div class="panel-body">
             <!-- Sheet sync banner -->
@@ -609,6 +628,7 @@
               <span>Target</span>
               <span>Owner</span>
               <span>Tier</span>
+              <span></span>
               <span></span>
             </div>
             <div id="kpi-rows">
@@ -1189,13 +1209,62 @@
   // ============================================================
   // RENDER — KPIs & sections table
   // ============================================================
+  // Hidden-KPI state is local to this admin (per-device), stored in
+  // localStorage. Hiding a row doesn't delete it — it just collapses
+  // it out of sight so you can focus on the ones you're editing.
+  const HIDDEN_KPIS_KEY = 'afg_admin_hidden_kpis';
+  let hiddenKpiSet = new Set();
+  let showHiddenRows = false;
+  try {
+    const raw = localStorage.getItem(HIDDEN_KPIS_KEY);
+    if (raw) hiddenKpiSet = new Set(JSON.parse(raw) || []);
+  } catch (_) { hiddenKpiSet = new Set(); }
+
+  function persistHiddenKpis() {
+    try {
+      localStorage.setItem(HIDDEN_KPIS_KEY, JSON.stringify([...hiddenKpiSet]));
+    } catch (_) { /* localStorage blocked — ignore */ }
+  }
+
+  function toggleHideKpi(idx) {
+    const name = kpis[idx].kpi;
+    if (!name) return;
+    if (hiddenKpiSet.has(name)) {
+      hiddenKpiSet.delete(name);
+      showToast('"' + name + '" shown.', 'success');
+    } else {
+      hiddenKpiSet.add(name);
+      showToast('"' + name + '" hidden.', 'warn');
+    }
+    persistHiddenKpis();
+    renderKpis();
+  }
+
+  function toggleShowHidden() {
+    showHiddenRows = !showHiddenRows;
+    renderKpis();
+  }
+
   function renderKpis() {
     const container = document.getElementById('kpi-rows');
+    const hiddenCount = kpis.filter(k => hiddenKpiSet.has(k.kpi)).length;
+
+    // Update the header toggle's visibility + label
+    const toggleBtn = document.getElementById('show-hidden-toggle');
+    const toggleLbl = document.getElementById('show-hidden-label');
+    if (toggleBtn) toggleBtn.style.display = hiddenCount ? 'inline-flex' : 'none';
+    if (toggleLbl) toggleLbl.textContent = showHiddenRows
+      ? 'Hide hidden (' + hiddenCount + ')'
+      : 'Show hidden (' + hiddenCount + ')';
+
     container.innerHTML = kpis.map((k, idx) => {
+      const isHidden = hiddenKpiSet.has(k.kpi);
+      if (isHidden && !showHiddenRows) return ''; // filtered out entirely
       const mathType = k.math_type || 'avg';
       const goalDir = k.goal_direction || 'higher';
+      const hideTitle = isHidden ? 'Unhide row' : 'Hide row';
       return `
-      <div class="kpi-row" data-idx="${idx}">
+      <div class="kpi-row ${isHidden ? 'is-hidden' : ''}" data-idx="${idx}">
         <input class="inline-input" value="${escape(k.kpi)}" maxlength="100" onchange="updateKpi(${idx}, 'kpi', this.value)" style="font-family: var(--serif); font-weight: 500;" />
         <select class="inline-input" onchange="updateKpi(${idx}, 'section', this.value)">
           ${SECTIONS.map(s => `<option ${s === k.section ? 'selected' : ''}>${escape(s)}</option>`).join('')}
@@ -1218,6 +1287,11 @@
           <span class="lead">lagging</span>
           <span class="lag">leading</span>
         </div>
+        <button class="hide-btn ${isHidden ? 'is-on' : ''}" onclick="toggleHideKpi(${idx})" title="${hideTitle}">
+          ${isHidden
+            ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
+            : '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'}
+        </button>
         <div class="row-actions">
           <button class="icon-btn danger" onclick="removeKpi(${idx})" title="Remove">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>

@@ -2417,44 +2417,92 @@
   }
 
   function updateRibbon(data) {
-    // Count status per driver KPI for the CURRENT WEEK (not MTD).
-    // Compares the selected week's actual against the monthly target.
-    // Respects goal_direction (turnover/costs = lower is better).
+    // Count status per driver KPI for the CURRENTLY-SELECTED WEEK, using
+    // MTD-through-that-week logic that respects each KPI's math_type and
+    // pro-rates sum-type targets to pace. Matches via normalizeKpi so
+    // sheet/admin name drift (punctuation, case, &amp; vs &) doesn't drop
+    // KPIs silently from the tally.
     let onTrack = 0, narrow = 0, risk = 0;
 
-    const configs = (data && data.kpis) || [];
-    const weeklyRows = (data && data.sheet && data.sheet.weekly && data.sheet.weekly.rows) || [];
-    const targets = (data && data.sheet && data.sheet.targets) || [];
-    const weekCol = 'W' + currentWeekNum;
+    const sheet = (data && data.sheet) || {};
+    const configs    = data.kpis    || data.config   || [];
+    const weeklyRows = (sheet.weekly && sheet.weekly.rows) || [];
+    const weekCols   = (sheet.weekly && sheet.weekly.columns) || [];
+    const weekMonths = (sheet.weekly && sheet.weekly.months)  || [];
+    const targets    = sheet.targets || data.targets || [];
 
-    const configByName = {};
-    configs.forEach(c => { configByName[c.kpi_name] = c; });
-    const targetByName = {};
-    targets.forEach(t => { targetByName[t.kpi] = t.months && t.months[currentMonth]; });
+    // Normalized lookup maps.
+    const weeklyByKpi = {};
+    weeklyRows.forEach(r => { weeklyByKpi[normalizeKpi(r.kpi)] = r; });
+    const targetByKpi = {};
+    targets.forEach(t => { targetByKpi[normalizeKpi(t.kpi)] = t; });
 
-    weeklyRows.forEach(row => {
-      // Only count driver (internally tier=lagging) KPIs; outcome KPIs
-      // (tier=leading) are surfaced through the per-section callouts.
-      const cfg = configByName[row.kpi];
+    // Count weeks elapsed vs total-in-month — used to pro-rate sum-type
+    // targets so W14 of a 5-week April isn't treated as 'Below target'
+    // when the numerator is 1/5 of the denominator by definition.
+    let weeksElapsed = 0;
+    let weeksInMonth = 0;
+    weekCols.forEach((col, i) => {
+      if (weekMonths[i] !== currentMonth) return;
+      weeksInMonth++;
+      const wn = parseInt(String(col).replace(/[^0-9]/g, ''), 10);
+      if (wn <= currentWeekNum) weeksElapsed++;
+    });
+
+    configs.forEach(cfg => {
+      // Only count driver KPIs. tier='leading' in this codebase is the
+      // OUTCOME metric (shown in the beige callout); drivers are tier='lagging'.
       if (!cfg || cfg.tier === 'leading') return;
 
-      const weekVal = row.weeks ? row.weeks[weekCol] : null;
-      const target = targetByName[row.kpi];
-      if (typeof weekVal !== 'number' || typeof target !== 'number' || target === 0) return;
+      const nameKey  = normalizeKpi(cfg.kpi_name);
+      let weeklyRow = weeklyByKpi[nameKey];
+      let tgtRow    = targetByKpi[nameKey];
+      // Second pass: fuzzy match on KPI name if direct normalized miss
+      if (!weeklyRow) {
+        const hit = weeklyRows.find(r => fuzzyMatchKpi(r.kpi, cfg.kpi_name));
+        if (hit) weeklyRow = hit;
+      }
+      if (!tgtRow) {
+        const hit = targets.find(r => fuzzyMatchKpi(r.kpi, cfg.kpi_name));
+        if (hit) tgtRow = hit;
+      }
 
-      const goalDir = cfg.goal_direction || 'higher';
-      const ratio = (goalDir === 'lower')
-        ? (target / Math.max(Math.abs(weekVal), 0.0001))
-        : (weekVal / target);
+      const mathType = cfg.math_type || 'avg';
+      const lowerIsBetter = (cfg.goal_direction === 'lower') ||
+                             /cost|turnover|cpl|cpb/i.test(cfg.kpi_name || '');
 
-      if (ratio >= 1.0) onTrack++;
-      else if (ratio >= 0.92) narrow++;
-      else risk++;
+      // MTD actual through the selected week (via math_type).
+      let mtd = null;
+      if (weeklyRow && weeklyRow.weeks) {
+        const vals = [];
+        weekCols.forEach((col, i) => {
+          if (weekMonths[i] !== currentMonth) return;
+          const wn = parseInt(String(col).replace(/[^0-9]/g, ''), 10);
+          if (wn > currentWeekNum) return;
+          const v = weeklyRow.weeks[col];
+          if (v !== null && v !== undefined && v !== '') vals.push(Number(v));
+        });
+        if (vals.length) {
+          if (mathType === 'sum')         mtd = vals.reduce((a, b) => a + b, 0);
+          else if (mathType === 'latest') mtd = vals[vals.length - 1];
+          else /* avg */                  mtd = vals.reduce((a, b) => a + b, 0) / vals.length;
+        }
+      }
+
+      const monthlyTarget = tgtRow && tgtRow.months ? tgtRow.months[currentMonth] : null;
+      let paceTarget = monthlyTarget;
+      if (mathType === 'sum' && typeof monthlyTarget === 'number' && weeksInMonth > 0) {
+        paceTarget = monthlyTarget * (weeksElapsed / weeksInMonth);
+      }
+
+      const status = computeStatus(mtd, paceTarget, lowerIsBetter);
+      if (status === 'on-track') onTrack++;
+      else if (status === 'narrow') narrow++;
+      else if (status === 'at-risk') risk++;
+      // 'unknown' (no data / no target) → deliberately not counted
     });
 
     // Verdict cell order in the new markup is: on-track, narrow, at-risk.
-    // (The old ribbon was risk/narrow/ok — flipping this without flipping
-    // the DOM is what made 'on track' appear to never tally correctly.)
     const ribbonCells = document.querySelectorAll('.ribbon-num');
     if (ribbonCells.length >= 3) {
       ribbonCells[0].textContent = onTrack;

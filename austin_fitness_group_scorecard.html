@@ -2844,9 +2844,10 @@
     // Respects goal_direction (for turnover/costs, lower is better).
     let onTrack = 0, narrow = 0, risk = 0;
 
-    const configs = (data && data.config) || [];
-    const actuals = (data && data.actuals) || [];
-    const targets = (data && data.targets) || [];
+    // Correct API paths: kpis at top level, actuals/targets under .sheet
+    const configs = (data && data.kpis) || [];
+    const actuals = (data && data.sheet && data.sheet.actuals) || [];
+    const targets = (data && data.sheet && data.sheet.targets) || [];
 
     const configByName = {};
     configs.forEach(c => { configByName[c.kpi_name] = c; });

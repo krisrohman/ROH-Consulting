@@ -654,9 +654,8 @@
     grid-template-columns: repeat(3, 1fr);
     align-items: baseline;
     gap: 0;
-    padding: 16px 0 0;
-    margin: 22px 0 0;
-    border-top: 0.5px solid var(--rule);
+    padding: 22px 0 0;
+    margin: 0;
   }
   .ribbon-cell {
     display: flex;
@@ -1225,14 +1224,15 @@
      so we can flip it back on later without touching markup. */
   .row-trend { display: none; }
   .row-trend-label, .trend-pct { display: none; }
-  /* Goal — sized down so it sits BELOW the metric name in hierarchy
-     (metric name is 16px serif 500; goal now 13px serif 500). */
+  /* Goal — coral serif italic so it reads as editorial pull-quote rather
+     than competing with the metric name or blending into the subhead. */
   .row-goal {
     display: block;
     font-family: var(--serif);
-    font-size: 13px;
+    font-style: italic;
+    font-size: 16px;
     font-weight: 500;
-    color: var(--ink-2);
+    color: var(--coral-600);
     letter-spacing: -0.005em;
     margin: 10px 0 0;
     line-height: 1.2;
@@ -1241,6 +1241,7 @@
   .row-goal::before {
     content: 'Goal ';
     font-family: var(--sans);
+    font-style: normal;
     font-size: 9px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -1249,21 +1250,26 @@
     display: block;
     margin-bottom: 2px;
   }
-  .row-goal .pct { font-size: 11px; font-weight: 500; color: var(--ink-3); }
+  .row-goal .pct { font-size: 13px; font-weight: 500; color: var(--coral-400); }
 
   /* Per-row status: a small filled dot instead of a verbose pill.
-     Hovering / tap shows the full status (title attr is added by JS). */
+     font-size: 0 collapses every glyph to zero width so the label
+     text can't visibly leak, while the inline 'color: var(--teal-800)'
+     on the pill markup still drives the background via currentColor. */
   .pill {
     display: inline-block;
     width: 12px; height: 12px;
     border-radius: 50%;
     background: currentColor !important;
     border: none !important;
-    text-indent: -9999px;
-    overflow: hidden;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    letter-spacing: 0 !important;
     vertical-align: middle;
     padding: 0 !important;
     flex: 0 0 auto;
+    overflow: hidden;
+    text-indent: -9999px;
   }
   /* Vivid dot colors keyed off the original pill's inline color var
      so the static markup doesn't need to change */
@@ -1272,30 +1278,39 @@
   .pill[style*="--teal"]  { background: var(--teal-400)  !important; }
 
   /* Leading metric callout (between section header and driver rows) */
-  /* Lagging outcome callout — structurally mirrors a driver row:
-     [text block (tag + name + sub + goal)] [big actual] [status dot]
-     so Goal sits on the left in both rows and lagging outcomes. */
+  /* Lagging outcome callout — editorial "feature" panel that echoes the
+     North Star's beige treatment so the reader reads it as the section's
+     headline metric, not just another driver row. Structure mirrors a
+     driver row: [text stack] [big actual] [status dot]. */
   .leading {
     display: grid;
     grid-template-columns: 1fr auto auto;
-    gap: 24px;
+    gap: 28px;
     align-items: center;
-    padding: 14px 0 18px;
-    margin: 0;
-    background: transparent;
+    padding: 22px 26px;
+    margin: 6px 0 10px;
+    background: #f4ede0;
     border: none;
-    border-radius: 0;
+    border-radius: 2px;
   }
   .leading-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .leading-text .row-goal { margin-top: 10px; }
+  .leading-text .row-goal { margin-top: 12px; }
   .leading-tag {
     font-size: 9px;
-    letter-spacing: 0.24em;
-    color: var(--ink-3);
+    letter-spacing: 0.26em;
+    color: var(--coral-600);
     text-transform: uppercase;
     font-weight: 500;
     white-space: nowrap;
-    margin: 0 0 4px;
+    margin: 0 0 6px;
+  }
+  .leading-name {
+    font-family: var(--serif);
+    font-size: 20px !important;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.015em;
+    line-height: 1.15;
   }
   .leading-name {
     font-family: var(--serif);

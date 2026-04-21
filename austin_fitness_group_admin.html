@@ -575,9 +575,9 @@
         <span class="status-dot pulse" id="conn-dot"></span>
         <span id="conn-label">Connecting&hellip;</span>
       </div>
-      <button class="btn ghost" onclick="refreshConfig()">
+      <button class="btn ghost" id="refresh-btn" onclick="handleRefreshClick(this)">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/></svg>
-        Refresh
+        <span id="refresh-btn-label">Refresh</span>
       </button>
     </div>
   </div>
@@ -922,9 +922,9 @@
     </div>
   </div>
 
-  <!-- Subtle footer: return link to the dashboard -->
+  <!-- Subtle footer: return link to the scorecard -->
   <div class="page-footer">
-    <a href="austin_fitness_group_scorecard.html" class="admin-link">← Back to dashboard</a>
+    <a href="austin_fitness_group_scorecard.html" class="admin-link">← Back to scorecard</a>
   </div>
 
   <!-- Toast container -->
@@ -1037,6 +1037,28 @@
   // ============================================================
   // LOAD config from Neon via /api/config
   // ============================================================
+  // Wrapper so the Refresh button gives visible feedback. The bare
+  // refreshConfig() call from HTML attributes ran silently and the user
+  // couldn't tell if anything happened.
+  async function handleRefreshClick(btn) {
+    if (btn && btn.disabled) return;
+    const label = document.getElementById('refresh-btn-label');
+    const prev = label ? label.textContent : 'Refresh';
+    if (btn) btn.disabled = true;
+    if (label) label.textContent = 'Refreshing…';
+    await refreshConfig();
+    // refreshConfig already surfaces errors via the connection banner.
+    // Check its outcome to pick the right toast.
+    const banner = document.getElementById('conn-banner');
+    if (banner && banner.classList.contains('warn')) {
+      showToast('Refresh failed — see connection banner.', 'error');
+    } else {
+      showToast('Refreshed from server.', 'success');
+    }
+    if (label) label.textContent = prev;
+    if (btn) btn.disabled = false;
+  }
+
   async function refreshConfig() {
     try {
       const [cfgRes, setRes] = await Promise.all([

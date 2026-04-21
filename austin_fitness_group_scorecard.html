@@ -2491,6 +2491,24 @@
     if (issueEl) issueEl.textContent = 'Week ' + currentWeekNum;
   }
 
+  // Parse + normalize admin-saved targets once per render (not per row).
+  // Keys use normalizeKpi() so lookups work regardless of case,
+  // whitespace, or &amp; vs & differences between admin and sheet.
+  function buildNormalizedTargetMap(data) {
+    const raw = (data && data.settings && data.settings.kpi_targets) || {};
+    let parsed = {};
+    if (typeof raw === 'string') {
+      try { parsed = JSON.parse(raw) || {}; } catch (_) { parsed = {}; }
+    } else {
+      parsed = raw || {};
+    }
+    const out = {};
+    for (const [k, v] of Object.entries(parsed)) {
+      if (v != null && String(v).trim() !== '') out[normalizeKpi(k)] = String(v);
+    }
+    return out;
+  }
+
   function renderDashboard(data) {
     renderNorthStar(data);
     // Build lookup from all 4 sources (actuals, PY, targets, weekly)
@@ -2543,6 +2561,9 @@
     // Parse hidden-KPI list (set by admin, stored in settings.hidden_kpis
      // as a JSON array of KPI names). These rows are completely removed from
      // view on the scorecard.
+    // Admin targets (normalized for fuzzy matching against sheet KPI names)
+    const normTargets = buildNormalizedTargetMap(data);
+
     let hiddenNames = new Set();
     try {
       if (data.settings && data.settings.hidden_kpis) {
@@ -2619,23 +2640,18 @@
         }).join('');
       }
 
-      // Goal display: prefer the per-KPI target string from settings.kpi_targets
-      // (e.g. ">50%", "<$170"). Fall back to the numeric monthly target.
-      const settingsTargets = (data.settings && data.settings.kpi_targets) || {};
-      let kpiTargetMap = {};
-      if (typeof settingsTargets === 'string') {
-        try { kpiTargetMap = JSON.parse(settingsTargets) || {}; } catch (_) { kpiTargetMap = {}; }
-      } else {
-        kpiTargetMap = settingsTargets || {};
-      }
-      const goalText = kpiTargetMap[d.kpi]
+      // Goal display: prefer the per-KPI target string saved in admin
+      // (settings.kpi_targets, normalized map). Fall back to the numeric
+      // monthly target from the sheet.
+      const adminGoal =
+        normTargets[normalizeKpi(d.kpi)] ||
+        normTargets[normalizeKpi(name)] ||
+        normTargets[normalizeKpi(matchKey)];
+      const goalText = adminGoal
         || ((d.target !== undefined && d.target !== null && d.target !== '')
               ? formatVal(d.target, d.unit) : null);
 
       // Left-side prominent goal: insert/update inside the metric cell.
-      // Admin-entered targets (settings.kpi_targets) are plain strings; the
-      // formatVal fallback may include <span class="pct"> markup — trusted
-      // since both sources are under our control.
       const leftCol = rowEl.children[0];
       if (leftCol && goalText != null && goalText !== '') {
         let goalEl = leftCol.querySelector('.row-goal');
@@ -2644,12 +2660,10 @@
           goalEl.className = 'row-goal';
           leftCol.appendChild(goalEl);
         }
-        if (kpiTargetMap[d.kpi]) {
-          // Admin free-form string — user input, safer as text
-          goalEl.textContent = goalText;
+        if (adminGoal) {
+          goalEl.textContent = goalText; // user input — text-safe
         } else {
-          // Our own formatVal output can include markup like <span class="pct">
-          goalEl.innerHTML = goalText;
+          goalEl.innerHTML = goalText;    // our own formatVal markup
         }
       }
     });

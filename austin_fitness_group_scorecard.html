@@ -2508,6 +2508,10 @@
       // Only count driver KPIs. tier='leading' in this codebase is the
       // OUTCOME metric (shown in the beige callout); drivers are tier='lagging'.
       if (!cfg || cfg.tier === 'leading') return;
+      // Skip junk / incomplete rows so test entries and blank-name placeholders
+      // don't inflate the 'not measured' bucket.
+      const kpiName = String(cfg.kpi_name || '').trim();
+      if (!kpiName || kpiName.length < 2) return;
 
       const nameKey  = normalizeKpi(cfg.kpi_name);
       let weeklyRow = weeklyByKpi[nameKey];

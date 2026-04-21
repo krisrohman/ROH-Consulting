@@ -34,10 +34,10 @@ const KPI_TARGETS = {
   'Internal promotions':            '> 30 / year',
   'eNPS score':                     '> 40',
   'Voluntary turnover':             '< 20%',
-  'Systemwide revenue':             'vs plan',
-  'Recurring revenue':              'vs plan',
-  'Prepaid package revenue':        'vs plan',
-  'Retail, fees & other':           'vs plan',
+  'Systemwide revenue':             '> 200',
+  'Recurring revenue':              '> 160',
+  'Prepaid package revenue':        '> 20',
+  'Retail, fees & other':           '> 15',
 };
 
 // Canonical KPI list — every row the scorecard + sheet expect. Seeding this

@@ -1,0 +1,2352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFG Dashboard — Admin</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23D85A30'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='500' text-anchor='middle' fill='%23fff'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --ink-2: #555;
+    --ink-3: #8a8a8a;
+    --paper: #fafaf6;
+    --rule: rgba(0,0,0,0.12);
+    --rule-strong: rgba(0,0,0,0.85);
+    --coral-50: #FAECE7;
+    --coral-200: #F5C4B3;
+    --coral-400: #D85A30;
+    --coral-600: #993C1D;
+    --coral-800: #712B13;
+    --teal-50: #E1F5EE;
+    --teal-400: #1D9E75;
+    --teal-600: #0F6E56;
+    --teal-800: #085041;
+    --amber-50: #FAEEDA;
+    --amber-400: #BA7517;
+    --amber-600: #854F0B;
+    --red-50: #FCEBEB;
+    --red-600: #A32D2D;
+    --sans: 'Inter', -apple-system, sans-serif;
+    --serif: 'Fraunces', Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: #efece4;
+    color: var(--ink); font-family: var(--sans); font-size: 14px;
+    line-height: 1.5; -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: none;
+    margin: 12px 16px 24px;
+    padding: 1.5rem 1.5rem 2rem;
+    background: var(--paper);
+    border-top: 4px solid var(--coral-400);
+    box-shadow: 0 4px 40px rgba(0,0,0,0.06);
+  }
+
+  /* Top bar with switcher */
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 1rem; border-bottom: 0.5px solid var(--rule);
+  }
+  .brand {
+    display: flex; align-items: baseline; gap: 14px;
+  }
+  .kicker {
+    font-size: 10px; letter-spacing: 0.22em;
+    color: var(--coral-600); margin: 0 0 6px;
+  }
+  .ptitle {
+    font-family: var(--serif); font-size: 26px; font-weight: 500;
+    margin: 0; letter-spacing: -0.02em;
+  }
+  .view-switcher {
+    display: inline-flex;
+    background: #fff;
+    border: 0.5px solid var(--rule);
+    border-radius: 100px;
+    padding: 3px;
+  }
+  .view-switcher a {
+    padding: 7px 16px;
+    font-size: 12px; font-weight: 500;
+    color: var(--ink-2);
+    text-decoration: none;
+    border-radius: 100px;
+    transition: all 0.15s ease;
+    font-family: var(--sans);
+  }
+  .view-switcher a:hover { color: var(--ink); }
+  .view-switcher a.active {
+    background: var(--coral-400);
+    color: #fff;
+  }
+
+  /* Left-right split */
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 32px;
+    margin-top: 24px;
+  }
+
+  /* Side nav */
+  .sidenav {
+    display: flex; flex-direction: column; gap: 2px;
+    position: sticky; top: 20px; align-self: start;
+  }
+  .sidenav-section {
+    font-size: 9px; letter-spacing: 0.26em;
+    color: var(--ink-3); text-transform: uppercase;
+    padding: 10px 0 6px; font-weight: 500;
+  }
+  .sidenav a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px;
+    font-size: 13px; color: var(--ink-2);
+    text-decoration: none;
+    border-radius: 6px;
+    border-left: 2px solid transparent;
+    margin-left: -2px;
+    font-family: var(--sans);
+  }
+  .sidenav a:hover { background: rgba(0,0,0,0.03); color: var(--ink); }
+  .sidenav a.active {
+    background: var(--coral-50);
+    color: var(--coral-800);
+    border-left-color: var(--coral-400);
+    font-weight: 500;
+  }
+  .sidenav-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); }
+  .sidenav a.active .sidenav-dot { background: var(--coral-400); }
+
+  /* Content panel */
+  .content { min-width: 0; }
+  .panel {
+    background: #fff;
+    border: 0.5px solid var(--rule);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 18px 24px;
+    border-bottom: 0.5px solid var(--rule);
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .panel-title {
+    font-family: var(--serif); font-size: 20px; font-weight: 500;
+    letter-spacing: -0.01em; margin: 0 0 4px;
+  }
+  .panel-sub {
+    font-family: var(--serif); font-style: italic;
+    font-size: 13px; color: var(--ink-2); margin: 0;
+  }
+  .panel-body {
+    padding: 16px 24px;
+  }
+  /* KPI table is wider than most viewports now that each row has 13
+     columns (reorder, name, section, unit, math, goal-dir, target,
+     on-track %, narrow %, owner, tier, hide, delete). Give the table
+     a scrollable window so the trash/hide icons never get clipped. */
+  #kpis-list-panel .panel-body,
+  #view-kpis .panel-body { overflow-x: auto; }
+  .kpi-row-header, .kpi-row { min-width: 1100px; }
+
+  /* Advanced-off mode: hide Unit, Math, Scope, Goal dir columns.
+     Default (no advanced-on on view) is simple. */
+  #view-kpis:not(.advanced-on) .kpi-row .adv,
+  #view-kpis:not(.advanced-on) .kpi-row-header .adv {
+    display: none;
+  }
+  #view-kpis:not(.advanced-on) .kpi-row-header,
+  #view-kpis:not(.advanced-on) .kpi-row {
+    grid-template-columns: 32px minmax(220px, 2.6fr) minmax(0, 1fr) 86px 58px 58px minmax(0, 0.7fr) 28px 28px;
+    min-width: 780px;
+  }
+  /* Advanced toggle chip */
+  .kpi-toolbar {
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: 8px; padding: 0 0 8px;
+    font-size: 12px; color: var(--ink-3);
+  }
+  .kpi-toolbar label { cursor: pointer; user-select: none; }
+  .kpi-toolbar input { vertical-align: middle; margin-right: 6px; }
+
+  /* Sheet sync banner — shown when admin config doesn't match Google Sheet */
+  .sheet-sync-banner {
+    background: #FEF3C7;
+    border: 0.5px solid #F59E0B;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #78350F;
+    line-height: 1.5;
+  }
+  .sheet-sync-banner.ok {
+    background: #ECFDF5;
+    border-color: #10B981;
+    color: #064E3B;
+  }
+  .sheet-sync-banner .banner-title {
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sheet-sync-banner .banner-list {
+    margin: 6px 0 4px;
+    padding-left: 0;
+    list-style: none;
+  }
+  .sheet-sync-banner .banner-list li {
+    padding: 3px 0;
+    font-family: var(--serif);
+    font-style: italic;
+  }
+  .sheet-sync-banner .banner-list code {
+    font-family: 'SF Mono', 'Monaco', monospace;
+    background: rgba(0,0,0,0.06);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-style: normal;
+    font-size: 12px;
+  }
+  .sheet-sync-banner .banner-action {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #78350F;
+  }
+  .sheet-sync-banner.ok .banner-action { color: #064E3B; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 14px; background: #fff;
+    border: 0.5px solid rgba(0,0,0,0.2);
+    border-radius: 100px;
+    font-family: var(--sans); font-size: 12px; font-weight: 500;
+    color: var(--ink); cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn:hover { border-color: rgba(0,0,0,0.4); }
+  .btn.primary {
+    background: var(--coral-400); border: none; color: #fff;
+  }
+  .btn.primary:hover { background: var(--coral-600); }
+  .btn.ghost { border: none; color: var(--ink-2); }
+  .btn.ghost:hover { background: rgba(0,0,0,0.04); color: var(--ink); }
+  .btn.danger { color: var(--red-600); border-color: rgba(163,45,45,0.25); }
+  .btn.danger:hover { background: var(--red-50); border-color: var(--red-600); }
+
+  /* KPI table */
+  .kpi-table {
+    width: 100%;
+    font-size: 13px;
+  }
+  .kpi-row-header, .kpi-row {
+    display: grid;
+    grid-template-columns: 32px minmax(220px, 2.2fr) minmax(0, 1fr) 80px 74px 80px 90px 92px 64px 60px 52px minmax(0, 0.7fr) 28px 28px;
+    gap: 6px;
+    align-items: center;
+    padding: 10px 12px;
+  }
+  .kpi-round-cell { display: flex; justify-content: center; }
+  .kpi-round-cell input[type="checkbox"] { margin: 0; cursor: pointer; }
+  /* Name input: full-width, no truncation — user wants the whole name visible. */
+  .kpi-row > .inline-input:nth-child(2) {
+    text-overflow: clip;
+    white-space: nowrap;
+    overflow: visible;
+  }
+  /* Reorder column — two compact chevrons stacked */
+  .kpi-reorder {
+    display: flex; flex-direction: column; gap: 2px;
+    align-items: center; justify-content: center;
+  }
+  .kpi-reorder button {
+    width: 22px; height: 14px;
+    border: 0.5px solid var(--rule); border-radius: 4px;
+    background: #fff; color: var(--ink-3);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; padding: 0;
+    transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+  }
+  .kpi-reorder button:hover:not(:disabled) {
+    color: var(--ink); border-color: var(--rule-strong); background: rgba(0,0,0,0.03);
+  }
+  .kpi-reorder button:disabled { opacity: 0.25; cursor: not-allowed; }
+  .kpi-reorder svg { width: 9px; height: 9px; }
+  .kpi-row.is-hidden {
+    opacity: 0.4;
+    background: rgba(0,0,0,0.03);
+  }
+  .kpi-row.is-hidden .inline-input,
+  .kpi-row.is-hidden .tier-toggle { pointer-events: none; }
+  .kpi-row.is-hidden input.inline-input { text-decoration: line-through; }
+  .hide-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px;
+    border: 0.5px solid var(--rule); border-radius: 6px;
+    background: #fff; color: var(--ink-3);
+    cursor: pointer; padding: 0;
+    transition: color 120ms ease, border-color 120ms ease;
+  }
+  .hide-btn:hover { color: var(--ink); border-color: var(--rule-strong); }
+  .hide-btn.is-on { color: var(--coral-600); border-color: var(--coral-200); background: var(--coral-50); }
+  .kpi-row-header {
+    font-size: 9px; letter-spacing: 0.22em;
+    color: var(--ink-3); text-transform: uppercase;
+    font-weight: 500;
+    background: rgba(0,0,0,0.03);
+    border-radius: 6px;
+    margin-bottom: 6px;
+  }
+  .kpi-row {
+    border-bottom: 0.5px solid var(--rule);
+  }
+  .kpi-row:last-child { border-bottom: none; }
+  .kpi-row:hover { background: rgba(0,0,0,0.015); }
+  .kpi-name {
+    font-family: var(--serif); font-weight: 500; font-size: 14px;
+    letter-spacing: -0.005em;
+  }
+  .section-pill {
+    display: inline-block;
+    font-size: 10px; font-weight: 500;
+    padding: 3px 9px; border-radius: 100px;
+  }
+  .tier-toggle {
+    display: inline-flex;
+    background: rgba(0,0,0,0.05);
+    border-radius: 100px;
+    padding: 2px;
+    font-size: 10px; font-weight: 500;
+    cursor: pointer;
+    width: fit-content;
+  }
+  .tier-toggle span {
+    padding: 3px 8px; border-radius: 100px;
+    color: var(--ink-3);
+  }
+  .tier-toggle.leading span.lead {
+    background: var(--coral-400); color: #fff;
+  }
+  .tier-toggle:not(.leading) span.lag {
+    background: #fff; color: var(--ink);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  }
+  .inline-input {
+    width: 100%;
+    border: 0.5px solid transparent;
+    background: transparent;
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-family: var(--sans); font-size: 13px;
+    color: var(--ink);
+    transition: all 0.1s ease;
+  }
+  .inline-input:hover {
+    border-color: var(--rule);
+    background: #fff;
+  }
+  .inline-input:focus {
+    outline: none;
+    border-color: var(--coral-400);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(216,90,48,0.1);
+  }
+  .row-actions {
+    display: flex; justify-content: flex-end; gap: 4px;
+  }
+  .icon-btn {
+    width: 28px; height: 28px;
+    border-radius: 6px; border: none; background: transparent;
+    color: var(--ink-3); cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: all 0.12s ease;
+  }
+  .icon-btn:hover { background: rgba(0,0,0,0.06); color: var(--ink); }
+  .icon-btn.danger:hover { background: var(--red-50); color: var(--red-600); }
+
+  /* Section accents for the pill */
+  .sec-mg { background: var(--coral-50); color: var(--coral-800); }
+  .sec-me { background: var(--teal-50); color: var(--teal-800); }
+  .sec-ba { background: #EEEDFE; color: #3C3489; }
+  .sec-sr { background: var(--amber-50); color: var(--amber-800); }
+  .sec-pc { background: #FBEAF0; color: #72243E; }
+
+  /* Settings form */
+  .field-grid {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 20px 24px;
+    align-items: center;
+  }
+  .field-label {
+    font-size: 12px; letter-spacing: 0.02em;
+    color: var(--ink-2);
+  }
+  .field-label .sub {
+    display: block; font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-3);
+    margin-top: 2px;
+  }
+  .field-control {
+    display: flex; gap: 10px; align-items: center;
+  }
+  .input {
+    padding: 8px 12px;
+    border: 0.5px solid var(--rule);
+    border-radius: 6px;
+    font-family: var(--sans); font-size: 13px;
+    color: var(--ink);
+    background: #fff;
+    min-width: 240px;
+  }
+  .input:focus {
+    outline: none;
+    border-color: var(--coral-400);
+    box-shadow: 0 0 0 3px rgba(216,90,48,0.1);
+  }
+  .color-chip {
+    width: 30px; height: 30px; border-radius: 6px;
+    border: 0.5px solid var(--rule);
+    cursor: pointer;
+  }
+
+  /* Audit log */
+  .audit-row {
+    display: grid;
+    grid-template-columns: 140px 90px 1fr;
+    gap: 16px;
+    padding: 10px 14px;
+    font-size: 13px;
+    border-bottom: 0.5px solid var(--rule);
+    align-items: center;
+  }
+  .audit-row:last-child { border-bottom: none; }
+  .audit-time {
+    font-size: 12px; color: var(--ink-3);
+    font-family: var(--serif); font-style: italic;
+  }
+  .audit-who {
+    font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  /* Status banner */
+  .status-banner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--teal-50);
+    border: 0.5px solid rgba(15,110,86,0.2);
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+  .status-banner.warn { background: var(--amber-50); border-color: rgba(186,117,23,0.2); }
+  .status-banner-left {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--ink);
+  }
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--teal-400);
+  }
+  .pulse { animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* Panel sections separator */
+  .panel + .panel { margin-top: 20px; }
+
+  /* Add row button */
+  .add-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    background: rgba(0,0,0,0.02);
+    border: 0.5px dashed var(--rule);
+    border-radius: 6px;
+    color: var(--ink-3);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .add-row:hover {
+    background: var(--coral-50);
+    border-color: var(--coral-400);
+    border-style: solid;
+    color: var(--coral-800);
+  }
+
+  /* Tab sections inside admin */
+  .admin-view { display: none; }
+  .admin-view.active { display: block; }
+
+  /* Footer save bar */
+  .savebar {
+    position: sticky; bottom: 20px;
+    background: #fff;
+    border: 0.5px solid var(--rule);
+    border-radius: 100px;
+    padding: 10px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    margin-top: 24px;
+  }
+  .savebar-status {
+    font-size: 12px; color: var(--ink-2);
+    font-family: var(--serif); font-style: italic;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* Back-to-scorecard link in the topbar — replaces the 'dashboard admin'
+     kicker so the user has a clear route out of the admin panel. */
+  .back-link {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--coral-600);
+    text-decoration: none;
+    font-weight: 500;
+    margin: 0 0 6px;
+    transition: color 140ms ease;
+  }
+  .back-link:hover { color: var(--ink); }
+
+  /* Toast notifications */
+  .toast-container {
+    position: fixed; bottom: 90px; right: 20px;
+    display: flex; flex-direction: column; gap: 8px;
+    z-index: 9999; pointer-events: none;
+  }
+  .toast {
+    min-width: 220px; max-width: 360px;
+    background: var(--ink); color: #fff;
+    font-family: var(--serif); font-size: 13px;
+    padding: 12px 16px; border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 180ms ease, transform 180ms ease;
+    pointer-events: auto;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.success { background: var(--teal-800, #0b5f56); }
+  .toast.error   { background: var(--red-600, #c03030); }
+  .toast.warn    { background: #9a6611; }
+
+  /* Inline hint under a field */
+  .field-hint {
+    font-size: 11px; color: var(--amber-600, #a06a0c);
+    font-style: italic; margin-top: 6px;
+    display: none;
+  }
+  .field-hint.show { display: block; }
+
+  /* =========================================================
+     Responsive — admin
+     - Tablet (<=960px): narrower padding, stack nav above content,
+       wrap the topbar, let the KPI table scroll horizontally
+     - Phone (<=640px): tighter padding, smaller typography,
+       single-column field layouts, full-width inputs
+     ========================================================= */
+  @media (max-width: 960px) {
+    .page { padding: 1.25rem 1rem 4rem; margin: 12px auto 24px; }
+    .topbar { flex-wrap: wrap; gap: 12px; }
+    .view-switcher { order: 2; width: 100%; justify-content: center; display: flex; overflow-x: auto; }
+    .layout { grid-template-columns: 1fr; gap: 20px; }
+    .sidenav {
+      position: static; flex-direction: row; gap: 0;
+      overflow-x: auto; padding-bottom: 4px;
+      border-bottom: 0.5px solid var(--rule);
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+    }
+    .sidenav-section { display: none; }
+    .sidenav a { flex: 0 0 auto; white-space: nowrap; padding: 8px 14px; }
+    .sidenav-dot { display: none; }
+    /* KPI table stays readable by scrolling horizontally */
+    .panel-body { overflow-x: auto; }
+    .kpi-row-header, .kpi-row { min-width: 1040px; }
+    .panel-header { flex-wrap: wrap; gap: 10px; }
+    .field-grid { grid-template-columns: 1fr; }
+    .field-label { padding: 0; }
+    .field-control { flex-wrap: wrap; }
+  }
+  @media (max-width: 640px) {
+    .page { padding: 1rem 0.875rem 4.5rem; border-top-width: 3px; }
+    .ptitle { font-size: 22px; }
+    .panel-title { font-size: 16px; }
+    .view-switcher a { padding: 6px 12px; font-size: 11px; }
+    .savebar {
+      position: fixed; left: 12px; right: 12px; bottom: 12px;
+      margin-top: 0; border-radius: 14px; padding: 10px 12px;
+      flex-wrap: wrap; gap: 8px;
+    }
+    .savebar-status { flex: 1 1 100%; }
+    .toast-container { bottom: 110px; right: 12px; left: 12px; }
+    .toast { min-width: 0; max-width: none; width: 100%; }
+    /* Access panel: make the invite row stack */
+    #view-access .panel-body > div[style*="gap: 8px"][style*="flex-end"] {
+      flex-direction: column; align-items: stretch;
+    }
+    #view-access .panel-body > div[style*="gap: 8px"][style*="flex-end"] > * { width: 100% !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div>
+      <a href="austin_fitness_group_scorecard.html" class="back-link">← Back to scorecard</a>
+      <h1 class="ptitle">Admin</h1>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- Side navigation -->
+    <nav class="sidenav">
+      <div class="sidenav-section">Manage</div>
+      <a href="#kpis" class="active" onclick="showView('kpis', this)">
+        <span class="sidenav-dot"></span> KPIs
+      </a>
+      <a href="#sections" onclick="showView('sections', this)">
+        <span class="sidenav-dot"></span> Sections
+      </a>
+      <a href="#owners" onclick="showView('owners', this)">
+        <span class="sidenav-dot"></span> Owners &amp; teams
+      </a>
+      <a href="#branding" onclick="showView('branding', this)">
+        <span class="sidenav-dot"></span> Branding
+      </a>
+      <a href="#north-star" onclick="showView('north-star', this)">
+        <span class="sidenav-dot"></span> North star
+      </a>
+      <div class="sidenav-section">Integration</div>
+      <a href="#sheet" onclick="showView('sheet', this)">
+        <span class="sidenav-dot"></span> Google Sheet
+      </a>
+      <a href="#access" onclick="showView('access', this)">
+        <span class="sidenav-dot"></span> Access &amp; security
+      </a>
+      <div class="sidenav-section">History</div>
+      <a href="#audit" onclick="showView('audit', this)">
+        <span class="sidenav-dot"></span> Audit log
+      </a>
+    </nav>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- KPIs & sections view -->
+      <div class="admin-view active" id="view-kpis">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">KPIs</h2>
+              <p class="panel-sub">Manage every KPI's name, section, unit, and whether it's a leading or lagging indicator.</p>
+            </div>
+            <button class="btn primary" onclick="addKpi()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add KPI
+            </button>
+          </div>
+          <div class="panel-body">
+            <!-- Sheet sync banner -->
+            <div id="sheet-sync-banner" class="sheet-sync-banner" style="display:none;"></div>
+            <div class="kpi-toolbar">
+              <label>
+                <input type="checkbox" id="advanced-toggle" onchange="toggleAdvanced(this.checked)" />
+                Show advanced columns (Unit / Math / Scope / Goal dir)
+              </label>
+            </div>
+            <div class="kpi-row-header">
+              <span style="text-align:center;">↕</span>
+              <span>KPI name</span>
+              <span>Section</span>
+              <span class="adv">Unit</span>
+              <span class="adv">Math</span>
+              <span class="adv" title="Target scope: monthly = target applies per month. annual = annual target pro-rated by weeks-elapsed / 52.">Scope</span>
+              <span class="adv">Goal dir</span>
+              <span>Target</span>
+              <span title="Minimum % of goal required for on-track. 100 = must hit goal. 95 = 95%+ is on-track. Default 100.">On-track %</span>
+              <span title="Minimum % of goal for narrow. Below this = at-risk. Must be ≤ On-track. Default 92.">Narrow %</span>
+              <span title="Round displayed values up (ceiling) instead of rounding to nearest. On = Math.ceil, Off = Math.round (default).">Round ↑</span>
+              <span>Owner</span>
+              <span></span>
+              <span></span>
+            </div>
+            <div id="kpi-rows">
+              <!-- Rows injected here -->
+            </div>
+            <div class="add-row" onclick="addKpi()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add another KPI
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sections view -->
+      <div class="admin-view" id="view-sections">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Sections</h2>
+              <p class="panel-sub">Each section on the dashboard has a number, title, subtitle, and a leading outcome callout. Edit any of these and save.</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div id="sections-list" style="display: flex; flex-direction: column; gap: 18px;">
+              <!-- Rendered by renderSections() -->
+            </div>
+            <div class="add-row" onclick="addSection()" style="margin-top: 14px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add another section
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Owners & teams view -->
+      <div class="admin-view" id="view-owners">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Owners &amp; teams</h2>
+              <p class="panel-sub">Who owns each measurable. Showing up across the dashboard and section headers.</p>
+            </div>
+          </div>
+          <div class="panel-body" id="owners-body">
+            <!-- Rendered from config -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Branding view -->
+      <div class="admin-view" id="view-branding">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Branding</h2>
+              <p class="panel-sub">Dashboard title, fiscal year, and brand color. Applied everywhere.</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="field-grid">
+              <div class="field-label">
+                Dashboard title
+                <span class="sub">shown in the hero</span>
+              </div>
+              <div class="field-control">
+                <input class="input" id="set-title" value="Austin Fitness Group" maxlength="80" />
+              </div>
+
+              <div class="field-label">
+                Fiscal year
+                <span class="sub">used throughout</span>
+              </div>
+              <div class="field-control">
+                <input class="input" id="set-fy" value="FY 2026" maxlength="20" style="min-width: 140px;" />
+              </div>
+
+              <div class="field-label">
+                Brand color
+                <span class="sub">section numbers, accents, sync button</span>
+              </div>
+              <div class="field-control">
+                <input type="color" class="color-chip" id="set-color-picker" value="#D85A30" />
+                <input class="input" id="set-color" value="#D85A30" maxlength="7" pattern="#[0-9A-Fa-f]{6}" style="min-width: 140px; font-family: var(--serif); font-variant-numeric: tabular-nums;" />
+                <span style="font-size: 11px; color: var(--ink-3); font-style: italic;">AFG orange by default</span>
+              </div>
+
+              <div class="field-label">
+                Hero tagline
+                <span class="sub">appears under the dashboard title</span>
+              </div>
+              <div class="field-control">
+                <input class="input" id="set-hero-tagline" value="High standards. Relentless execution. No shortcuts." maxlength="200" style="min-width: 100%; width: 100%; font-family: var(--serif);" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- North star view -->
+      <div class="admin-view" id="view-north-star">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">North star</h2>
+              <p class="panel-sub">The single headline metric that anchors the dashboard.</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="field-grid">
+              <div class="field-label">
+                Pick a KPI
+                <span class="sub">from your config list</span>
+              </div>
+              <div class="field-control">
+                <select class="input" id="ns-kpi" style="min-width: 320px;">
+                  <!-- Options populated from config -->
+                </select>
+              </div>
+
+              <div class="field-label">
+                Headline text
+                <span class="sub">the line above the three numbers</span>
+              </div>
+              <div class="field-control">
+                <input class="input" id="ns-headline" value="Net recurring members per studio, on average." maxlength="200" style="min-width: 100%; width: 100%; font-family: var(--serif);" />
+                <p id="ns-stale-hint" class="field-hint">Heads up — you just changed the North Star KPI. Update Headline, Target, and Projection to match the new KPI before saving.</p>
+              </div>
+
+              <div class="field-label">
+                End-of-year target
+                <span class="sub">shown on the north star card</span>
+              </div>
+              <div class="field-control">
+                <input class="input" id="ns-target" value="12" maxlength="20" inputmode="decimal" style="min-width: 140px; font-family: var(--serif); font-variant-numeric: tabular-nums;" />
+              </div>
+
+              <div class="field-label">
+                Current projection
+                <span class="sub">overridden if calculated automatically</span>
+              </div>
+              <div class="field-control">
+                <input class="input" id="ns-projection" value="24" maxlength="20" inputmode="decimal" style="min-width: 140px; font-family: var(--serif); font-variant-numeric: tabular-nums;" />
+                <label style="font-size: 12px; color: var(--ink-2); display: flex; align-items: center; gap: 6px;">
+                  <input type="checkbox" id="ns-auto" checked />
+                  calculate automatically from MTD run rate
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sheet integration view -->
+      <div class="admin-view" id="view-sheet">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Google Sheet integration</h2>
+              <p class="panel-sub">Where the dashboard pulls its weekly data. Ben edits the sheet directly.</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="field-grid">
+              <div class="field-label">
+                Web app URL
+                <span class="sub">apps script endpoint</span>
+              </div>
+              <div class="field-control" style="flex-direction: column; align-items: stretch; gap: 8px;">
+                <input class="input" id="sheet-url" placeholder="https://script.google.com/macros/s/XXXXX/exec" maxlength="500" style="min-width: 100%; width: 100%; font-family: var(--serif); font-size: 12px; font-variant-numeric: tabular-nums;" />
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn ghost" onclick="copySheetUrl()">Copy URL</button>
+                  <span style="font-size: 11px; font-style: italic; color: var(--ink-3); align-self: center;">Connection status shown at top of page.</span>
+                </div>
+              </div>
+
+              <div class="field-label">
+                Sheet name
+                <span class="sub">read-only</span>
+              </div>
+              <div class="field-control">
+                <span style="font-family: var(--serif); font-size: 14px; color: var(--ink-2);">AFG KPI Dashboard &mdash; FY26</span>
+              </div>
+
+              <div class="field-label">
+                Last successful sync
+                <span class="sub">read-only</span>
+              </div>
+              <div class="field-control">
+                <span id="sync-time-admin" style="font-family: var(--serif); font-style: italic; font-size: 13px; color: var(--ink-2);">Checking…</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top: 18px;">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Seed canonical defaults</h2>
+              <p class="panel-sub">Populates the database with the five pillar sections, per-KPI goal strings, brand, and North Star settings that ship with the scorecard. Safe to run on a fresh DB. By default it <strong>skips</strong> anything you've already filled in, so it won't clobber edits.</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <button class="btn" id="seed-btn" onclick="runSeed(this, false, false)">
+                <span id="seed-btn-label">Seed defaults</span>
+              </button>
+              <button class="btn ghost" id="seed-force-btn" onclick="runSeed(this, true, false)" title="Overwrites existing values — use only if you want to reset to the shipped defaults.">
+                <span id="seed-force-btn-label">Overwrite with defaults</span>
+              </button>
+              <button class="btn ghost" id="seed-prune-btn" onclick="runSeed(this, false, true)" title="Soft-deletes any KPI whose name isn't in the canonical list. Useful for clearing test rows, renamed duplicates, and empty New KPI leftovers.">
+                <span id="seed-prune-btn-label">Prune to canonical</span>
+              </button>
+              <span style="font-size: 11px; font-style: italic; color: var(--ink-3);">Seed fills gaps · Overwrite resets values · Prune removes non-canonical rows.</span>
+            </div>
+            <div id="seed-result" style="margin-top: 12px; font-size: 12px; color: var(--ink-2); display: none;"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Access view -->
+      <div class="admin-view" id="view-access">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Access &amp; security</h2>
+              <p class="panel-sub">Who can edit this admin panel. Adding someone here gives them permission to change KPIs, settings, and branding once Netlify Identity is wired in.</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div id="users-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
+              <!-- Rows injected by renderUsers() -->
+            </div>
+            <div style="display: flex; gap: 8px; align-items: flex-end; padding-top: 10px; border-top: 0.5px solid var(--rule);">
+              <div style="flex: 2;">
+                <div class="field-label" style="margin-bottom: 4px;">Email</div>
+                <input class="input" id="new-user-email" placeholder="name@company.com" maxlength="120" type="email" style="width: 100%;" />
+              </div>
+              <div style="flex: 1.5;">
+                <div class="field-label" style="margin-bottom: 4px;">Name</div>
+                <input class="input" id="new-user-name" placeholder="Full name" maxlength="80" style="width: 100%;" />
+              </div>
+              <div style="flex: 1;">
+                <div class="field-label" style="margin-bottom: 4px;">Role</div>
+                <select class="input" id="new-user-role" style="width: 100%;">
+                  <option value="admin">admin</option>
+                  <option value="owner">owner</option>
+                  <option value="viewer">viewer</option>
+                </select>
+              </div>
+              <button class="btn primary" onclick="inviteUser()">Invite</button>
+            </div>
+            <p style="font-size: 11px; font-style: italic; color: var(--ink-3); margin-top: 10px;">
+              Roles: <strong>owner</strong> full control &middot; <strong>admin</strong> edit KPIs and settings &middot; <strong>viewer</strong> read-only
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Audit log view -->
+      <div class="admin-view" id="view-audit">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Audit log</h2>
+              <p class="panel-sub">Recent changes to the dashboard configuration.</p>
+            </div>
+            <button class="btn ghost" onclick="exportAuditCsv()">Export CSV</button>
+          </div>
+          <div class="panel-body" style="padding: 0 8px;">
+            <div class="audit-row">
+              <span class="audit-time">Apr 17, 9:04 a.m.</span>
+              <span class="audit-who">Ben</span>
+              <span>Added new KPI "eNPS score" to People &amp; culture</span>
+            </div>
+            <div class="audit-row">
+              <span class="audit-time">Apr 15, 3:22 p.m.</span>
+              <span class="audit-who">Kris</span>
+              <span>Changed brand color from #333 to #D85A30</span>
+            </div>
+            <div class="audit-row">
+              <span class="audit-time">Apr 15, 10:11 a.m.</span>
+              <span class="audit-who">Kris</span>
+              <span>Set "Net recurring members / studio" as North Star</span>
+            </div>
+            <div class="audit-row">
+              <span class="audit-time">Apr 14, 4:45 p.m.</span>
+              <span class="audit-who">Ben</span>
+              <span>Reassigned "Fitness event achievement" from Chris to Vic</span>
+            </div>
+            <div class="audit-row">
+              <span class="audit-time">Apr 12, 11:30 a.m.</span>
+              <span class="audit-who">Kris</span>
+              <span>Initial dashboard setup complete &middot; 19 KPIs configured</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Bottom save bar -->
+  <div class="savebar">
+    <div class="savebar-status">
+      <span class="status-dot" id="save-dot" style="background: var(--teal-400);"></span>
+      <span id="save-status">Saved</span>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn ghost" onclick="discardChanges()">Discard</button>
+      <button class="btn primary" onclick="saveChanges()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Save &amp; push to dashboard
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ============================================================
+  // CONFIG — Netlify Function endpoints
+  // ============================================================
+  const API_BASE = ''; // same-origin on Netlify
+  const API = {
+    config:    API_BASE + '/api/config',
+    settings:  API_BASE + '/api/settings',
+    audit:     API_BASE + '/api/audit',
+    dashboard: API_BASE + '/api/dashboard',
+    users:     API_BASE + '/api/users',
+    sections:  API_BASE + '/api/sections',
+    seed:      API_BASE + '/api/seed'
+  };
+  const CURRENT_USER = 'kris@roh-consulting.com'; // will come from Netlify Identity in production
+
+  // KPI list — starts empty, populated by refreshConfig() from Neon on
+  // DOMContentLoaded. Previously seeded with 22 hardcoded rows which caused
+  // a visible flash of fake KPIs before the real DB load completed.
+  let kpis = [];
+
+  const SECTIONS = ['Member growth', 'Member engagement', 'Brand awareness', 'Studio refresh', 'People & culture', 'Revenue'];
+  const UNITS = ['percent', 'count', 'USD', 'ratio', 'stars', 'score'];
+
+  const SECTION_CLASS = {
+    'Member growth': 'sec-mg',
+    'Member engagement': 'sec-me',
+    'Brand awareness': 'sec-ba',
+    'Studio refresh': 'sec-sr',
+    'People & culture': 'sec-pc',
+    'Revenue': 'sec-rv'
+  };
+
+  let isDirty = false;
+
+  // Input length limits (mirror the HTML maxlength attrs; enforced on save too)
+  const LIMITS = {
+    kpi_name: 100,
+    owner: 60,
+    department: 80,
+    section_name: 80,
+    section_key: 80,
+    section_display_number: 3,
+    tagline: 200,
+    owner_badge: 100,
+    display_label: 80,
+    description: 200,
+    settings_value: 500,
+    user_email: 120,
+    user_name: 80,
+  };
+
+  // ============================================================
+  // TOAST notifications
+  // ============================================================
+  function showToast(message, kind) {
+    const host = document.getElementById('toast-container');
+    if (!host) return;
+    const el = document.createElement('div');
+    el.className = 'toast' + (kind ? ' ' + kind : '');
+    el.textContent = message;
+    host.appendChild(el);
+    // Force reflow so the transition triggers
+    requestAnimationFrame(() => el.classList.add('show'));
+    setTimeout(() => {
+      el.classList.remove('show');
+      setTimeout(() => el.remove(), 220);
+    }, 3200);
+  }
+
+  // ============================================================
+  // LOAD config from Neon via /api/config
+  // ============================================================
+  // Wrapper so the Refresh button gives visible feedback. The bare
+  // refreshConfig() call from HTML attributes ran silently and the user
+  // couldn't tell if anything happened.
+  async function handleRefreshClick(btn) {
+    if (btn && btn.disabled) return;
+    const label = document.getElementById('refresh-btn-label');
+    const prev = label ? label.textContent : 'Refresh';
+    if (btn) btn.disabled = true;
+    if (label) label.textContent = 'Refreshing…';
+    await refreshConfig();
+    // refreshConfig already surfaces errors via the connection banner.
+    // Check its outcome to pick the right toast.
+    const banner = document.getElementById('conn-banner');
+    if (banner && banner.classList.contains('warn')) {
+      showToast('Refresh failed — see connection banner.', 'error');
+    } else {
+      showToast('Refreshed from server.', 'success');
+    }
+    if (label) label.textContent = prev;
+    if (btn) btn.disabled = false;
+  }
+
+  // ============================================================
+  // SEED — one-shot populate DB with canonical scorecard defaults.
+  // force=true overwrites existing values; default is merge-only.
+  // ============================================================
+  async function runSeed(btn, force, prune) {
+    if (!btn || btn.disabled) return;
+    const labelId = (btn.id || '') + '-label';
+    const label = document.getElementById(labelId) || btn.querySelector('span');
+    const prev = label ? label.textContent : 'Seed';
+    if (force) {
+      if (!confirm('Overwrite with canonical defaults?\n\nThis will REPLACE section copy, goals, and base settings with the shipped values. Any edits you made in admin will be lost.')) return;
+    }
+    if (prune) {
+      if (!confirm('Prune to canonical KPIs?\n\nAny KPI whose name isn\'t in the canonical list (test rows, renamed duplicates, empty "New KPI" placeholders) will be deactivated. You can restore them by re-adding in admin. Continue?')) return;
+    }
+    btn.disabled = true;
+    if (label) label.textContent = force ? 'Overwriting…' : (prune ? 'Pruning…' : 'Seeding…');
+    const resultEl = document.getElementById('seed-result');
+    try {
+      const res = await fetch(API.seed || '/api/seed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actor: CURRENT_USER, force: !!force, prune: !!prune })
+      });
+      const payload = await res.json();
+      if (!payload.ok) throw new Error(payload.error || 'Seed failed');
+      const summary = `KPIs: ${payload.kpis_added || 0} added, ${payload.kpis_reactivated || 0} reactivated, ${payload.kpis_skipped || 0} skipped, ${payload.kpis_pruned || 0} pruned. Sections: ${payload.sections_added} added, ${payload.sections_skipped} skipped. Targets merged: ${payload.targets_merged}. Thresholds merged: ${payload.thresholds_merged || 0}. Settings filled: ${payload.settings_added}.`;
+      if (resultEl) {
+        resultEl.style.display = 'block';
+        resultEl.textContent = summary;
+      }
+      showToast('Seed complete. ' + summary, 'success');
+      await refreshConfig();
+    } catch (err) {
+      if (resultEl) {
+        resultEl.style.display = 'block';
+        resultEl.style.color = 'var(--red-600)';
+        resultEl.textContent = 'Seed failed: ' + err.message;
+      }
+      showToast('Seed failed: ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      if (label) label.textContent = prev;
+    }
+  }
+
+  async function refreshConfig() {
+    try {
+      const [cfgRes, setRes] = await Promise.all([
+        fetch(API.config),
+        fetch(API.settings)
+      ]);
+      const cfgPayload = await cfgRes.json();
+      const setPayload = await setRes.json();
+      if (!cfgPayload.ok) throw new Error(cfgPayload.error || 'Config read failed');
+      if (!setPayload.ok) throw new Error(setPayload.error || 'Settings read failed');
+
+      // Parse KPI targets out of settings (stored as a JSON map keyed by KPI name).
+      // This avoids a DB migration while still giving us per-KPI targets.
+      const s = setPayload.settings || {};
+      let targetsByName = {};
+      try {
+        if (s.kpi_targets) targetsByName = JSON.parse(s.kpi_targets) || {};
+      } catch (_) { targetsByName = {}; }
+
+      // Per-KPI thresholds: each entry can be a number (legacy single
+      // narrow-%) or an object { ontrack, narrow } for the dual-threshold
+      // model. Helpers below normalize lookup across both shapes.
+      let thresholdsByName = {};
+      try {
+        if (s.kpi_thresholds) thresholdsByName = JSON.parse(s.kpi_thresholds) || {};
+      } catch (_) { thresholdsByName = {}; }
+
+      // Per-KPI target scope: 'monthly' (default) or 'annual'.
+      let scopesByName = {};
+      try {
+        if (s.kpi_scopes) scopesByName = JSON.parse(s.kpi_scopes) || {};
+      } catch (_) { scopesByName = {}; }
+
+      // Per-KPI rounding mode: 'ceil' | 'round' (default). Stored as a
+      // simple name → 'ceil'|'round' map in settings.kpi_rounding.
+      let roundingByName = {};
+      try {
+        if (s.kpi_rounding) roundingByName = JSON.parse(s.kpi_rounding) || {};
+      } catch (_) { roundingByName = {}; }
+
+      function thresholdsOntrack(map, name) {
+        const v = map[name];
+        if (v == null) return '';
+        if (typeof v === 'object' && v.ontrack != null) return String(v.ontrack);
+        return ''; // legacy number = narrow-only, no on-track override
+      }
+      function thresholdsNarrow(map, name) {
+        const v = map[name];
+        if (v == null) return '';
+        if (typeof v === 'number') return String(v);
+        if (typeof v === 'object' && v.narrow != null) return String(v.narrow);
+        return '';
+      }
+
+      // Hydrate hidden-KPI list from server (authoritative) so other devices
+      // stay in sync. Local storage is just a cache of the last loaded state.
+      try {
+        if (s.hidden_kpis) {
+          const serverHidden = JSON.parse(s.hidden_kpis) || [];
+          hiddenKpiSet = new Set(serverHidden);
+          persistHiddenKpis();
+        }
+      } catch (_) { /* keep local set */ }
+
+      // Map Neon column names to the shape our UI expects
+      kpis = (cfgPayload.kpis || []).map(r => ({
+        kpi: r.kpi_name,
+        section: r.section,
+        unit: r.unit,
+        owner: r.owner || '',
+        department: r.department || '',
+        tier: r.tier || 'lagging',
+        math_type: r.math_type || 'avg',
+        goal_direction: r.goal_direction || 'higher',
+        target: targetsByName[r.kpi_name] || '',
+        ontrack_pct: thresholdsOntrack(thresholdsByName, r.kpi_name),
+        narrow_pct:  thresholdsNarrow(thresholdsByName,  r.kpi_name),
+        target_scope: (scopesByName[r.kpi_name] === 'annual' ? 'annual' : 'monthly'),
+        round_up: (roundingByName[r.kpi_name] === 'ceil')
+      }));
+
+      // Apply settings to the form fields
+      if (s.dashboard_title) document.getElementById('set-title').value = s.dashboard_title;
+      if (s.fiscal_year)     document.getElementById('set-fy').value = s.fiscal_year;
+      if (s.brand_color) {
+        document.getElementById('set-color').value = s.brand_color;
+        document.getElementById('set-color-picker').value = s.brand_color;
+      }
+      if (s.north_star_eoy_target) document.getElementById('ns-target').value = s.north_star_eoy_target;
+      if (s.north_star_projection) document.getElementById('ns-projection').value = s.north_star_projection;
+      if (s.apps_script_url)       document.getElementById('sheet-url').value = s.apps_script_url;
+      if (s.hero_tagline) {
+        const el = document.getElementById('set-hero-tagline');
+        if (el) el.value = s.hero_tagline;
+      }
+      if (s.north_star_headline) {
+        const el = document.getElementById('ns-headline');
+        if (el) el.value = s.north_star_headline;
+      }
+
+      updateConn(true, 'Connected · loaded ' + kpis.length + ' KPIs from Neon');
+      renderKpis();
+      renderOwners();
+      renderNorthStarKpis();
+      if (s.north_star_kpi) {
+        document.getElementById('ns-kpi').value = s.north_star_kpi;
+      }
+
+      loadAudit();
+
+      // Sheet sync check — fully optional, can never break the admin load
+      checkSheetSync();
+    } catch (err) {
+      updateConn(false, 'Connection error · ' + err.message);
+      // Fall back to seed data so the UI still shows something in local dev
+      renderKpis();
+      renderOwners();
+      renderNorthStarKpis();
+    }
+  }
+
+  // Fire-and-forget sheet sync checker — wrapped so it NEVER throws into refreshConfig
+  async function checkSheetSync() {
+    try {
+      const dashRes = await fetch(API.dashboard);
+      if (!dashRes.ok) return;
+      const ct = dashRes.headers.get('content-type') || '';
+      if (!ct.includes('application/json')) return; // guard against HTML 404 pages
+      const dashData = await dashRes.json();
+      renderSheetSyncBanner(dashData);
+      updateSyncTimeDisplay(dashData.syncedAt);
+    } catch (e) {
+      // Silent — sheet sync is a nice-to-have, not critical
+      console.log('Sheet sync check skipped:', e.message);
+    }
+  }
+
+  // ----- Fuzzy KPI matching (mirrors the scorecard) ------------------
+  // Normalize names before comparing so punctuation, slashes, commas,
+  // and casing don't throw false warnings.
+  function normalizeKpiName(s) {
+    return String(s || '')
+      .replace(/&amp;/g, '&')
+      .replace(/[,\/\\\-]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+  }
+  function fuzzyKpiMatch(a, b) {
+    const na = normalizeKpiName(a);
+    const nb = normalizeKpiName(b);
+    if (!na || !nb) return false;
+    if (na === nb) return true;
+    if (na.includes(nb) || nb.includes(na)) return true;
+    const firstTwo = s => s.split(' ').filter(w => w.length >= 2).slice(0, 2).join(' ');
+    if (firstTwo(na) && firstTwo(na) === firstTwo(nb)) return true;
+    const toWords = s => new Set(s.split(' ').filter(w => w.length >= 2));
+    const wa = toWords(na);
+    const wb = toWords(nb);
+    if (wa.size === 0 || wb.size === 0) return false;
+    let overlap = 0;
+    wa.forEach(w => { if (wb.has(w)) overlap++; });
+    return overlap / Math.min(wa.size, wb.size) >= 0.4;
+  }
+
+  // Compare admin kpi names vs Sheet kpi names — alert the user to mismatches.
+  function renderSheetSyncBanner(dashData) {
+    const banner = document.getElementById('sheet-sync-banner');
+    if (!banner) return;
+
+    const sheetRows = ((dashData.sheet || {}).actuals || []).map(r => r.kpi);
+    const adminKpiList = kpis.map(k => k.kpi);
+
+    // Fuzzy compare — a Sheet row with minor name drift (typo, punctuation,
+    // slash vs comma) still counts as 'matched' if there's a recognizable
+    // admin KPI. Only rows that have NO fuzzy match at all get flagged.
+    const adminHasFuzzyMatch = (sheetName) =>
+      adminKpiList.some(adminName => fuzzyKpiMatch(adminName, sheetName));
+    const sheetHasFuzzyMatch = (adminName) =>
+      sheetRows.some(sheetName => fuzzyKpiMatch(adminName, sheetName));
+
+    const missingInSheet = adminKpiList.filter(n => !sheetHasFuzzyMatch(n));
+    const missingInAdmin = sheetRows.filter(n => !adminHasFuzzyMatch(n));
+
+    if (missingInSheet.length === 0 && missingInAdmin.length === 0) {
+      banner.className = 'sheet-sync-banner ok';
+      banner.style.display = 'block';
+      banner.innerHTML = `
+        <div class="banner-title">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Synced with Google Sheet
+        </div>
+        <div class="banner-action">All ${kpis.length} admin KPIs match the Google Sheet. Dashboard will render all rows.</div>
+      `;
+      return;
+    }
+
+    let html = `<div class="banner-title">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Out of sync with Google Sheet
+    </div>`;
+
+    if (missingInSheet.length) {
+      html += `<div style="margin-top:10px;"><strong>In admin but missing from Sheet:</strong><ul class="banner-list">`;
+      missingInSheet.forEach(n => {
+        html += `<li>• <code>${escape(n)}</code> — dashboard row will be empty until this KPI is added to all 4 Sheet tabs (Actuals, PriorYear, Targets, Weekly2026)</li>`;
+      });
+      html += `</ul></div>`;
+    }
+    if (missingInAdmin.length) {
+      html += `<div style="margin-top:10px;"><strong>In Sheet but missing from admin:</strong><ul class="banner-list">`;
+      missingInAdmin.forEach(n => {
+        html += `<li>• <code>${escape(n)}</code></li>`;
+      });
+      html += `</ul><div style="margin-top:8px;">
+        <button class="btn" onclick="addMissingKpis(this)"><span>Add these KPIs to admin</span></button>
+        <span style="font-size: 11px; font-style: italic; color: var(--ink-3); margin-left: 10px;">Runs Seed defaults — safe, won't overwrite existing rows.</span>
+      </div></div>`;
+    }
+    html += `<div class="banner-action">💡 If you renamed a KPI in admin, you need to rename it in column A of all 4 Sheet tabs as well.</div>`;
+
+    banner.className = 'sheet-sync-banner';
+    banner.style.display = 'block';
+    banner.innerHTML = html;
+  }
+
+  // One-click handler wired into the 'Add these KPIs' button in the banner.
+  // Delegates to runSeed (the same merge-mode endpoint behind the Seed
+  // defaults panel on the Google Sheet view) so we have one code path.
+  async function addMissingKpis(btn) {
+    const label = btn.querySelector('span');
+    const prev = label ? label.textContent : 'Add';
+    btn.disabled = true;
+    if (label) label.textContent = 'Adding…';
+    try {
+      const res = await fetch(API.seed || '/api/seed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actor: CURRENT_USER, force: false })
+      });
+      const payload = await res.json();
+      if (!payload.ok) throw new Error(payload.error || 'Seed failed');
+      showToast(`Added ${payload.kpis_added || 0} KPI${payload.kpis_added === 1 ? '' : 's'} to admin.`, 'success');
+      await refreshConfig();
+    } catch (err) {
+      showToast('Failed: ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      if (label) label.textContent = prev;
+    }
+  }
+
+  async function loadAudit() {
+    try {
+      const res = await fetch(API.audit + '?limit=20');
+      const payload = await res.json();
+      if (!payload.ok || !payload.entries.length) return;
+
+      const auditView = document.querySelector('#view-audit .panel-body');
+      if (!auditView) return;
+      auditView.innerHTML = payload.entries.map(e => {
+        const when = new Date(e.created_at);
+        const timeStr = when.toLocaleString('en-US', {
+          month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+        });
+        return `
+          <div class="audit-row">
+            <span class="audit-time">${timeStr}</span>
+            <span class="audit-who">${e.actor.split('@')[0]}</span>
+            <span>${describeAudit(e)}</span>
+          </div>
+        `;
+      }).join('');
+    } catch (err) {
+      console.error('Audit load failed:', err);
+    }
+  }
+
+  function describeAudit(e) {
+    if (e.action === 'kpi.add')     return `Added KPI "${e.entity}"`;
+    if (e.action === 'kpi.remove')  return `Removed KPI "${e.entity}"`;
+    if (e.action === 'kpi.update')  return `Updated "${e.entity}"`;
+    if (e.action === 'settings.change') return `Changed setting: ${e.entity}`;
+    return e.action + ' · ' + (e.entity || '');
+  }
+
+  function updateConn(ok, label) {
+    const banner = document.getElementById('conn-banner');
+    const dot = document.getElementById('conn-dot');
+    const lbl = document.getElementById('conn-label');
+    // Banner removed from DOM — no-op when the element isn't present.
+    if (!banner) return;
+    if (ok) {
+      banner.classList.remove('warn');
+      dot.style.background = 'var(--teal-400)';
+    } else {
+      banner.classList.add('warn');
+      dot.style.background = 'var(--amber-400)';
+    }
+    lbl.innerHTML = label;
+  }
+
+  // ============================================================
+  // RENDER — KPIs & sections table
+  // ============================================================
+  // Hidden-KPI state is local to this admin (per-device), stored in
+  // localStorage. Hiding a row doesn't delete it — it just collapses
+  // it out of sight so you can focus on the ones you're editing.
+  // Hidden KPIs: persisted to the `hidden_kpis` setting so hiding propagates
+  // to the public scorecard. Local copy kept for instant UI response; dirty
+  // flag ensures Save pushes the list to the server.
+  const HIDDEN_KPIS_KEY = 'afg_admin_hidden_kpis';
+  let hiddenKpiSet = new Set();
+  try {
+    const raw = localStorage.getItem(HIDDEN_KPIS_KEY);
+    if (raw) hiddenKpiSet = new Set(JSON.parse(raw) || []);
+  } catch (_) { hiddenKpiSet = new Set(); }
+
+  function persistHiddenKpis() {
+    try {
+      localStorage.setItem(HIDDEN_KPIS_KEY, JSON.stringify([...hiddenKpiSet]));
+    } catch (_) { /* localStorage blocked — ignore */ }
+  }
+
+  function toggleHideKpi(idx) {
+    const name = kpis[idx].kpi;
+    if (!name) return;
+    if (hiddenKpiSet.has(name)) {
+      hiddenKpiSet.delete(name);
+      showToast('"' + name + '" will show on the dashboard after save.', 'success');
+    } else {
+      hiddenKpiSet.add(name);
+      showToast('"' + name + '" will be hidden from the dashboard after save.', 'warn');
+    }
+    persistHiddenKpis();
+    markDirty();
+    renderKpis();
+  }
+
+  function renderKpis() {
+    const container = document.getElementById('kpi-rows');
+
+    container.innerHTML = kpis.map((k, idx) => {
+      const isHidden = hiddenKpiSet.has(k.kpi);
+      const mathType = k.math_type || 'avg';
+      const goalDir = k.goal_direction || 'higher';
+      const hideTitle = isHidden ? 'Unhide row' : 'Hide row';
+      const isFirst = idx === 0;
+      const isLast = idx === kpis.length - 1;
+      return `
+      <div class="kpi-row ${isHidden ? 'is-hidden' : ''}" data-idx="${idx}">
+        <div class="kpi-reorder">
+          <button onclick="moveKpi(${idx}, -1)" ${isFirst ? 'disabled' : ''} title="Move up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+          </button>
+          <button onclick="moveKpi(${idx}, 1)" ${isLast ? 'disabled' : ''} title="Move down">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+        </div>
+        <input class="inline-input" value="${escape(k.kpi)}" maxlength="100" title="${escape(k.kpi)}" onchange="updateKpi(${idx}, 'kpi', this.value)" onmouseenter="this.setAttribute('title', this.value)" style="font-family: var(--serif); font-weight: 500;" />
+        <select class="inline-input" onchange="updateKpi(${idx}, 'section', this.value)">
+          ${SECTIONS.map(s => `<option ${s === k.section ? 'selected' : ''}>${escape(s)}</option>`).join('')}
+        </select>
+        <select class="inline-input adv" onchange="updateKpi(${idx}, 'unit', this.value)">
+          ${UNITS.map(u => `<option ${u === k.unit ? 'selected' : ''}>${escape(u)}</option>`).join('')}
+        </select>
+        <select class="inline-input adv" onchange="updateKpi(${idx}, 'math_type', this.value)" title="How weekly values roll up to month/YTD">
+          <option value="avg"    ${mathType === 'avg'    ? 'selected' : ''}>avg</option>
+          <option value="sum"    ${mathType === 'sum'    ? 'selected' : ''}>sum</option>
+          <option value="latest" ${mathType === 'latest' ? 'selected' : ''}>latest</option>
+        </select>
+        <select class="inline-input adv" onchange="updateKpi(${idx}, 'target_scope', this.value)" title="Monthly = target applies per month (e.g. 80% adoption). Annual = target is yearly and pro-rates by weeks-elapsed.">
+          <option value="monthly" ${(k.target_scope || 'monthly') === 'monthly' ? 'selected' : ''}>monthly</option>
+          <option value="annual"  ${(k.target_scope || 'monthly') === 'annual'  ? 'selected' : ''}>annual</option>
+        </select>
+        <select class="inline-input adv" onchange="updateKpi(${idx}, 'goal_direction', this.value)" title="Higher is better, or lower is better">
+          <option value="higher" ${goalDir === 'higher' ? 'selected' : ''}>higher ↑</option>
+          <option value="lower"  ${goalDir === 'lower'  ? 'selected' : ''}>lower ↓</option>
+        </select>
+        <input class="inline-input" value="${escape(k.target || '')}" maxlength="40" placeholder="e.g. >50% or <$170" onchange="updateKpi(${idx}, 'target', this.value)" title="Target value shown on the scorecard (free-form, e.g. >50%, <$170, +12 by EOY)" />
+        <input class="inline-input" value="${escape(k.ontrack_pct === '' || k.ontrack_pct == null ? '' : k.ontrack_pct)}" type="number" min="0" max="200" step="1" placeholder="100" onchange="updateKpi(${idx}, 'ontrack_pct', this.value)" title="Minimum % of goal required for on-track. 100 = must hit goal. 95 = 95%+ is on-track. Blank = 100." style="text-align: right;" />
+        <input class="inline-input" value="${escape(k.narrow_pct === '' || k.narrow_pct == null ? '' : k.narrow_pct)}" type="number" min="0" max="200" step="1" placeholder="92" onchange="updateKpi(${idx}, 'narrow_pct', this.value)" title="Minimum % of goal for narrow. Below = at-risk. Must be ≤ On-track. Revenue often 90; tight KPIs 95. Blank = 92." style="text-align: right;" />
+        <div class="kpi-round-cell">
+          <input type="checkbox" ${k.round_up ? 'checked' : ''} onchange="updateKpi(${idx}, 'round_up', this.checked)" title="On = round displayed values UP (ceiling). Off = round to nearest (default)." />
+        </div>
+        <input class="inline-input" value="${escape(k.owner)}" maxlength="60" onchange="updateKpi(${idx}, 'owner', this.value)" />
+        <button class="hide-btn ${isHidden ? 'is-on' : ''}" onclick="toggleHideKpi(${idx})" title="${hideTitle}">
+          ${isHidden
+            ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
+            : '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'}
+        </button>
+        <div class="row-actions">
+          <button class="icon-btn danger" onclick="removeKpi(${idx})" title="Remove">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          </button>
+        </div>
+      </div>
+      `;
+    }).join('');
+  }
+
+  // Safe for both HTML content and double-quoted attributes.
+  // Previously only escaped `"` which was an XSS hole on any textContent injection.
+  function escape(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function truncate(s, max) {
+    s = String(s == null ? '' : s);
+    return s.length > max ? s.slice(0, max) : s;
+  }
+
+  function updateKpi(idx, field, value) {
+    if (field === 'narrow_pct' || field === 'ontrack_pct') {
+      // Both fields = 'minimum % of goal'. Keep as string so '' = "use
+      // scorecard default" (100 for on-track, 92 for narrow). Range 0..200
+      // so someone can set an over-attainment definition > 100 if needed.
+      const raw = String(value == null ? '' : value).trim();
+      if (raw === '') { kpis[idx][field] = ''; }
+      else {
+        const n = Number(raw);
+        if (!Number.isNaN(n) && n >= 0 && n <= 200) kpis[idx][field] = String(n);
+      }
+      // Cross-validate: narrow must be ≤ ontrack (narrow is the lower
+      // floor). If the row now violates that, clamp the field the user
+      // just edited to restore the invariant.
+      const ontrackStr = kpis[idx].ontrack_pct;
+      const narrowStr  = kpis[idx].narrow_pct;
+      if (ontrackStr !== '' && narrowStr !== '') {
+        const ontrack = Number(ontrackStr);
+        const narrow  = Number(narrowStr);
+        if (!Number.isNaN(ontrack) && !Number.isNaN(narrow) && narrow > ontrack) {
+          if (field === 'ontrack_pct') kpis[idx].ontrack_pct = String(narrow);
+          else kpis[idx].narrow_pct = String(ontrack);
+          renderKpis();
+        }
+      }
+      markDirty();
+      return;
+    }
+    if (field === 'round_up') {
+      kpis[idx].round_up = !!value;
+      markDirty();
+      return;
+    }
+    if (typeof value === 'string') {
+      const limit = (field === 'kpi') ? LIMITS.kpi_name
+                  : (field === 'owner') ? LIMITS.owner
+                  : (field === 'department') ? LIMITS.department
+                  : (field === 'target') ? 40
+                  : 500;
+      value = truncate(value.trim(), limit);
+    }
+    kpis[idx][field] = value;
+    markDirty();
+    if (field === 'section') renderOwners();
+    if (field === 'kpi') {
+      // Keep the North Star dropdown in sync with renamed KPI names
+      renderNorthStarKpis();
+    }
+  }
+
+  function toggleTier(idx) {
+    kpis[idx].tier = kpis[idx].tier === 'leading' ? 'lagging' : 'leading';
+    markDirty();
+    renderKpis();
+  }
+
+  // Toggle visibility of advanced columns (Unit / Math / Scope / Goal dir).
+  // Preference persists across sessions so power users don't have to
+  // re-enable it every visit.
+  function toggleAdvanced(on) {
+    const view = document.getElementById('view-kpis');
+    if (!view) return;
+    view.classList.toggle('advanced-on', !!on);
+    try { localStorage.setItem('afg_admin_advanced_cols', on ? '1' : '0'); } catch (_) {}
+  }
+  (function initAdvancedToggle(){
+    try {
+      const saved = localStorage.getItem('afg_admin_advanced_cols') === '1';
+      document.addEventListener('DOMContentLoaded', () => {
+        const cb = document.getElementById('advanced-toggle');
+        if (cb) { cb.checked = saved; toggleAdvanced(saved); }
+      });
+    } catch (_) {}
+  })();
+
+  // Reorder a KPI by one position. delta = -1 (up) or +1 (down).
+  // The DB persists order via sort_order on save, so the new position
+  // becomes canonical after clicking Save.
+  function moveKpi(idx, delta) {
+    const next = idx + delta;
+    if (next < 0 || next >= kpis.length) return;
+    const [row] = kpis.splice(idx, 1);
+    kpis.splice(next, 0, row);
+    markDirty();
+    renderKpis();
+  }
+
+  // Debounce guard: prevent double-click creating duplicate KPI rows
+  let _addKpiBusy = false;
+  function addKpi() {
+    if (_addKpiBusy) return;
+    _addKpiBusy = true;
+    try {
+      kpis.push({
+        kpi: 'New KPI',
+        section: SECTIONS[0],
+        unit: 'percent',
+        owner: '',
+        department: '',
+        tier: 'lagging',
+        math_type: 'avg',
+        goal_direction: 'higher',
+        target: '',
+        ontrack_pct: '',
+        narrow_pct: '',
+        target_scope: 'monthly',
+        round_up: false
+      });
+      markDirty();
+      renderKpis();
+      renderNorthStarKpis();
+    } finally {
+      setTimeout(() => { _addKpiBusy = false; }, 400);
+    }
+  }
+
+  function removeKpi(idx) {
+    const name = kpis[idx].kpi;
+    if (!confirm('Remove "' + name + '"?\n\nNote: the dashboard will stop showing it after the next save, but the row will remain in the Google Sheet until you also delete it there.')) return;
+    kpis.splice(idx, 1);
+    markDirty();
+    renderKpis();
+    renderNorthStarKpis();
+    showToast('Removed "' + name + '". Save to apply, then remove the row from your Google Sheet to finish syncing.', 'warn');
+  }
+
+  // ============================================================
+  // RENDER — Sections
+  // ============================================================
+  let sections = [];
+
+  async function loadSections() {
+    try {
+      const res = await fetch(API.sections);
+      const payload = await res.json();
+      if (!payload.ok) throw new Error(payload.error);
+      sections = (payload.sections || []).map(s => ({
+        section_key: s.section_key,
+        display_number: s.display_number || '',
+        display_name: s.display_name || '',
+        tagline: s.tagline || '',
+        owner_badge: s.owner_badge || '',
+        leading_kpi_name: s.leading_kpi_name || '',
+        leading_display_label: s.leading_display_label || '',
+        leading_description: s.leading_description || '',
+        sort_order: s.sort_order || 0
+      }));
+      renderSectionsList();
+    } catch (err) {
+      const list = document.getElementById('sections-list');
+      if (list) list.innerHTML = '<p style="font-size: 12px; color: var(--red-600);">Could not load sections: ' + err.message + '</p>';
+    }
+  }
+
+  function renderSectionsList() {
+    const list = document.getElementById('sections-list');
+    if (!list) return;
+    if (!sections.length) {
+      list.innerHTML = '<p style="font-size: 12px; color: var(--ink-3); font-style: italic;">No sections yet. Add one below.</p>';
+      return;
+    }
+    const kpiOptions = kpis.map(k => k.kpi);
+    list.innerHTML = sections.map((s, idx) => `
+      <div style="border: 0.5px solid var(--rule); border-radius: 8px; padding: 16px 18px; background: #fff;">
+        <div style="display: grid; grid-template-columns: 70px 1fr auto; gap: 12px; align-items: start;">
+          <div>
+            <div class="field-label" style="margin-bottom: 4px;">Number</div>
+            <input class="inline-input" type="text" inputmode="numeric" pattern="[0-9]{1,3}" value="${escape(s.display_number)}" placeholder="01" maxlength="3" onchange="updateSection(${idx}, 'display_number', this.value)" style="font-family: var(--serif); font-weight: 500; width: 100%;" />
+          </div>
+          <div>
+            <div class="field-label" style="margin-bottom: 4px;">Section name</div>
+            <input class="inline-input" value="${escape(s.display_name)}" maxlength="80" onchange="updateSection(${idx}, 'display_name', this.value)" style="font-family: var(--serif); font-size: 15px; font-weight: 500; width: 100%;" />
+            <div style="font-size: 10px; color: var(--ink-3); margin-top: 3px; font-style: italic;">Data key: <code style="font-family: ui-monospace, monospace;">${escape(s.section_key)}</code> (can't change — it links KPIs to this section)</div>
+          </div>
+          <button class="icon-btn danger" onclick="removeSection(${idx})" title="Remove section" style="margin-top: 22px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>
+        </div>
+
+        <div style="margin-top: 14px;">
+          <div class="field-label" style="margin-bottom: 4px;">Tagline / subtitle</div>
+          <input class="inline-input" value="${escape(s.tagline)}" placeholder="How we grow the recurring member base." maxlength="200" onchange="updateSection(${idx}, 'tagline', this.value)" style="width: 100%;" />
+        </div>
+
+        <div style="margin-top: 14px;">
+          <div class="field-label" style="margin-bottom: 4px;">Owner badge</div>
+          <input class="inline-input" value="${escape(s.owner_badge)}" placeholder="Chris · Sales Ops" maxlength="100" onchange="updateSection(${idx}, 'owner_badge', this.value)" style="width: 100%;" />
+        </div>
+
+        <div style="margin-top: 18px; padding-top: 14px; border-top: 0.5px solid var(--rule);">
+          <div style="font-size: 10px; letter-spacing: 0.22em; color: var(--ink-3); text-transform: uppercase; margin-bottom: 10px;">Lagging outcome callout</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <div class="field-label" style="margin-bottom: 4px;">Outcome KPI <span style="font-weight: 400; color: var(--ink-3); text-transform: none; letter-spacing: 0;">— drives the weekly strip</span></div>
+              <select class="inline-input" onchange="updateSection(${idx}, 'leading_kpi_name', this.value)" style="width: 100%;">
+                <option value="">— none —</option>
+                ${kpiOptions.map(k => `<option value="${escape(k)}" ${k === s.leading_kpi_name ? 'selected' : ''}>${escape(k)}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <div class="field-label" style="margin-bottom: 4px;">Outcome name <span style="font-weight: 400; color: var(--ink-3); text-transform: none; letter-spacing: 0;">— headline on the callout</span></div>
+              <input class="inline-input" value="${escape(s.leading_display_label)}" placeholder="e.g. Members per studio" maxlength="80" onchange="updateSection(${idx}, 'leading_display_label', this.value)" style="width: 100%;" />
+            </div>
+          </div>
+          <div style="margin-top: 10px; font-size: 11px; color: var(--ink-3); font-style: italic; line-height: 1.45;">
+            Goal text for this outcome is pulled from the KPI's <strong style="font-weight: 500; color: var(--ink-2); font-style: normal;">Target</strong> field in the KPIs tab — edit it there, not here.
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function updateSection(idx, field, value) {
+    if (typeof value === 'string') {
+      value = value.trim();
+      if (field === 'display_number') {
+        // Only digits; strip anything else (including leading minus)
+        value = value.replace(/[^0-9]/g, '').slice(0, LIMITS.section_display_number);
+      } else {
+        const limit = (field === 'display_name' || field === 'leading_display_label') ? LIMITS.section_name
+                    : (field === 'tagline' || field === 'leading_description') ? LIMITS.tagline
+                    : (field === 'owner_badge') ? LIMITS.owner_badge
+                    : 500;
+        value = truncate(value, limit);
+      }
+    }
+    sections[idx][field] = value;
+    markDirty();
+  }
+
+  function addSection() {
+    const key = prompt('Section data key (used internally to link KPIs). Example: "Member growth". Must match what you set on KPIs in the KPI tab.');
+    if (!key) return;
+    if (sections.some(s => s.section_key === key)) {
+      alert('A section with that key already exists.');
+      return;
+    }
+    const nextNum = String(sections.length + 1).padStart(2, '0');
+    sections.push({
+      section_key: key,
+      display_number: nextNum,
+      display_name: key,
+      tagline: '',
+      owner_badge: '',
+      leading_kpi_name: '',
+      leading_display_label: '',
+      leading_description: '',
+      sort_order: sections.length * 10
+    });
+    markDirty();
+    renderSectionsList();
+  }
+
+  function removeSection(idx) {
+    if (!confirm('Remove "' + (sections[idx].display_name || sections[idx].section_key) + '" section? KPIs assigned to it will still exist but will not render under any section header until you reassign them.')) return;
+    sections.splice(idx, 1);
+    markDirty();
+    renderSectionsList();
+  }
+
+  // ============================================================
+  // RENDER — Users (Access & Security)
+  // ============================================================
+  let users = [];
+  const ROLE_COLORS = {
+    owner:  { bg: 'var(--coral-200)',  fg: 'var(--coral-800)' },
+    admin:  { bg: 'var(--teal-50)',    fg: 'var(--teal-800)' },
+    viewer: { bg: 'rgba(0,0,0,0.08)',  fg: 'var(--ink-2)' }
+  };
+
+  async function loadUsers() {
+    try {
+      const res = await fetch(API.users);
+      const payload = await res.json();
+      if (!payload.ok) throw new Error(payload.error);
+      users = payload.users || [];
+      renderUsers();
+    } catch (err) {
+      const list = document.getElementById('users-list');
+      if (list) list.innerHTML = '<p style="font-size: 12px; color: var(--red-600);">Could not load users: ' + err.message + '</p>';
+    }
+  }
+
+  function renderUsers() {
+    const list = document.getElementById('users-list');
+    if (!list) return;
+    if (!users.length) {
+      list.innerHTML = '<p style="font-size: 12px; color: var(--ink-3); font-style: italic;">No users yet. Invite someone below.</p>';
+      return;
+    }
+    list.innerHTML = users.map(u => {
+      const initial = (u.name || u.email).charAt(0).toUpperCase();
+      const colors = ROLE_COLORS[u.role] || ROLE_COLORS.viewer;
+      const isCurrent = u.email === CURRENT_USER;
+      return `
+        <div style="display: flex; gap: 10px; align-items: center; padding: 10px 14px; border: 0.5px solid var(--rule); border-radius: 6px;">
+          <span style="width: 28px; height: 28px; border-radius: 50%; background: ${colors.bg}; color: ${colors.fg}; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-weight: 500; font-size: 12px;">${initial}</span>
+          <div style="flex: 1;">
+            <div style="font-size: 13px; font-weight: 500;">${escape(u.name || u.email)}${isCurrent ? ' <span style="color: var(--ink-3); font-weight: 400; font-size: 11px;">(you)</span>' : ''}</div>
+            <div style="font-size: 11px; color: var(--ink-3); font-family: var(--serif);">${escape(u.email)}</div>
+          </div>
+          <select class="input" onchange="updateUserRole('${escape(u.email)}', this.value)" style="width: auto; padding: 5px 24px 5px 10px; font-size: 11px;">
+            <option value="owner"  ${u.role === 'owner'  ? 'selected' : ''}>owner</option>
+            <option value="admin"  ${u.role === 'admin'  ? 'selected' : ''}>admin</option>
+            <option value="viewer" ${u.role === 'viewer' ? 'selected' : ''}>viewer</option>
+          </select>
+          ${isCurrent ? '' : `<button class="icon-btn danger" onclick="removeUser('${escape(u.email)}')" title="Remove">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>`}
+        </div>
+      `;
+    }).join('');
+  }
+
+  let _inviteBusy = false;
+  async function inviteUser() {
+    if (_inviteBusy) return;
+    const email = truncate(document.getElementById('new-user-email').value.trim().toLowerCase(), LIMITS.user_email);
+    const name  = truncate(document.getElementById('new-user-name').value.trim(), LIMITS.user_name);
+    const role  = document.getElementById('new-user-role').value;
+
+    // Basic email shape check — one "@", a dot after the @, and no spaces.
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showToast('Enter a valid email address.', 'error');
+      return;
+    }
+    if (users.some(u => u.email === email)) {
+      showToast(email + ' already has access.', 'warn');
+      return;
+    }
+
+    _inviteBusy = true;
+    try {
+      const res = await fetch(API.users, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actor: CURRENT_USER, email, name: name || email.split('@')[0], role })
+      });
+      const result = await res.json();
+      if (!result.ok) throw new Error(result.error || 'Invite failed');
+      document.getElementById('new-user-email').value = '';
+      document.getElementById('new-user-name').value = '';
+      await loadUsers();
+      showToast('Invited ' + email + ' as ' + role + '.', 'success');
+    } catch (err) {
+      showToast('Invite failed: ' + err.message, 'error');
+    } finally {
+      _inviteBusy = false;
+    }
+  }
+
+  async function updateUserRole(email, role) {
+    try {
+      const res = await fetch(API.users, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actor: CURRENT_USER, email, role })
+      });
+      const result = await res.json();
+      if (!result.ok) throw new Error(result.error);
+      loadUsers();
+    } catch (err) {
+      alert('Update failed: ' + err.message);
+    }
+  }
+
+  async function removeUser(email) {
+    if (!confirm('Remove access for ' + email + '?')) return;
+    try {
+      const res = await fetch(API.users + '?email=' + encodeURIComponent(email) + '&actor=' + encodeURIComponent(CURRENT_USER), { method: 'DELETE' });
+      const result = await res.json();
+      if (!result.ok) throw new Error(result.error);
+      loadUsers();
+    } catch (err) {
+      alert('Remove failed: ' + err.message);
+    }
+  }
+
+  // ============================================================
+  // RENDER — Owners view
+  // ============================================================
+  function renderOwners() {
+    const container = document.getElementById('owners-body');
+    const bySection = {};
+    SECTIONS.forEach(s => bySection[s] = []);
+    kpis.forEach(k => {
+      if (bySection[k.section]) bySection[k.section].push(k);
+    });
+
+    container.innerHTML = SECTIONS.map(section => {
+      const rows = bySection[section];
+      if (!rows.length) return '';
+      const firstOwner = rows[0].owner;
+      const firstDept = rows[0].department;
+      const uniqueOwners = [...new Set(rows.map(r => r.owner))].filter(o => o);
+      const primary = uniqueOwners[0] || '—';
+      const initial = primary.charAt(0).toUpperCase();
+      const cls = SECTION_CLASS[section] || 'sec-mg';
+
+      return `
+        <div style="display: grid; grid-template-columns: 40px 1fr auto; gap: 14px; align-items: center; padding: 14px 0; border-bottom: 0.5px solid var(--rule);">
+          <div class="section-pill ${cls}" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 14px;">${initial}</div>
+          <div>
+            <div style="font-family: var(--serif); font-size: 15px; font-weight: 500;">${section}</div>
+            <div style="font-size: 12px; color: var(--ink-3); margin-top: 2px;">${rows.length} KPIs &middot; owner: <strong style="color: var(--ink);">${primary}</strong> &middot; ${firstDept}</div>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <input class="inline-input" value="${escape(primary)}" placeholder="Owner name" maxlength="60" style="width: 140px; border: 0.5px solid var(--rule);" onchange="reassignOwner('${escape(section)}', this.value)" />
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function reassignOwner(section, newOwner) {
+    const cleanOwner = truncate(String(newOwner || '').trim(), LIMITS.owner);
+    kpis.forEach(k => {
+      if (k.section === section) k.owner = cleanOwner;
+    });
+    markDirty();
+    renderKpis();
+    renderOwners();
+  }
+
+  // ============================================================
+  // RENDER — North star
+  // ============================================================
+  function renderNorthStarKpis() {
+    const select = document.getElementById('ns-kpi');
+    if (!select) return;
+    const currentValue = select.value;
+    select.innerHTML = kpis.map(k =>
+      `<option value="${escape(k.kpi)}" ${k.kpi === currentValue ? 'selected' : ''}>${escape(k.kpi)}</option>`
+    ).join('');
+    // Preserve selection if possible, else keep whatever the default is
+    if (currentValue && kpis.some(k => k.kpi === currentValue)) {
+      select.value = currentValue;
+    }
+  }
+
+  // ============================================================
+  // VIEW SWITCHING
+  // ============================================================
+  function showView(viewId, linkEl) {
+    document.querySelectorAll('.admin-view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + viewId).classList.add('active');
+    document.querySelectorAll('.sidenav a').forEach(a => a.classList.remove('active'));
+    linkEl.classList.add('active');
+    event && event.preventDefault();
+
+    // Lazy-load data for views that need it
+    if (viewId === 'access') loadUsers();
+    if (viewId === 'sections') loadSections();
+  }
+
+  // ============================================================
+  // SAVE
+  // ============================================================
+  function markDirty() {
+    isDirty = true;
+    document.getElementById('save-status').textContent = 'Unsaved changes';
+    document.getElementById('save-dot').style.background = 'var(--amber-400)';
+  }
+
+  // Validate the in-memory KPI/section state before attempting a save.
+  // Returns {ok: true} on success, or {ok: false, error: '...'} with a user-facing message.
+  function validateBeforeSave() {
+    // KPI names: required, unique, within length
+    const seen = new Set();
+    for (let i = 0; i < kpis.length; i++) {
+      const name = String(kpis[i].kpi || '').trim();
+      if (!name) {
+        return { ok: false, error: 'KPI name can’t be empty (row ' + (i + 1) + ').' };
+      }
+      if (name.length > LIMITS.kpi_name) {
+        return { ok: false, error: 'KPI name too long (row ' + (i + 1) + ', max ' + LIMITS.kpi_name + ' chars).' };
+      }
+      const key = name.toLowerCase();
+      if (seen.has(key)) {
+        return { ok: false, error: 'Duplicate KPI name: "' + name + '" (each KPI must be unique).' };
+      }
+      seen.add(key);
+    }
+
+    // Sections: display_number must be non-negative integer
+    for (let i = 0; i < sections.length; i++) {
+      const dn = String(sections[i].display_number || '').trim();
+      if (dn && !/^\d+$/.test(dn)) {
+        return { ok: false, error: 'Section number must be a positive whole number (section "' + (sections[i].display_name || sections[i].section_key) + '").' };
+      }
+      if (!sections[i].section_key) {
+        return { ok: false, error: 'Section is missing its data key.' };
+      }
+    }
+
+    return { ok: true };
+  }
+
+  async function saveChanges() {
+    try {
+      // Client-side validation first — stops bad data before we hit the DB.
+      const v = validateBeforeSave();
+      if (!v.ok) {
+        showToast(v.error, 'error');
+        return;
+      }
+
+      document.getElementById('save-status').textContent = 'Saving…';
+      document.getElementById('save-dot').style.background = 'var(--amber-400)';
+
+      // Soft-warn (but allow) for KPIs without an owner assigned.
+      const missingOwner = kpis.filter(k => !String(k.owner || '').trim()).map(k => k.kpi);
+      if (missingOwner.length) {
+        showToast(missingOwner.length + ' KPI' + (missingOwner.length === 1 ? ' has' : 's have') + ' no owner set. Saving anyway.', 'warn');
+      }
+
+      // Save KPI config — trim + truncate defensively on the way out.
+      const cfgPayload = {
+        actor: CURRENT_USER,
+        kpis: kpis.map(k => ({
+          kpi_name: truncate(String(k.kpi || '').trim(), LIMITS.kpi_name),
+          section: k.section,
+          unit: k.unit,
+          owner: truncate(String(k.owner || '').trim(), LIMITS.owner),
+          department: truncate(String(k.department || '').trim(), LIMITS.department),
+          tier: k.tier,
+          math_type: k.math_type || 'avg',
+          goal_direction: k.goal_direction || 'higher'
+        }))
+      };
+      const cfgRes = await fetch(API.config, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cfgPayload)
+      });
+      const cfgResult = await cfgRes.json();
+      if (!cfgResult.ok) throw new Error(cfgResult.error || 'Config save failed');
+
+      // Per-KPI targets are stored as a JSON map keyed by KPI name, in the
+      // settings table. Keeps the schema stable while allowing freeform target
+      // strings like ">50%", "<$170", "+12 by EOY".
+      const kpiTargetsMap = {};
+      kpis.forEach(k => {
+        const t = String(k.target || '').trim();
+        if (t) kpiTargetsMap[k.kpi] = truncate(t, 40);
+      });
+
+      // Per-KPI target scope: only save 'annual' rows — 'monthly' is
+      // the default and doesn't need storage.
+      const kpiScopesMap = {};
+      kpis.forEach(k => {
+        if (k.target_scope === 'annual') kpiScopesMap[k.kpi] = 'annual';
+      });
+
+      // Per-KPI thresholds: save as { ontrack, narrow } objects. Only
+      // include keys the user actually filled so blanks stay at default.
+      const kpiThresholdsMap = {};
+      kpis.forEach(k => {
+        const out = {};
+        const n = Number(k.narrow_pct);
+        if (k.narrow_pct !== '' && k.narrow_pct != null && !Number.isNaN(n) && n >= 0 && n <= 100) {
+          out.narrow = n;
+        }
+        const o = Number(k.ontrack_pct);
+        if (k.ontrack_pct !== '' && k.ontrack_pct != null && !Number.isNaN(o) && o >= 0 && o <= 100) {
+          out.ontrack = o;
+        }
+        if (Object.keys(out).length) kpiThresholdsMap[k.kpi] = out;
+      });
+
+      // Per-KPI rounding: only save 'ceil' rows; 'round' is the default
+      // and doesn't need storage.
+      const kpiRoundingMap = {};
+      kpis.forEach(k => {
+        if (k.round_up === true) kpiRoundingMap[k.kpi] = 'ceil';
+      });
+
+      // Save settings
+      const settings = {
+        dashboard_title: truncate(document.getElementById('set-title').value.trim(), LIMITS.settings_value),
+        fiscal_year: truncate(document.getElementById('set-fy').value.trim(), 20),
+        brand_color: truncate(document.getElementById('set-color').value.trim(), 7),
+        north_star_kpi: document.getElementById('ns-kpi').value,
+        north_star_eoy_target: truncate(document.getElementById('ns-target').value.trim(), 20),
+        north_star_projection: truncate(document.getElementById('ns-projection').value.trim(), 20),
+        apps_script_url: truncate(document.getElementById('sheet-url').value.trim(), LIMITS.settings_value),
+        hero_tagline: truncate(((document.getElementById('set-hero-tagline') || {}).value || '').trim(), 200),
+        north_star_headline: truncate(((document.getElementById('ns-headline') || {}).value || '').trim(), 200),
+        kpi_targets: JSON.stringify(kpiTargetsMap),
+        kpi_thresholds: JSON.stringify(kpiThresholdsMap),
+        kpi_scopes: JSON.stringify(kpiScopesMap),
+        kpi_rounding: JSON.stringify(kpiRoundingMap),
+        hidden_kpis: JSON.stringify([...hiddenKpiSet])
+      };
+      const setRes = await fetch(API.settings, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actor: CURRENT_USER, settings })
+      });
+      const setResult = await setRes.json();
+      if (!setResult.ok) throw new Error(setResult.error || 'Settings save failed');
+
+      // Save sections (if any have been loaded)
+      if (sections.length) {
+        const secRes = await fetch(API.sections, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ actor: CURRENT_USER, sections })
+        });
+        const secResult = await secRes.json();
+        if (!secResult.ok) throw new Error(secResult.error || 'Sections save failed');
+      }
+
+      isDirty = false;
+      document.getElementById('save-status').textContent = 'Saved';
+      document.getElementById('save-dot').style.background = 'var(--teal-400)';
+      // Hide the stale-north-star hint now that the user has saved
+      const nsHint = document.getElementById('ns-stale-hint');
+      if (nsHint) nsHint.classList.remove('show');
+      loadAudit();
+      // Re-check sheet sync after save (safe/bulletproof)
+      checkSheetSync();
+      showToast('Changes saved.', 'success');
+    } catch (err) {
+      document.getElementById('save-status').innerHTML = '⚠ Save failed: ' + escape(err.message);
+      document.getElementById('save-dot').style.background = 'var(--red-600)';
+      showToast('Save failed: ' + err.message, 'error');
+    }
+  }
+
+  async function discardChanges() {
+    if (!isDirty) return;
+    if (!confirm('Discard all unsaved changes?\n\nThis reloads the last saved state from the database. It does NOT undo changes that were already saved.')) return;
+    document.getElementById('save-status').textContent = 'Reloading…';
+    document.getElementById('save-dot').style.background = 'var(--amber-400)';
+    try {
+      await refreshConfig();
+      const nsHint = document.getElementById('ns-stale-hint');
+      if (nsHint) nsHint.classList.remove('show');
+      isDirty = false;
+      document.getElementById('save-status').textContent = 'Saved';
+      document.getElementById('save-dot').style.background = 'var(--teal-400)';
+      showToast('Unsaved changes discarded.', 'success');
+    } catch (err) {
+      document.getElementById('save-status').textContent = 'Reload failed';
+      document.getElementById('save-dot').style.background = 'var(--red-600)';
+      showToast('Reload failed: ' + err.message, 'error');
+    }
+  }
+
+  // ============================================================
+  // Small UX helpers: Copy URL + Export CSV + dynamic sync timestamp
+  // ============================================================
+  async function copySheetUrl() {
+    const val = document.getElementById('sheet-url').value;
+    if (!val) {
+      showToast('Nothing to copy — paste the Apps Script URL first.', 'warn');
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(val);
+      showToast('Sheet URL copied to clipboard.', 'success');
+    } catch (err) {
+      showToast('Copy failed — select the field and press ⌘C / Ctrl+C.', 'error');
+    }
+  }
+
+  async function exportAuditCsv() {
+    try {
+      const res = await fetch(API.audit + '?limit=200');
+      const payload = await res.json();
+      if (!payload.ok) throw new Error(payload.error || 'Audit fetch failed');
+      const rows = payload.entries || [];
+      if (!rows.length) {
+        showToast('Audit log is empty — nothing to export.', 'warn');
+        return;
+      }
+      const header = ['created_at', 'actor', 'action', 'entity'];
+      const csvEscape = v => {
+        const s = String(v == null ? '' : v);
+        return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      };
+      const csv = [header.join(',')]
+        .concat(rows.map(r => header.map(h => csvEscape(r[h])).join(',')))
+        .join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'afg-audit-log-' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast('Exported ' + rows.length + ' audit rows.', 'success');
+    } catch (err) {
+      showToast('Export failed: ' + err.message, 'error');
+    }
+  }
+
+  function updateSyncTimeDisplay(isoString) {
+    const el = document.getElementById('sync-time-admin');
+    if (!el) return;
+    if (!isoString) {
+      el.textContent = 'Never synced';
+      return;
+    }
+    try {
+      const d = new Date(isoString);
+      const when = d.toLocaleString('en-US', {
+        month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+      });
+      el.textContent = when + ' · ' + kpis.length + ' KPIs loaded';
+    } catch (_) {
+      el.textContent = 'Unknown';
+    }
+  }
+
+  async function testConnection() {
+    // Deprecated — the connection status shown at the top of the admin
+    // (updateConn) reflects the real state of the Neon + Apps Script pipeline.
+    // Left as a stub in case any legacy click handlers reference it.
+    return;
+  }
+
+  // ============================================================
+  // COLOR PICKER SYNC
+  // ============================================================
+  document.addEventListener('DOMContentLoaded', () => {
+    const cp = document.getElementById('set-color-picker');
+    const ci = document.getElementById('set-color');
+    if (cp && ci) {
+      cp.addEventListener('input', e => { ci.value = e.target.value.toUpperCase(); markDirty(); });
+      ci.addEventListener('input', e => { cp.value = e.target.value; markDirty(); });
+    }
+    // Mark dirty on any settings change
+    ['set-title', 'set-fy', 'ns-kpi', 'ns-target', 'ns-projection', 'set-hero-tagline', 'ns-headline'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('change', markDirty);
+    });
+
+    // North Star KPI change: flag the headline/target/projection as potentially stale
+    const nsKpi = document.getElementById('ns-kpi');
+    const nsHint = document.getElementById('ns-stale-hint');
+    if (nsKpi && nsHint) {
+      nsKpi.addEventListener('change', () => {
+        nsHint.classList.add('show');
+      });
+      // Any edit to the dependent fields clears the hint
+      ['ns-headline', 'ns-target', 'ns-projection'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', () => nsHint.classList.remove('show'));
+      });
+    }
+
+    // Enter-to-invite on the access panel
+    const inviteEmail = document.getElementById('new-user-email');
+    const inviteName = document.getElementById('new-user-name');
+    [inviteEmail, inviteName].forEach(el => {
+      if (el) el.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); inviteUser(); }
+      });
+    });
+
+    // Multi-tab safety: when this tab becomes visible again and has no unsaved
+    // changes, refresh from DB so it doesn't drift from another tab's saves.
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && !isDirty) {
+        refreshConfig();
+      }
+    });
+
+    renderKpis();
+    renderOwners();
+    renderNorthStarKpis();
+    refreshConfig();
+  });
+</script>
+
+</body>
+</html>

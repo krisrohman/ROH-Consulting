@@ -1,0 +1,320 @@
+// netlify/functions/seed.js
+// One-shot seeder for the canonical scorecard copy.
+// POST /api/seed  → upserts 5 sections, kpi_targets, and base settings.
+// Idempotent: merges with existing values instead of clobbering.
+
+import { neon } from '@netlify/neon';
+const sql = neon();
+
+const SECTIONS = [
+  { section_key: 'Member growth',     display_number: '01', display_name: 'Member growth',     owner_badge: 'Chris · sales ops',   leading_kpi_name: 'Net recurring members / studio', leading_display_label: 'Net recurring members / studio', leading_description: '+12 by EOY' },
+  { section_key: 'Member engagement', display_number: '02', display_name: 'Member engagement', owner_badge: 'Vic · fitness',       leading_kpi_name: 'Workouts per member / week',     leading_display_label: 'Workouts per member, per week',  leading_description: '> 1.5×' },
+  { section_key: 'Brand awareness',   display_number: '03', display_name: 'Brand awareness',   owner_badge: 'Christy · marketing', leading_kpi_name: 'PSA leads, YoY change',          leading_display_label: 'PSA leads, year-over-year',      leading_description: '> +0%' },
+  { section_key: 'Studio refresh',    display_number: '04', display_name: 'Studio refresh',    owner_badge: 'Scott · finance',     leading_kpi_name: 'Studio remodels',                leading_display_label: 'Capex program completion',       leading_description: '53 total' },
+  { section_key: 'People & culture',  display_number: '05', display_name: 'People & culture',  owner_badge: 'Deana · people ops',  leading_kpi_name: 'Glassdoor rating',               leading_display_label: 'Glassdoor rating',               leading_description: '> 3.5' },
+];
+
+const KPI_TARGETS = {
+  'Net recurring members / studio': '+12 by EOY',
+  'Intro conversion':               '> 50%',
+  'Lead portal management':         '> 80%',
+  'Revenue portal management':      '> 80%',
+  'Weekend sales, no zeros':        '100%',
+  'Workouts per member / week':     '> 1.5×',
+  'HRM usage':                      '> 77%',
+  '120-day retention':              '> 75%',
+  'Member portal management':       '> 80%',
+  'Fitness event achievement':      '4 / month',
+  'PSA leads, YoY change':          '> +0%',
+  'Cost per booking, Meta':         '< $170',
+  'Cost per lead, Meta':            '< $80',
+  'Studio remodels':                '21 / year',
+  'Treadmill refreshes':            '32 / year',
+  'Glassdoor rating':               '> 3.5',
+  'Internal promotions':            '> 30 / year',
+  'Systemwide revenue':             '> 200',
+  'Recurring revenue':              '> 160',
+  'Prepaid package revenue':        '> 20',
+  'Retail, fees & other':           '> 15',
+};
+
+// Canonical KPI list — every row the scorecard + sheet expect. Seeding this
+// into the kpis table makes the 'this Sheet row has no config' warnings
+// in the admin go away and lets dashboard.js know what math_type to use.
+const KPIS = [
+  // Section: Member growth
+  { kpi_name: 'Net recurring members / studio', section: 'Member growth',     unit: 'count',   owner: 'Chris',   department: 'Sales ops',   tier: 'leading', math_type: 'avg',    goal_direction: 'higher' },
+  { kpi_name: 'Intro conversion',               section: 'Member growth',     unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },
+  { kpi_name: 'Lead portal management',         section: 'Member growth',     unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },
+  { kpi_name: 'Revenue portal management',      section: 'Member growth',     unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },
+  { kpi_name: 'Weekend sales, no zeros',        section: 'Member growth',     unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },
+  // Section: Member engagement
+  { kpi_name: 'Workouts per member / week',     section: 'Member engagement', unit: 'ratio',   owner: 'Vic',     department: 'Fitness',     tier: 'leading', math_type: 'latest', goal_direction: 'higher' },
+  { kpi_name: 'HRM usage',                      section: 'Member engagement', unit: 'percent', owner: 'Vic',     department: 'Fitness',     tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },
+  { kpi_name: '120-day retention',              section: 'Member engagement', unit: 'percent', owner: 'Vic',     department: 'Fitness',     tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },
+  { kpi_name: 'Member portal management',       section: 'Member engagement', unit: 'percent', owner: 'Vic',     department: 'Fitness',     tier: 'lagging', math_type: 'avg',    goal_direction: 'higher' },
+  { kpi_name: 'Fitness event achievement',      section: 'Member engagement', unit: 'count',   owner: 'Vic',     department: 'Fitness',     tier: 'lagging', math_type: 'sum',    goal_direction: 'higher' },
+  // Section: Brand awareness
+  { kpi_name: 'PSA leads, YoY change',          section: 'Brand awareness',   unit: 'percent', owner: 'Christy', department: 'Marketing',   tier: 'leading', math_type: 'avg',    goal_direction: 'higher' },
+  { kpi_name: 'Cost per booking, Meta',         section: 'Brand awareness',   unit: 'USD',     owner: 'Christy', department: 'Marketing',   tier: 'lagging', math_type: 'avg',    goal_direction: 'lower' },
+  { kpi_name: 'Cost per lead, Meta',            section: 'Brand awareness',   unit: 'USD',     owner: 'Christy', department: 'Marketing',   tier: 'lagging', math_type: 'avg',    goal_direction: 'lower' },
+  // Section: Studio refresh
+  { kpi_name: 'Studio remodels',                section: 'Studio refresh',    unit: 'count',   owner: 'Scott',   department: 'Finance',     tier: 'lagging', math_type: 'latest', goal_direction: 'higher' },
+  { kpi_name: 'Treadmill refreshes',            section: 'Studio refresh',    unit: 'count',   owner: 'Scott',   department: 'Finance',     tier: 'lagging', math_type: 'latest', goal_direction: 'higher' },
+  // Section: People & culture
+  { kpi_name: 'Glassdoor rating',               section: 'People & culture',  unit: 'stars',   owner: 'Deana',   department: 'People ops',  tier: 'leading', math_type: 'latest', goal_direction: 'higher' },
+  { kpi_name: 'Internal promotions',            section: 'People & culture',  unit: 'count',   owner: 'Deana',   department: 'People ops',  tier: 'lagging', math_type: 'sum',    goal_direction: 'higher' },
+  // Section: Revenue — standalone, rendered in the revenue strap above the pillars
+  { kpi_name: 'Systemwide revenue',             section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', math_type: 'sum',    goal_direction: 'higher' },
+  { kpi_name: 'Recurring revenue',              section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', math_type: 'sum',    goal_direction: 'higher' },
+  { kpi_name: 'Prepaid package revenue',        section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', math_type: 'sum',    goal_direction: 'higher' },
+  { kpi_name: 'Retail, fees & other',           section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', math_type: 'sum',    goal_direction: 'higher' },
+];
+
+// Per-KPI narrow / on-track thresholds, applied by category. All KPIs
+// default to on-track = 100 (must hit goal). Narrow floor varies:
+//   - Tight conversion rates:  95  (5% tolerance)
+//   - General % rates:         92  (8% — scorecard default)
+//   - Revenue / spend:         90  (10%)
+//   - Volume counts:           85  (15%)
+const KPI_THRESHOLDS = {
+  // Tight conversion rates
+  'Intro conversion':               { ontrack: 100, narrow: 95 },
+  // General % rates (most of these would hit the default if unset, but
+  // making them explicit lets admins see and tune them)
+  'Lead portal management':         { ontrack: 100, narrow: 92 },
+  'Revenue portal management':      { ontrack: 100, narrow: 92 },
+  'Weekend sales, no zeros':        { ontrack: 100, narrow: 92 },
+  'Workouts per member / week':     { ontrack: 100, narrow: 92 },
+  'HRM usage':                      { ontrack: 100, narrow: 92 },
+  '120-day retention':              { ontrack: 100, narrow: 92 },
+  'Member portal management':       { ontrack: 100, narrow: 92 },
+  'PSA leads, YoY change':          { ontrack: 100, narrow: 92 },
+  'Glassdoor rating':               { ontrack: 100, narrow: 92 },
+  // Revenue / spend / pipeline — 10% tolerance
+  'Cost per booking, Meta':         { ontrack: 100, narrow: 90 },
+  'Cost per lead, Meta':            { ontrack: 100, narrow: 90 },
+  'Systemwide revenue':             { ontrack: 100, narrow: 90 },
+  'Recurring revenue':              { ontrack: 100, narrow: 90 },
+  'Prepaid package revenue':        { ontrack: 100, narrow: 90 },
+  'Retail, fees & other':           { ontrack: 100, narrow: 90 },
+  // Volume counts — 15% tolerance
+  'Net recurring members / studio': { ontrack: 100, narrow: 85 },
+  'Fitness event achievement':      { ontrack: 100, narrow: 85 },
+  'Studio remodels':                { ontrack: 100, narrow: 85 },
+  'Treadmill refreshes':            { ontrack: 100, narrow: 85 },
+  'Internal promotions':            { ontrack: 100, narrow: 85 },
+};
+
+// Per-KPI target scope — 'annual' means the Target number is a YEAR-end
+// figure that should be pro-rated by weeks-elapsed-in-year for status.
+// Default (unset) is 'monthly': target is a monthly figure and pro-rates
+// by weeks-elapsed-in-month. Only KPIs whose target is naturally annual
+// need an entry here.
+const KPI_SCOPES = {
+  'Studio remodels':     'annual',
+  'Treadmill refreshes': 'annual',
+  'Internal promotions': 'annual',
+};
+
+// Settings that describe identity / brand / north star — only set if empty.
+const BASE_SETTINGS = {
+  dashboard_title:       'Austin Fitness Group',
+  fiscal_year:           'FY 2026',
+  brand_color:           '#D85A30',
+  north_star_kpi:        'Net recurring members / studio',
+  north_star_headline:   'Net recurring members per studio, on average.',
+  north_star_eoy_target: '12',
+  hero_tagline:          'High standards. Relentless execution. No shortcuts.',
+};
+
+export default async (request) => {
+  if (request.method !== 'POST') {
+    return json({ ok: false, error: 'Method not allowed' }, 405);
+  }
+
+  try {
+    const body = await request.json().catch(() => ({}));
+    const actor = body.actor || 'seed';
+    const force = body.force === true;
+    const prune = body.prune === true;
+    const report = { kpis_added: 0, kpis_reactivated: 0, kpis_skipped: 0, kpis_pruned: 0,
+                     sections_added: 0, sections_skipped: 0,
+                     settings_added: 0, targets_merged: 0, thresholds_merged: 0 };
+
+    // 0) KPIs — every row the scorecard and sheet expect. In merge mode,
+    //    skip KPIs that already exist AND are active. Soft-deleted rows
+    //    get reactivated so accidentally-deleted canonical KPIs (e.g.
+    //    eNPS, Voluntary turnover) come back on next Seed without needing
+    //    a force-overwrite. Force mode resets everything canonical.
+    for (let i = 0; i < KPIS.length; i++) {
+      const k = KPIS[i];
+      const existing = await sql`SELECT active FROM kpis WHERE kpi_name = ${k.kpi_name}`;
+      const existsActive = existing.length && existing[0].active;
+      if (existsActive && !force) {
+        report.kpis_skipped++;
+        continue;
+      }
+      await sql`
+        INSERT INTO kpis (kpi_name, section, unit, owner, department, tier, math_type, goal_direction, sort_order, active)
+        VALUES (${k.kpi_name}, ${k.section}, ${k.unit}, ${k.owner}, ${k.department}, ${k.tier}, ${k.math_type}, ${k.goal_direction}, ${i * 10}, TRUE)
+        ON CONFLICT (kpi_name) DO UPDATE SET
+          section = EXCLUDED.section,
+          unit = EXCLUDED.unit,
+          owner = EXCLUDED.owner,
+          department = EXCLUDED.department,
+          tier = EXCLUDED.tier,
+          math_type = EXCLUDED.math_type,
+          goal_direction = EXCLUDED.goal_direction,
+          sort_order = EXCLUDED.sort_order,
+          active = TRUE`;
+      if (!existing.length) {
+        await audit(actor, 'kpi.seed', k.kpi_name, null, k);
+        report.kpis_added++;
+      } else if (!existsActive) {
+        await audit(actor, 'kpi.reactivate', k.kpi_name, null, k);
+        report.kpis_reactivated++;
+      } else {
+        await audit(actor, 'kpi.seed-overwrite', k.kpi_name, null, k);
+      }
+    }
+
+    // 0b) Prune — soft-delete any active KPI whose name isn't in the
+    //     canonical list. Only runs when caller passes prune=true.
+    //     Use this to wipe junk test rows, duplicate renames, and
+    //     accumulated 'New KPI' leftovers in one shot.
+    if (prune) {
+      const canonicalNames = new Set(KPIS.map(k => k.kpi_name));
+      const activeRows = await sql`SELECT kpi_name FROM kpis WHERE active = TRUE`;
+      for (const row of activeRows) {
+        if (!canonicalNames.has(row.kpi_name)) {
+          await sql`UPDATE kpis SET active = FALSE WHERE kpi_name = ${row.kpi_name}`;
+          await audit(actor, 'kpi.prune', row.kpi_name, { kpi_name: row.kpi_name }, null);
+          report.kpis_pruned++;
+        }
+      }
+    }
+
+    // 1) Sections — upsert (only fills in rows; doesn't nuke user edits to
+    //    an existing row unless force=true).
+    for (let i = 0; i < SECTIONS.length; i++) {
+      const s = SECTIONS[i];
+      const existing = await sql`SELECT section_key FROM sections WHERE section_key = ${s.section_key}`;
+      if (existing.length && !force) {
+        report.sections_skipped++;
+        continue;
+      }
+      await sql`
+        INSERT INTO sections (
+          section_key, display_number, display_name, tagline, owner_badge,
+          leading_kpi_name, leading_display_label, leading_description, sort_order, active
+        ) VALUES (
+          ${s.section_key}, ${s.display_number}, ${s.display_name}, ${''}, ${s.owner_badge},
+          ${s.leading_kpi_name}, ${s.leading_display_label}, ${s.leading_description}, ${i * 10}, TRUE
+        )
+        ON CONFLICT (section_key) DO UPDATE SET
+          display_number = EXCLUDED.display_number,
+          display_name = EXCLUDED.display_name,
+          owner_badge = EXCLUDED.owner_badge,
+          leading_kpi_name = EXCLUDED.leading_kpi_name,
+          leading_display_label = EXCLUDED.leading_display_label,
+          leading_description = EXCLUDED.leading_description,
+          sort_order = EXCLUDED.sort_order,
+          active = TRUE`;
+      if (existing.length) {
+        await audit(actor, 'section.seed-overwrite', s.section_key, null, s);
+      } else {
+        await audit(actor, 'section.seed', s.section_key, null, s);
+        report.sections_added++;
+      }
+    }
+
+    // 2) kpi_targets — MERGE with existing, never clobber user edits.
+    const curTargetsRow = await sql`SELECT value FROM settings WHERE key = 'kpi_targets'`;
+    let curTargets = {};
+    try {
+      if (curTargetsRow.length) curTargets = JSON.parse(curTargetsRow[0].value) || {};
+    } catch (_) { curTargets = {}; }
+
+    for (const [name, target] of Object.entries(KPI_TARGETS)) {
+      if (curTargets[name] && !force) continue;
+      curTargets[name] = target;
+      report.targets_merged++;
+    }
+    await sql`
+      INSERT INTO settings (key, value) VALUES ('kpi_targets', ${JSON.stringify(curTargets)})
+      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`;
+
+    // 2b) kpi_thresholds — merge with existing. Any KPI the user has
+    //     already customized is left alone unless force=true.
+    const curThRow = await sql`SELECT value FROM settings WHERE key = 'kpi_thresholds'`;
+    let curTh = {};
+    try {
+      if (curThRow.length) curTh = JSON.parse(curThRow[0].value) || {};
+    } catch (_) { curTh = {}; }
+
+    for (const [name, val] of Object.entries(KPI_THRESHOLDS)) {
+      // Legacy entries might be bare numbers from the single-threshold era;
+      // only "has a value" if it's an object with narrow/ontrack set.
+      const existing = curTh[name];
+      const hasUserEdit = existing && typeof existing === 'object' &&
+                          (existing.narrow != null || existing.ontrack != null);
+      if (hasUserEdit && !force) continue;
+      curTh[name] = val;
+      report.thresholds_merged++;
+    }
+    await sql`
+      INSERT INTO settings (key, value) VALUES ('kpi_thresholds', ${JSON.stringify(curTh)})
+      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`;
+
+    // 2c) kpi_scopes — merge with existing.
+    const curScRow = await sql`SELECT value FROM settings WHERE key = 'kpi_scopes'`;
+    let curSc = {};
+    try {
+      if (curScRow.length) curSc = JSON.parse(curScRow[0].value) || {};
+    } catch (_) { curSc = {}; }
+    for (const [name, val] of Object.entries(KPI_SCOPES)) {
+      if (curSc[name] && !force) continue;
+      curSc[name] = val;
+    }
+    await sql`
+      INSERT INTO settings (key, value) VALUES ('kpi_scopes', ${JSON.stringify(curSc)})
+      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`;
+
+    // 3) Base settings — only fill in keys that don't exist yet (or force).
+    for (const [key, value] of Object.entries(BASE_SETTINGS)) {
+      const cur = await sql`SELECT value FROM settings WHERE key = ${key}`;
+      if (cur.length && cur[0].value && !force) continue;
+      await sql`
+        INSERT INTO settings (key, value) VALUES (${key}, ${value})
+        ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`;
+      report.settings_added++;
+    }
+
+    return json({ ok: true, ...report });
+  } catch (err) {
+    console.error('Seed failed:', err);
+    return json({ ok: false, error: err.message }, 500);
+  }
+};
+
+async function audit(actor, action, entity, before, after) {
+  try {
+    await sql`
+      INSERT INTO audit_log (actor, action, entity, before_val, after_val)
+      VALUES (${actor}, ${action}, ${entity}, ${before}::jsonb, ${after ? JSON.stringify(after) : null}::jsonb)`;
+  } catch (_) { /* audit is best-effort */ }
+}
+
+function json(payload, status = 200) {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-store',
+      'Access-Control-Allow-Origin': '*'
+    }
+  });
+}
+
+export const config = { path: '/api/seed' };

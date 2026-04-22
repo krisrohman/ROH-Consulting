@@ -1,0 +1,61 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/dashboard"
+  to = "/.netlify/functions/dashboard"
+  status = 200
+
+[[redirects]]
+  from = "/api/config"
+  to = "/.netlify/functions/config"
+  status = 200
+
+[[redirects]]
+  from = "/api/settings"
+  to = "/.netlify/functions/settings"
+  status = 200
+
+[[redirects]]
+  from = "/api/audit"
+  to = "/.netlify/functions/audit"
+  status = 200
+
+[[redirects]]
+  from = "/api/sections"
+  to = "/.netlify/functions/sections"
+  status = 200
+
+[[redirects]]
+  from = "/api/users"
+  to = "/.netlify/functions/users"
+  status = 200
+
+[[redirects]]
+  from = "/api/test-connection"
+  to = "/.netlify/functions/test-connection"
+  status = 200
+
+[[redirects]]
+  from = "/api/seed"
+  to = "/.netlify/functions/seed"
+  status = 200
+
+[[redirects]]
+  from = "/"
+  to = "/austin_fitness_group_scorecard.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin"
+  to = "/austin_fitness_group_admin.html"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/austin_fitness_group_scorecard.html"
+  status = 200

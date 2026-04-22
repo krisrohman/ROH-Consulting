@@ -686,8 +686,10 @@
     background: transparent !important;
   }
   .rev-sidebar .rev-status::before { display: none; }
-  .rev-sidebar .rev-status.miss { color: #c58b00; }
-  .rev-sidebar .rev-status.unknown { color: #999; }
+  .rev-sidebar .rev-status.narrow { color: #c58b00; }
+  .rev-sidebar .rev-status.at-risk { color: #b23b3b; }
+  .rev-sidebar .rev-status.miss { color: #c58b00; } /* legacy */
+  .rev-sidebar .rev-status.unknown { color: #999; font-style: italic; }
   .ns-head {
     grid-column: 1 / -1;
     display: flex;
@@ -945,10 +947,11 @@
     grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
     column-gap: 48px;
     row-gap: 20px;
-    padding: 36px 0 44px;
+    padding: 56px 0 72px;
     border-bottom: 0.5px solid var(--rule);
   }
-  .pillar:last-of-type { border-bottom: none; }
+  .pillar:first-of-type { padding-top: 40px; }
+  .pillar:last-of-type { border-bottom: none; padding-bottom: 40px; }
 
   /* Left column — identity + lagging outcome */
   .pillar-left {
@@ -1410,10 +1413,6 @@
         <div>
           <p class="ns-side-stat-label">end-of-year target</p>
           <div class="ns-mid" id="ns-target">+12</div>
-        </div>
-        <div>
-          <p class="ns-side-stat-label">trajectory</p>
-          <p class="ns-track-meta">YTD exceeds EOY target</p>
         </div>
       </div>
       <div class="ns-spark" id="ns-spark" aria-hidden="true">
@@ -2176,16 +2175,10 @@
     // Verdict kicker: echo the current week
     document.querySelectorAll('.verdict-wk').forEach(el => el.textContent = currentWeekNum);
 
-    // NS trajectory caption: short editorial statement. No bar anymore.
-    const trackMeta = document.querySelector('.ns-track-meta');
-    if (trackMeta && nsTarget) {
-      const pctOfTarget = Math.max(0, (ytd / nsTarget) * 100);
-      if (pctOfTarget >= 100) {
-        trackMeta.textContent = `YTD is ${pctOfTarget.toFixed(0)}% of EOY target — exceeded`;
-      } else {
-        trackMeta.textContent = `Tracking ${pctOfTarget.toFixed(0)}% of EOY target`;
-      }
-    }
+    // Trajectory caption intentionally dropped — user feedback: the
+    // 'YTD is 117% — exceeded' framing introduced false finality and
+    // conflicted with the weekly-report voice. NS stands on its own
+    // with YTD numeral + EOY target stat only.
 
     // NS sparkline — render up to last 13 weeks of the KPI's weekly values.
     // Coral polyline, soft filled area underneath, current week dot highlighted,
@@ -2614,14 +2607,13 @@
       const tgtEl = card.querySelector('.rev-target');
       const pill  = card.querySelector('.rev-status');
 
-      const setUnknown = () => {
-        if (valEl) valEl.textContent = '—';
-        if (tgtEl) tgtEl.textContent = '—';
-        card.classList.remove('miss', 'over');
-        if (pill) { pill.className = 'rev-status unknown'; pill.textContent = ''; }
-      };
+      // Hide cards entirely when there's no underlying Sheet row — don't
+      // stamp '—' placeholders into the hero area.
+      const hideCard = () => { card.style.display = 'none'; };
+      const showCard = () => { card.style.display = ''; };
 
-      if (!actRow) { setUnknown(); return; }
+      if (!actRow) { hideCard(); return; }
+      showCard();
 
       const unit = (actRow.config && actRow.config.unit) || 'USD';
       const mathType = (actRow.config && actRow.config.math_type)
@@ -2667,11 +2659,12 @@
         paceTarget = monthlyTarget * (weeksElapsed / weeksInMonth);
       }
 
-      if (mtdActual == null || paceTarget == null || paceTarget === 0) {
-        if (valEl) valEl.innerHTML = mtdActual == null ? '—' : formatVal(mtdActual, unit);
-        if (tgtEl) tgtEl.innerHTML = monthlyTarget == null ? '—' : formatVal(monthlyTarget, unit);
-        card.classList.remove('miss', 'over');
-        if (pill) { pill.className = 'rev-status unknown'; pill.textContent = ''; }
+      if (mtdActual == null) { hideCard(); return; }
+      if (paceTarget == null || paceTarget === 0) {
+        // Have the value but no target — show value cleanly with 'no target' status
+        if (valEl) valEl.innerHTML = formatVal(mtdActual, unit);
+        if (tgtEl) tgtEl.textContent = '';
+        if (pill) { pill.className = 'rev-status unknown'; pill.textContent = 'no target'; }
         return;
       }
 
@@ -2679,18 +2672,16 @@
       if (tgtEl) tgtEl.innerHTML = formatVal(monthlyTarget, unit);
 
       card.classList.remove('miss', 'over');
-      if (pill) pill.classList.remove('ontrack', 'miss', 'unknown');
+      if (pill) pill.classList.remove('ontrack', 'miss', 'unknown', 'narrow', 'at-risk');
       const lowerIsBetter = false; // revenue is always higher-is-better
       const thr = thresholdMap[wanted] || {};
       const status = computeStatus(mtdActual, paceTarget, lowerIsBetter, thr.narrow, thr.ontrack);
       if (status === 'on-track') {
         if (pill) { pill.className = 'rev-status ontrack'; pill.textContent = 'On track'; }
       } else if (status === 'narrow') {
-        card.classList.add('miss');
-        if (pill) { pill.className = 'rev-status miss'; pill.textContent = 'Narrow miss'; }
+        if (pill) { pill.className = 'rev-status narrow'; pill.textContent = 'Narrow'; }
       } else {
-        card.classList.add('miss');
-        if (pill) { pill.className = 'rev-status miss'; pill.textContent = 'Below target'; }
+        if (pill) { pill.className = 'rev-status at-risk'; pill.textContent = 'At risk'; }
       }
     });
   }

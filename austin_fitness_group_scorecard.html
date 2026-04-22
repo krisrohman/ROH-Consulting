@@ -48,8 +48,8 @@
   html, body {
     margin: 0;
     padding: 0;
-    background: #F5F0E8;
-    color: var(--ink);
+    background: #ffffff;
+    color: #111;
     font-family: var(--sans);
     font-size: 16px;
     line-height: 1.5;
@@ -150,13 +150,11 @@
     cursor: pointer;
   }
 
-  /* The page no longer reads as a container — it's paper.
-     Background removed, no box shadow, no top border strip.
-     Narrow max-width gives the editorial column feel. */
+  /* Page lives on white paper with a tight editorial column. */
   .page {
     max-width: 1100px;
-    margin: 40px auto 80px;
-    padding: 0 24px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
     background: none;
     border-top: none;
     box-shadow: none;
@@ -615,7 +613,7 @@
     padding: 0 0 16px;
     background: transparent;
     margin: 40px 0;
-    border-bottom: 1px solid #e5e0d8;
+    border-bottom: 1px solid #eaeaea;
   }
   .rev-sidebar-head {
     font-family: var(--sans);
@@ -947,8 +945,9 @@
     grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
     column-gap: 48px;
     row-gap: 20px;
-    padding: 0;
-    margin-top: 80px;
+    padding: 32px 0 0;
+    margin-top: 48px;
+    border-top: 1px solid #f0f0f0;
     border-bottom: none;
   }
   .pillar:first-of-type { margin-top: 56px; }
@@ -1405,13 +1404,13 @@
       </div>
       <h2 class="ns-title" id="ns-title">Net recurring members per studio, on average.</h2>
       <div class="ns-hero">
-        <div class="ns-big" id="ns-ytd">+17</div>
+        <div class="ns-big" id="ns-ytd">&nbsp;</div>
         <p class="ns-hero-label">members / studio &middot; year to date</p>
       </div>
       <div class="ns-side">
         <div>
           <p class="ns-side-stat-label">end-of-year target</p>
-          <div class="ns-mid" id="ns-target">+12</div>
+          <div class="ns-mid" id="ns-target">&nbsp;</div>
         </div>
       </div>
       <div class="ns-spark" id="ns-spark" aria-hidden="true">
@@ -1425,26 +1424,26 @@
       <div class="revenue-row" id="revenue-row">
         <div class="rev-card" data-kpi="Systemwide revenue">
           <p class="rev-label">Systemwide</p>
-          <div class="rev-value">—</div>
-          <p class="rev-target">—</p>
+          <div class="rev-value">&nbsp;</div>
+          <p class="rev-target">&nbsp;</p>
           <span class="rev-status ontrack">On track</span>
         </div>
         <div class="rev-card" data-kpi="Recurring revenue">
           <p class="rev-label">Recurring</p>
-          <div class="rev-value">—</div>
-          <p class="rev-target">—</p>
+          <div class="rev-value">&nbsp;</div>
+          <p class="rev-target">&nbsp;</p>
           <span class="rev-status ontrack">On track</span>
         </div>
         <div class="rev-card" data-kpi="Prepaid package revenue">
           <p class="rev-label">Prepaid package</p>
-          <div class="rev-value">—</div>
-          <p class="rev-target">—</p>
+          <div class="rev-value">&nbsp;</div>
+          <p class="rev-target">&nbsp;</p>
           <span class="rev-status ontrack">On track</span>
         </div>
         <div class="rev-card" data-kpi="Retail, fees &amp; other">
           <p class="rev-label">Retail, fees &amp; other</p>
-          <div class="rev-value">—</div>
-          <p class="rev-target">—</p>
+          <div class="rev-value">&nbsp;</div>
+          <p class="rev-target">&nbsp;</p>
           <span class="rev-status ontrack">On track</span>
         </div>
       </div>
@@ -1744,13 +1743,15 @@
         el.classList.add('selected');
       }
     });
-    // Immediately populate FAKE_DATA (the raw API shape) so helpers that
-    // read data.sheet.* / data.kpis / data.settings work before /api/dashboard
-    // returns. Never flatten this — helpers expect the raw shape.
+    // Seed FAKE_DATA only for dropdown population (week menu, hero strip).
+    // Intentionally DO NOT render the dashboard here — that was causing a
+    // visible flash where the hero number paints with FAKE_DATA values
+    // first, then swaps to real API data a moment later. syncSheet below
+    // runs immediately on DOMContentLoaded and renders once the API
+    // returns (or falls back to FAKE_DATA only if it fails).
     window.__kpiData = window.__kpiData || FAKE_DATA;
     repopulateWeekMenu(window.__kpiData);
     rebuildHeroWeekStrip();
-    renderDashboard(window.__kpiData);
 
     // Date in masthead — set to today's local date, long form.
     const mhd = document.getElementById('masthead-date');

@@ -232,17 +232,24 @@
          left coral rule. All the context: kicker, headline, big YTD
          with status pill, and EOY target alongside. ─── */
   .ns-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "kicker stats"
+      "title  stats";
+    align-items: center;
+    column-gap: 56px;
+    row-gap: 10px;
     background: #f6efe2;
     border: 1px solid #e8ddc5;
     border-left: 4px solid var(--coral-400);
     border-radius: 8px;
-    padding: 22px 28px 24px;
+    padding: 18px 28px;
     margin: 18px 0 24px;
   }
   .ns-kicker {
+    grid-area: kicker;
+    align-self: end;
     font-family: var(--sans);
     font-size: 10px;
     letter-spacing: 0.3em;
@@ -252,21 +259,24 @@
     margin: 0;
   }
   .ns-title {
+    grid-area: title;
+    align-self: start;
     font-family: var(--serif);
-    font-size: 22px;
+    font-size: 32px;
     font-weight: 500;
-    line-height: 1.25;
+    line-height: 1.15;
     color: #1a1a1a;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.02em;
     margin: 0;
-    max-width: 820px;
   }
   .ns-stats {
+    grid-area: stats;
     display: flex;
     align-items: flex-end;
-    gap: 56px;
-    margin-top: 6px;
+    gap: 48px;
+    margin-top: 0;
     flex-wrap: wrap;
+    justify-self: end;
   }
   .ns-stat { display: flex; flex-direction: column; gap: 4px; }
   .ns-stat-label {
@@ -1586,7 +1596,12 @@
     .pillar { grid-template-columns: 1fr; column-gap: 0; row-gap: 20px; }
     .pillar-left { position: static; }
     .ns-feature { grid-template-columns: 1fr; row-gap: 20px; }
-    .ns-panel { grid-template-columns: 1fr; padding: 32px 28px; }
+    .ns-panel {
+      grid-template-columns: 1fr;
+      grid-template-areas: "kicker" "title" "stats";
+      padding: 22px 24px;
+    }
+    .ns-stats { justify-self: start; }
     .ns-big { font-size: 56px; }
     .ns-side { padding-left: 0; border-left: none; border-top: 0.5px solid rgba(0,0,0,0.18); padding-top: 22px; }
   }

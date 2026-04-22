@@ -414,57 +414,60 @@
      A single inline line: '11 on pace · 5 narrow · 6 at risk'.
      No borders, no container, small muted gray — should barely register
      so the North Star below gets all the attention. */
+  /* The Tally — readable from a Zoom share, still clearly secondary to the
+     North Star. Three counts laid out left-to-right with serif numbers
+     and small caps labels stacked below each. No borders, no container —
+     just typography sitting on the page. */
   .verdict {
     background: none !important;
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
-    margin: 4px 0 8px;
-    font-size: 11px;
-    color: #888;
-    letter-spacing: 0.02em;
+    margin: 18px 0 24px;
+    color: #555;
   }
   .verdict-kicker { display: none; }
   .verdict-line {
-    display: block;
+    display: flex;
     grid-template-columns: none;
-    gap: 0;
-    line-height: 1.4;
+    gap: 56px;
+    line-height: 1.2;
+    align-items: flex-start;
   }
   .verdict-cell {
-    display: inline-flex;
-    align-items: baseline;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 4px;
     padding: 0;
     border: none;
   }
-  .verdict-cell + .verdict-cell::before {
-    content: '·';
-    color: #c9c4b9;
-    margin: 0 10px 0 0;
-    order: 0;
-  }
+  .verdict-cell + .verdict-cell::before { content: none; }
+  /* Status color on the big number — neutral label below stays gray. */
+  .verdict-cell.v-ok     .verdict-num { color: #16A34A !important; }
+  .verdict-cell.v-narrow .verdict-num { color: #D97706 !important; }
+  .verdict-cell.v-risk   .verdict-num { color: #DC2626 !important; }
   .verdict-num {
-    display: inline;
+    display: block;
     order: 1;
-    font-family: var(--sans);
-    font-size: 11px;
-    font-weight: 600;
-    line-height: inherit;
-    letter-spacing: 0.02em;
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
-    color: #666 !important;
+    color: #111 !important;
     margin: 0;
   }
   .verdict-label {
-    display: inline;
+    display: block;
     order: 2;
     font-family: var(--sans);
     font-size: 11px;
-    font-weight: 400;
-    line-height: inherit;
-    letter-spacing: 0.02em;
-    text-transform: lowercase;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
     color: #888 !important;
     margin: 0;
   }
@@ -1111,11 +1114,11 @@
   .row > *:last-child { text-align: right; }
   .mname {
     font-family: var(--serif);
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 500;
     margin: 0;
     letter-spacing: -0.01em;
-    color: var(--ink);
+    color: #111;
     line-height: 1.2;
   }
   .mdept { display: none; }
@@ -1141,6 +1144,30 @@
     font-weight: 500;
   }
   .row .row-goal .pct { font-size: 11px; color: inherit; }
+  /* YTD aggregate — sits under the metric goal so the reader can compare
+     this-week / this-month / year-to-date in a single glance per row. */
+  .row-ytd {
+    display: block;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: #555;
+    margin: 4px 0 0;
+    line-height: 1.25;
+    font-variant-numeric: tabular-nums;
+  }
+  .row-ytd-label {
+    display: inline;
+    font-family: var(--sans);
+    font-style: normal;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #999;
+    font-weight: 500;
+    margin-right: 6px;
+  }
+  .row-ytd .pct { font-size: 12px; color: inherit; }
 
   /* Hide the 4-col compare block — it's a data carrier for the JS */
   .compare { display: none; }
@@ -1173,12 +1200,12 @@
   }
   .wk-val {
     font-family: var(--serif);
-    font-size: 16px;
+    font-size: 19px;
     font-weight: 400;
     line-height: 1;
     margin: 0;
     font-variant-numeric: tabular-nums;
-    color: var(--ink);
+    color: #111;
     letter-spacing: -0.005em;
   }
   .wk-val.empty { color: var(--ink-3); font-weight: 300; }
@@ -1191,7 +1218,7 @@
   .wk.future .wk-label { color: var(--ink-3); opacity: 0.5; }
   .wk.future .wk-val {
     color: var(--ink-3); font-weight: 300; opacity: 0.5;
-    font-size: 14px; font-style: italic;
+    font-size: 17px; font-style: italic;
   }
 
   /* Status as plain colored text — no pills, no dots, no chips.
@@ -1203,9 +1230,9 @@
     border: none !important;
     width: auto; height: auto;
     font-family: var(--sans);
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
     line-height: 1.4;
     padding: 0 !important;
     text-indent: 0 !important;
@@ -2283,6 +2310,7 @@
       lookup[row.kpi].allMonths = row.months;
       lookup[row.kpi].trend = row.trend || null;
       lookup[row.kpi].math_type = row.math_type || 'avg';
+      lookup[row.kpi].ytd = (typeof row.ytd === 'number') ? row.ytd : null;
     });
     priorYearSrc.forEach(row => {
       lookup[row.kpi] = lookup[row.kpi] || {};
@@ -2468,6 +2496,20 @@
         } else {
           goalEl.innerHTML = goalText;    // our own formatVal markup
         }
+      }
+
+      // YTD aggregate — sits below the goal so 'how are we doing this
+      // year?' is answered alongside the weekly view. Pulled from the
+      // backend's actualRow.ytd which respects each KPI's math_type
+      // (sum / latest / avg).
+      if (leftCol && typeof d.ytd === 'number') {
+        let ytdEl = leftCol.querySelector('.row-ytd');
+        if (!ytdEl) {
+          ytdEl = document.createElement('p');
+          ytdEl.className = 'row-ytd';
+          leftCol.appendChild(ytdEl);
+        }
+        ytdEl.innerHTML = '<span class="row-ytd-label">YTD</span>' + formatVal(d.ytd, d.unit);
       }
     });
 
@@ -2776,9 +2818,9 @@
 
   function formatVal(v, unit) {
     if (v === null || v === undefined || v === '') return '—';
-    if (unit === 'percent') return Number(v).toFixed(1) + '<span class="pct">%</span>';
+    if (unit === 'percent') return Math.round(Number(v)) + '<span class="pct">%</span>';
     if (unit === 'USD') return '$' + Math.round(Number(v)).toLocaleString();
-    if (unit === 'ratio') return Number(v).toFixed(2) + '<span class="pct">×</span>';
+    if (unit === 'ratio') return Number(v).toFixed(1) + '<span class="pct">×</span>';
     if (unit === 'stars') return Number(v).toFixed(1);
     if (unit === 'count') return Math.round(Number(v)).toString();
     return String(v);

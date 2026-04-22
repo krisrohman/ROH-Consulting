@@ -3065,28 +3065,22 @@
       .toLowerCase();
   }
 
-  // Word-set overlap: returns true if a and b share a reasonable fraction
-  // of their significant words. Handles name drift between admin and sheet
-  // (different punctuation, word order, minor rephrasing, abbreviations
-  // like YoY -> year-over-year).
+  // Match a and b if: identical after normalization, one contains the other,
+  // or their first two significant words are the same. The old 40% word-set
+  // overlap was too lax — it made 'Systemwide revenue' fuzzy-match
+  // 'Recurring revenue' via the shared 'revenue' word, silently writing
+  // wrong data into revenue cards.
   function fuzzyMatchKpi(a, b) {
     const normA = normalizeKpi(a);
     const normB = normalizeKpi(b);
     if (!normA || !normB) return false;
     if (normA === normB) return true;
     if (normA.includes(normB) || normB.includes(normA)) return true;
-    // First two significant words match? Handles 'PSA leads, YoY change'
-    // ↔ 'PSA leads, year-over-year' and other trailing-word variations.
     const firstTwo = s => s.split(' ').filter(w => w.length >= 2).slice(0, 2).join(' ');
-    if (firstTwo(normA) && firstTwo(normA) === firstTwo(normB)) return true;
-    // Word-set overlap (any overlap >= 40% of smaller set)
-    const toWords = s => new Set(s.split(' ').filter(w => w.length >= 2));
-    const wa = toWords(normA);
-    const wb = toWords(normB);
-    if (wa.size === 0 || wb.size === 0) return false;
-    let overlap = 0;
-    wa.forEach(w => { if (wb.has(w)) overlap++; });
-    return overlap / Math.min(wa.size, wb.size) >= 0.4;
+    const ftA = firstTwo(normA);
+    const ftB = firstTwo(normB);
+    if (ftA && ftA === ftB) return true;
+    return false;
   }
 
   // Wire every admin-editable setting into its visible spot on the scorecard.

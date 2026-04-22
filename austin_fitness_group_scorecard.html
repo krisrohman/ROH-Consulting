@@ -1393,13 +1393,13 @@
   .row > *:first-child, .row > *:last-child { padding-top: 0; }
   .row > *:last-child { text-align: right; }
   .mname {
-    font-family: var(--sans);
-    font-size: 15px;
-    font-weight: 600;
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 500;
     margin: 0;
-    letter-spacing: -0.005em;
-    color: #111;
-    line-height: 1.25;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    line-height: 1.2;
   }
   .mdept { display: none; }
   /* Goal + YTD on driver rows — clear, tabular, not italic. Each on its
@@ -2958,8 +2958,6 @@
     cards.forEach(card => {
       const rawWanted = card.dataset.kpi || '';
       const wanted = normalizeKpi(rawWanted);
-      // Exact-normalized first, fuzzy fallback — so 'Recurring revenue' vs
-      // 'Recuring Revenue' or 'Systemwide Revenue · USD' still matches.
       let actRow = actByKpi[wanted];
       if (!actRow) actRow = actuals.find(r => fuzzyMatchKpi(r.kpi, rawWanted));
       let tgtRow = tgtByKpi[wanted];
@@ -2970,17 +2968,21 @@
       const tgtEl = card.querySelector('.rev-target');
       const pill  = card.querySelector('.rev-status');
 
-      // Hide cards entirely when there's no underlying Sheet row — don't
-      // stamp '—' placeholders into the hero area.
-      const hideCard = () => { card.style.display = 'none'; };
-      const showCard = () => { card.style.display = ''; };
+      // Never hide silently. Always show the card with a state readable at
+      // a glance. If no sheet row at all, explicitly say so instead of
+      // disappearing.
+      card.style.display = '';
 
-      if (!actRow) { hideCard(); return; }
-      showCard();
+      if (!actRow && !weeklyRow) {
+        if (valEl) valEl.textContent = '—';
+        if (tgtEl) tgtEl.textContent = '';
+        if (pill) { pill.className = 'rev-status unknown'; pill.textContent = 'no sheet row'; }
+        return;
+      }
 
-      const unit = (actRow.config && actRow.config.unit) || 'USD';
-      const mathType = (actRow.config && actRow.config.math_type)
-                    || (actRow.math_type)
+      const unit = (actRow && actRow.config && actRow.config.unit) || 'USD';
+      const mathType = (actRow && actRow.config && actRow.config.math_type)
+                    || (actRow && actRow.math_type)
                     || 'sum';
       let monthlyTarget = tgtRow && tgtRow.months ? tgtRow.months[month] : null;
       if (typeof monthlyTarget !== 'number') {
@@ -3010,7 +3012,7 @@
       }
       // Fallback to the backend's full-month value if no weekly data came
       // through for this KPI.
-      if (mtdActual === null && actRow.months) {
+      if (mtdActual === null && actRow && actRow.months) {
         mtdActual = actRow.months[month];
       }
 
@@ -3022,7 +3024,12 @@
         paceTarget = monthlyTarget * (weeksElapsed / weeksInMonth);
       }
 
-      if (mtdActual == null) { hideCard(); return; }
+      if (mtdActual == null) {
+        if (valEl) valEl.textContent = '—';
+        if (tgtEl) tgtEl.textContent = '';
+        if (pill) { pill.className = 'rev-status unknown'; pill.textContent = 'no data'; }
+        return;
+      }
       if (paceTarget == null || paceTarget === 0) {
         // Have the value but no target — show value cleanly with 'no target' status
         if (valEl) valEl.innerHTML = formatVal(mtdActual, unit);

@@ -415,21 +415,20 @@
      A single inline line: '11 on pace · 5 narrow · 6 at risk'.
      No borders, no container, small muted gray — should barely register
      so the North Star below gets all the attention. */
-  /* Tally — dashboard KPI strip. 3 tiles side-by-side, each with a
-     colored left-edge rule, label, and big number. Clear status at a
-     glance. */
+  /* Tally — same card chrome as pillars. No colored edge rules; the
+     number itself wears the status color. Quiet and consistent. */
   .verdict {
     background: none !important;
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
-    margin: 16px 0 28px;
+    margin: 12px 0 20px;
   }
   .verdict-kicker { display: none; }
   .verdict-line {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 12px;
   }
   .verdict-cell {
     display: flex;
@@ -437,14 +436,10 @@
     gap: 6px;
     padding: 14px 18px;
     background: #fafaf7;
-    border: 1px solid #ececec;
-    border-left: 3px solid transparent;
-    border-radius: 6px;
+    border: 1px solid #e8e3d9;
+    border-radius: 8px;
   }
   .verdict-cell + .verdict-cell::before { content: none; }
-  .verdict-cell.v-ok     { border-left-color: #16A34A; }
-  .verdict-cell.v-narrow { border-left-color: #D97706; }
-  .verdict-cell.v-risk   { border-left-color: #DC2626; }
   .verdict-cell.v-ok     .verdict-num { color: #16A34A !important; }
   .verdict-cell.v-narrow .verdict-num { color: #D97706 !important; }
   .verdict-cell.v-risk   .verdict-num { color: #DC2626 !important; }
@@ -511,15 +506,14 @@
   }
   .ns-panel {
     position: relative;
-    background: #ffffff;
+    background: #fafaf7;
     border: 1px solid #e8e3d9;
-    border-left: 3px solid var(--coral-400);
     border-radius: 8px;
     padding: 22px 28px 24px;
     margin: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(220px, 1fr);
-    column-gap: 36px;
+    grid-template-columns: minmax(0, 1.3fr) minmax(220px, 1fr);
+    column-gap: 32px;
     row-gap: 0;
     align-items: end;
     text-align: left;
@@ -665,15 +659,10 @@
     display: block;
     padding: 14px 16px 14px;
     border: 1px solid #e8e3d9;
-    border-top: 3px solid #e8e3d9;
     background: #fafaf7;
-    border-radius: 6px;
+    border-radius: 8px;
     position: relative;
   }
-  .rev-sidebar .rev-card.ontrack { border-top-color: #16A34A; }
-  .rev-sidebar .rev-card.narrow  { border-top-color: #D97706; }
-  .rev-sidebar .rev-card.at-risk { border-top-color: #DC2626; }
-  .rev-sidebar .rev-card.unknown { border-top-color: #ccc; }
   .rev-sidebar .rev-card + .rev-card { padding-left: 16px; }
   .rev-sidebar .rev-label {
     display: block;
@@ -1497,10 +1486,6 @@
           <p class="ns-side-stat-label">end-of-year target</p>
           <div class="ns-mid" id="ns-target">&nbsp;</div>
         </div>
-      </div>
-      <div class="ns-spark" id="ns-spark" aria-hidden="true">
-        <svg viewBox="0 0 320 56" preserveAspectRatio="none" class="ns-spark-svg"></svg>
-        <div class="ns-spark-axis"><span class="ns-spark-axis-start">w1</span><span class="ns-spark-axis-end">w17</span></div>
       </div>
     </section>
 

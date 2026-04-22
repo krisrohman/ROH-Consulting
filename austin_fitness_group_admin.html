@@ -615,20 +615,6 @@
     </div>
   </div>
 
-  <!-- Connection status -->
-  <div style="margin-top: 18px;">
-    <div class="status-banner" id="conn-banner">
-      <div class="status-banner-left">
-        <span class="status-dot pulse" id="conn-dot"></span>
-        <span id="conn-label">Connecting&hellip;</span>
-      </div>
-      <button class="btn ghost" id="refresh-btn" onclick="handleRefreshClick(this)">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/></svg>
-        <span id="refresh-btn-label">Refresh</span>
-      </button>
-    </div>
-  </div>
-
   <div class="layout">
 
     <!-- Side navigation -->
@@ -1468,6 +1454,8 @@
     const banner = document.getElementById('conn-banner');
     const dot = document.getElementById('conn-dot');
     const lbl = document.getElementById('conn-label');
+    // Banner removed from DOM — no-op when the element isn't present.
+    if (!banner) return;
     if (ok) {
       banner.classList.remove('warn');
       dot.style.background = 'var(--teal-400)';

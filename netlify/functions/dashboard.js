@@ -36,7 +36,13 @@ export default async () => {
       process.env.APPS_SCRIPT_URL ||
       FALLBACK_APPS_SCRIPT_URL;
 
-    const sheetResp = await fetch(appsScriptUrl).then(r => r.json());
+    // Cache-bust: Google's script.google.com edge caches Apps Script web-app
+    // responses per-URL for ~60s. Without a unique query param, sheet edits
+    // don't show up until the edge expires. Adding ?t=<now> forces a fresh
+    // fetch every time. Also pass fetch cache: 'no-store' for the Netlify
+    // runtime's own HTTP cache.
+    const bustUrl = appsScriptUrl + (appsScriptUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
+    const sheetResp = await fetch(bustUrl, { cache: 'no-store' }).then(r => r.json());
 
     if (!sheetResp || !sheetResp.ok) {
       throw new Error('Apps Script returned not-ok: ' + (sheetResp && sheetResp.error));

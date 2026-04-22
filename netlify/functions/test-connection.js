@@ -13,7 +13,10 @@ export default async (request) => {
 
   try {
     const t0 = Date.now();
-    const res = await fetch(testUrl, { method: 'GET' });
+    // Cache-bust the Apps Script URL so Google's edge doesn't serve a stale
+    // response. Same as dashboard.js.
+    const bustUrl = testUrl + (testUrl.includes('?') ? '&' : '?') + 't=' + t0;
+    const res = await fetch(bustUrl, { method: 'GET', cache: 'no-store' });
     const text = await res.text();
     const elapsed = Date.now() - t0;
 

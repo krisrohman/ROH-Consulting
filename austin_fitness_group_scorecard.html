@@ -2289,8 +2289,11 @@
       renderDashboard(window.__kpiData);
       updateSyncStatus(true);
     } catch (err) {
-      console.error('API unreachable:', err.message);
-      document.getElementById('sync-status').textContent = 'Connection error · try Sync to retry';
+      console.error('API unreachable, using preview data:', err.message);
+      window.__kpiData = FAKE_DATA;
+      repopulateWeekMenu(window.__kpiData);
+      renderDashboard(window.__kpiData);
+      document.getElementById('sync-status').textContent = 'Preview mode · connect to live API to sync';
     } finally {
       btn.classList.remove('syncing');
       document.getElementById('sync-label').textContent = 'Sync';
@@ -2439,9 +2442,15 @@
     const nsKpi = settings.north_star_kpi || 'Net recurring members / studio';
     const nsTarget = parseFloat(settings.north_star_eoy_target) || 12;
 
-    // Find the actual row for north star KPI (raw shape: data.sheet.actuals)
+    // Find the actual row for north star KPI (raw shape: data.sheet.actuals).
+    // Normalized + fuzzy match so the NS setting doesn't have to string-equal
+    // the sheet row name byte-for-byte (punctuation / trailing '(north star)' /
+    // case drift all tolerated).
     const sheet = data.sheet || {};
-    const actualRow = (sheet.actuals || data.actuals || []).find(r => r.kpi === nsKpi);
+    const actualsAll = sheet.actuals || data.actuals || [];
+    const nsKey = normalizeKpi(nsKpi);
+    let actualRow = actualsAll.find(r => normalizeKpi(r.kpi) === nsKey);
+    if (!actualRow) actualRow = actualsAll.find(r => fuzzyMatchKpi(r.kpi, nsKpi));
     if (!actualRow) return;
 
     const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -2463,7 +2472,9 @@
 
     // Trend — percentage change over last 4 weeks (same logic as lagging rows).
     // Flat when |change| < 1%.
-    const weeklyRow = (((sheet.weekly && sheet.weekly.rows) || (data.weekly && data.weekly.rows) || [])).find(r => r.kpi === nsKpi);
+    const weeklyRowsAll = ((sheet.weekly && sheet.weekly.rows) || (data.weekly && data.weekly.rows) || []);
+    let weeklyRow = weeklyRowsAll.find(r => normalizeKpi(r.kpi) === nsKey);
+    if (!weeklyRow) weeklyRow = weeklyRowsAll.find(r => fuzzyMatchKpi(r.kpi, nsKpi));
     let trendText = '—';
 
     if (weeklyRow && weeklyRow.weeks) {
@@ -2945,10 +2956,16 @@
     });
 
     cards.forEach(card => {
-      const wanted = normalizeKpi(card.dataset.kpi || '');
-      const actRow = actByKpi[wanted];
-      const tgtRow = tgtByKpi[wanted];
-      const weeklyRow = weeklyByKpi[wanted];
+      const rawWanted = card.dataset.kpi || '';
+      const wanted = normalizeKpi(rawWanted);
+      // Exact-normalized first, fuzzy fallback — so 'Recurring revenue' vs
+      // 'Recuring Revenue' or 'Systemwide Revenue · USD' still matches.
+      let actRow = actByKpi[wanted];
+      if (!actRow) actRow = actuals.find(r => fuzzyMatchKpi(r.kpi, rawWanted));
+      let tgtRow = tgtByKpi[wanted];
+      if (!tgtRow) tgtRow = targets.find(r => fuzzyMatchKpi(r.kpi, rawWanted));
+      let weeklyRow = weeklyByKpi[wanted];
+      if (!weeklyRow) weeklyRow = weeklyRows.find(r => fuzzyMatchKpi(r.kpi, rawWanted));
       const valEl = card.querySelector('.rev-value');
       const tgtEl = card.querySelector('.rev-target');
       const pill  = card.querySelector('.rev-status');

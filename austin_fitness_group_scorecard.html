@@ -1778,15 +1778,20 @@
   //
   // daysElapsed and daysInMonth are inferred from currentWeekNum
   // ============================================================
-  function projectValue(mtdActual, unit, weekNumInMonth, totalWeeksInMonth) {
+  function projectValue(mtdActual, unit, weekNumInMonth, totalWeeksInMonth, mathType) {
     if (mtdActual === null || mtdActual === undefined || mtdActual === '') return null;
 
+    // Rate-like: don't extrapolate. Includes unit-based rates AND any KPI
+    // whose math_type is 'avg' or 'latest' (e.g. 'Cost per booking' in USD
+    // is a rate, not an accumulating volume — extrapolating it was turning
+    // on-track metrics into false at-risk by multiplying the cost by
+    // 1/week-fraction).
     const rateUnits = ['percent', 'ratio', 'stars', 'score'];
-    if (rateUnits.includes(unit)) {
+    if (rateUnits.includes(unit) || mathType === 'avg' || mathType === 'latest') {
       return Number(mtdActual); // rate is stable; MTD ≈ month-end
     }
 
-    // Volume-like: extrapolate linearly
+    // Volume-like (sum math on count/USD): extrapolate linearly
     const weekFraction = weekNumInMonth / totalWeeksInMonth;
     if (weekFraction <= 0) return Number(mtdActual);
     return Math.round((Number(mtdActual) / weekFraction) * 100) / 100;
@@ -2369,7 +2374,7 @@
       rowEl.style.display = isHidden ? 'none' : '';
       if (isHidden) return;
 
-      const projection = projectValue(d.mtd, d.unit, weekInMonth, totalWeeks);
+      const projection = projectValue(d.mtd, d.unit, weekInMonth, totalWeeks, d.math_type);
       const thr = thresholdMap[normalizeKpi(matchKey)] || thresholdMap[normalizeKpi(name)] || {};
       // Pro-rate target for annual-scope KPIs (Studio remodels, Treadmill
       // refreshes, Internal promotions): expected pace = target × YTD/52.

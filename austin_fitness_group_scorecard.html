@@ -161,21 +161,21 @@
     box-shadow: 0 2px 12px rgba(0,0,0,0.04);
   }
 
-  /* ─── Brand strip — minimal identity header ─── */
+  /* ─── Brand strip — editorial nameplate, big wordmark + tagline left,
+         meta strip right-aligned and vertically centered ─── */
   .brand-strip {
     display: flex;
-    align-items: baseline;
-    gap: 14px;
-    padding: 0 0 14px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 0 0 18px;
     margin: 0 0 16px;
     border-bottom: 1px solid #eee;
   }
-  .brand-kicker {
-    font-family: var(--serif);
-    font-size: 20px;
-    font-weight: 500;
-    color: #1a1a1a;
-    letter-spacing: -0.01em;
+  .brand-block {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
   }
   .brand-meta {
     font-family: var(--sans);
@@ -183,8 +183,8 @@
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: #8a8a8a;
-    font-weight: 500;
-    margin-left: auto;
+    font-weight: 400;
+    flex-shrink: 0;
   }
 
   /* ─── Tally strip — single line above NS, quiet but readable ─── */
@@ -626,18 +626,19 @@
   .wordmark {
     font-family: var(--serif);
     font-size: 36px;
-    font-weight: 500;
+    font-weight: 400;
     line-height: 1;
     letter-spacing: -0.025em;
     color: var(--ink);
-    margin: 0 0 6px;
+    margin: 0 0 4px;
   }
   .wordmark-tagline {
     font-family: var(--serif);
     font-style: italic;
+    font-weight: 400;
     font-size: 15px;
     color: var(--ink-2);
-    margin: 0 0 28px;
+    margin: 0;
     letter-spacing: -0.005em;
   }
 
@@ -1684,7 +1685,10 @@
        2. BRAND STRIP — minimal identity header, one line
        ══════════════════════════════════════════════════ -->
   <div class="brand-strip">
-    <span class="brand-kicker" id="wordmark">Austin Fitness Group</span>
+    <div class="brand-block">
+      <h1 class="wordmark" id="wordmark">Austin Fitness Group</h1>
+      <p class="wordmark-tagline" id="wordmark-tagline">High standards. Relentless execution. No shortcuts.</p>
+    </div>
     <span class="brand-meta">Leadership Scorecard · <span id="nameplate-fy">FY 2026</span> · <span id="hero-issue">Week 16</span></span>
   </div>
 

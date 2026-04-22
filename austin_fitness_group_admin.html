@@ -254,11 +254,13 @@
   }
   .kpi-row-header, .kpi-row {
     display: grid;
-    grid-template-columns: 32px minmax(220px, 2.2fr) minmax(0, 1fr) 80px 74px 80px 90px 92px 64px 60px minmax(0, 0.7fr) 28px 28px;
+    grid-template-columns: 32px minmax(220px, 2.2fr) minmax(0, 1fr) 80px 74px 80px 90px 92px 64px 60px 52px minmax(0, 0.7fr) 28px 28px;
     gap: 6px;
     align-items: center;
     padding: 10px 12px;
   }
+  .kpi-round-cell { display: flex; justify-content: center; }
+  .kpi-round-cell input[type="checkbox"] { margin: 0; cursor: pointer; }
   /* Name input: full-width, no truncation — user wants the whole name visible. */
   .kpi-row > .inline-input:nth-child(2) {
     text-overflow: clip;
@@ -684,6 +686,7 @@
               <span>Target</span>
               <span title="Minimum % of goal required for on-track. 100 = must hit goal. 95 = 95%+ is on-track. Default 100.">On-track %</span>
               <span title="Minimum % of goal for narrow. Below this = at-risk. Must be ≤ On-track. Default 92.">Narrow %</span>
+              <span title="Round displayed values up (ceiling) instead of rounding to nearest. On = Math.ceil, Off = Math.round (default).">Round ↑</span>
               <span>Owner</span>
               <span></span>
               <span></span>
@@ -1024,33 +1027,10 @@
   };
   const CURRENT_USER = 'kris@roh-consulting.com'; // will come from Netlify Identity in production
 
-  // Fallback seed data for local preview before wiring up the sheet
-  // Target strings match phrasing from Ben's AFG KPI Dashboard sheet (FY26).
-  let kpis = [
-    { kpi: 'Net recurring members / studio', section: 'Member growth', unit: 'count',   owner: 'Chris',   department: 'Sales ops',   tier: 'leading', target: '+12 by EOY' },
-    { kpi: 'Intro conversion',               section: 'Member growth', unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', target: '>50%' },
-    { kpi: 'Lead portal management',         section: 'Member growth', unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', target: '>80%' },
-    { kpi: 'Revenue portal management',      section: 'Member growth', unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', target: '>80%' },
-    { kpi: 'Weekend sales, no zeros',        section: 'Member growth', unit: 'percent', owner: 'Chris',   department: 'Sales ops',   tier: 'lagging', target: '100%' },
-    { kpi: 'Workouts per member / week',     section: 'Member engagement', unit: 'ratio',   owner: 'Vic',     department: 'Fitness',     tier: 'leading', target: '>1.5×' },
-    { kpi: 'HRM usage',                      section: 'Member engagement', unit: 'percent', owner: 'Vic',     department: 'Fitness',     tier: 'lagging', target: '>77%' },
-    { kpi: '120-day retention',              section: 'Member engagement', unit: 'percent', owner: 'Vic',     department: 'Fitness',     tier: 'lagging', target: '>75%' },
-    { kpi: 'Member portal management',       section: 'Member engagement', unit: 'percent', owner: 'Vic',     department: 'Fitness',     tier: 'lagging', target: '>80%' },
-    { kpi: 'Fitness event achievement',      section: 'Member engagement', unit: 'count',   owner: 'Vic',     department: 'Fitness',     tier: 'lagging', target: 'TBD' },
-    { kpi: 'PSA leads, YoY change',          section: 'Brand awareness',   unit: 'percent', owner: 'Christy', department: 'Marketing',   tier: 'leading', target: '>0%' },
-    { kpi: 'Cost per booking, Meta',         section: 'Brand awareness',   unit: 'USD',     owner: 'Christy', department: 'Marketing',   tier: 'lagging', target: '<$170' },
-    { kpi: 'Cost per lead, Meta',            section: 'Brand awareness',   unit: 'USD',     owner: 'Christy', department: 'Marketing',   tier: 'lagging', target: '<$80' },
-    { kpi: 'Studio remodels',                section: 'Studio refresh',    unit: 'count',   owner: 'Scott',   department: 'Finance',     tier: 'lagging', target: '21/year' },
-    { kpi: 'Treadmill refreshes',            section: 'Studio refresh',    unit: 'count',   owner: 'Scott',   department: 'Finance',     tier: 'lagging', target: '32/year' },
-    { kpi: 'Glassdoor rating',               section: 'People & culture',  unit: 'stars',   owner: 'Deana',   department: 'People ops',  tier: 'leading', target: '>3.5' },
-    { kpi: 'Internal promotions',            section: 'People & culture',  unit: 'count',   owner: 'Deana',   department: 'People ops',  tier: 'lagging', target: '>30' },
-    // Revenue KPIs — standalone (not inside a pillar). Rendered in the
-    // 'By the numbers' strip directly under the North Star.
-    { kpi: 'Systemwide revenue',             section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', target: 'vs plan' },
-    { kpi: 'Recurring revenue',              section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', target: 'vs plan' },
-    { kpi: 'Prepaid package revenue',        section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', target: 'vs plan' },
-    { kpi: 'Retail, fees & other',           section: 'Revenue',           unit: 'USD',     owner: 'Scott',   department: 'Finance',     tier: 'lagging', target: 'vs plan' },
-  ];
+  // KPI list — starts empty, populated by refreshConfig() from Neon on
+  // DOMContentLoaded. Previously seeded with 22 hardcoded rows which caused
+  // a visible flash of fake KPIs before the real DB load completed.
+  let kpis = [];
 
   const SECTIONS = ['Member growth', 'Member engagement', 'Brand awareness', 'Studio refresh', 'People & culture', 'Revenue'];
   const UNITS = ['percent', 'count', 'USD', 'ratio', 'stars', 'score'];
@@ -1205,6 +1185,13 @@
         if (s.kpi_scopes) scopesByName = JSON.parse(s.kpi_scopes) || {};
       } catch (_) { scopesByName = {}; }
 
+      // Per-KPI rounding mode: 'ceil' | 'round' (default). Stored as a
+      // simple name → 'ceil'|'round' map in settings.kpi_rounding.
+      let roundingByName = {};
+      try {
+        if (s.kpi_rounding) roundingByName = JSON.parse(s.kpi_rounding) || {};
+      } catch (_) { roundingByName = {}; }
+
       function thresholdsOntrack(map, name) {
         const v = map[name];
         if (v == null) return '';
@@ -1242,7 +1229,8 @@
         target: targetsByName[r.kpi_name] || '',
         ontrack_pct: thresholdsOntrack(thresholdsByName, r.kpi_name),
         narrow_pct:  thresholdsNarrow(thresholdsByName,  r.kpi_name),
-        target_scope: (scopesByName[r.kpi_name] === 'annual' ? 'annual' : 'monthly')
+        target_scope: (scopesByName[r.kpi_name] === 'annual' ? 'annual' : 'monthly'),
+        round_up: (roundingByName[r.kpi_name] === 'ceil')
       }));
 
       // Apply settings to the form fields
@@ -1546,6 +1534,9 @@
         <input class="inline-input" value="${escape(k.target || '')}" maxlength="40" placeholder="e.g. >50% or <$170" onchange="updateKpi(${idx}, 'target', this.value)" title="Target value shown on the scorecard (free-form, e.g. >50%, <$170, +12 by EOY)" />
         <input class="inline-input" value="${escape(k.ontrack_pct === '' || k.ontrack_pct == null ? '' : k.ontrack_pct)}" type="number" min="0" max="200" step="1" placeholder="100" onchange="updateKpi(${idx}, 'ontrack_pct', this.value)" title="Minimum % of goal required for on-track. 100 = must hit goal. 95 = 95%+ is on-track. Blank = 100." style="text-align: right;" />
         <input class="inline-input" value="${escape(k.narrow_pct === '' || k.narrow_pct == null ? '' : k.narrow_pct)}" type="number" min="0" max="200" step="1" placeholder="92" onchange="updateKpi(${idx}, 'narrow_pct', this.value)" title="Minimum % of goal for narrow. Below = at-risk. Must be ≤ On-track. Revenue often 90; tight KPIs 95. Blank = 92." style="text-align: right;" />
+        <div class="kpi-round-cell">
+          <input type="checkbox" ${k.round_up ? 'checked' : ''} onchange="updateKpi(${idx}, 'round_up', this.checked)" title="On = round displayed values UP (ceiling). Off = round to nearest (default)." />
+        </div>
         <input class="inline-input" value="${escape(k.owner)}" maxlength="60" onchange="updateKpi(${idx}, 'owner', this.value)" />
         <button class="hide-btn ${isHidden ? 'is-on' : ''}" onclick="toggleHideKpi(${idx})" title="${hideTitle}">
           ${isHidden
@@ -1603,6 +1594,11 @@
           renderKpis();
         }
       }
+      markDirty();
+      return;
+    }
+    if (field === 'round_up') {
+      kpis[idx].round_up = !!value;
       markDirty();
       return;
     }
@@ -1678,7 +1674,8 @@
         target: '',
         ontrack_pct: '',
         narrow_pct: '',
-        target_scope: 'monthly'
+        target_scope: 'monthly',
+        round_up: false
       });
       markDirty();
       renderKpis();
@@ -2142,6 +2139,13 @@
         if (Object.keys(out).length) kpiThresholdsMap[k.kpi] = out;
       });
 
+      // Per-KPI rounding: only save 'ceil' rows; 'round' is the default
+      // and doesn't need storage.
+      const kpiRoundingMap = {};
+      kpis.forEach(k => {
+        if (k.round_up === true) kpiRoundingMap[k.kpi] = 'ceil';
+      });
+
       // Save settings
       const settings = {
         dashboard_title: truncate(document.getElementById('set-title').value.trim(), LIMITS.settings_value),
@@ -2156,6 +2160,7 @@
         kpi_targets: JSON.stringify(kpiTargetsMap),
         kpi_thresholds: JSON.stringify(kpiThresholdsMap),
         kpi_scopes: JSON.stringify(kpiScopesMap),
+        kpi_rounding: JSON.stringify(kpiRoundingMap),
         hidden_kpis: JSON.stringify([...hiddenKpiSet])
       };
       const setRes = await fetch(API.settings, {

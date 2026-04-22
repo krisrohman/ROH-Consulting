@@ -150,15 +150,217 @@
     cursor: pointer;
   }
 
-  /* Dashboard page container — white card on warm neutral background. */
+  /* Command-center page — white card on warm neutral background. */
   .page {
     max-width: 1440px;
     margin: 24px auto;
-    padding: 32px 40px 48px;
+    padding: 28px 40px 48px;
     background: #ffffff;
     border: 1px solid #e8e3d9;
     border-radius: 8px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+
+  /* ─── Brand strip — minimal identity header ─── */
+  .brand-strip {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 0 0 14px;
+    margin: 0 0 16px;
+    border-bottom: 1px solid #eee;
+  }
+  .brand-kicker {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 500;
+    color: #1a1a1a;
+    letter-spacing: -0.01em;
+  }
+  .brand-meta {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #8a8a8a;
+    font-weight: 500;
+    margin-left: auto;
+  }
+
+  /* ─── Top bar — NS + tally on one line ─── */
+  .top-bar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+    padding: 18px 0 20px;
+    margin: 0 0 4px;
+    border-bottom: 1px solid #eee;
+    flex-wrap: wrap;
+  }
+  .tb-ns { display: flex; flex-direction: column; gap: 4px; min-width: 260px; }
+  .tb-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--coral-600);
+    font-weight: 600;
+  }
+  .tb-ns-row {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin: 2px 0 2px;
+  }
+  .tb-value {
+    font-family: var(--serif);
+    font-size: 46px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: #1a1a1a;
+    font-variant-numeric: tabular-nums;
+  }
+  .tb-status {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+  }
+  .tb-status.on-track { color: #16A34A; background: #e8f5ec; border-color: #c8e6d0; }
+  .tb-status.narrow   { color: #92500A; background: #fdf4e1; border-color: #f1dbb0; }
+  .tb-status.at-risk  { color: #991B1B; background: #fbe9e9; border-color: #f0c8c8; }
+  .tb-sub {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: #666;
+    letter-spacing: -0.005em;
+  }
+  .tb-tally {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding-top: 16px;
+    font-family: var(--sans);
+    font-size: 14px;
+  }
+  .tb-tally .verdict-cell {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+    flex-direction: row;
+  }
+  .tb-tally .verdict-num {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .tb-tally .verdict-label {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: lowercase;
+    color: #666;
+  }
+  .tb-tally .v-ok     .verdict-num { color: #16A34A; }
+  .tb-tally .v-narrow .verdict-num { color: #D97706; }
+  .tb-tally .v-risk   .verdict-num { color: #DC2626; }
+  .tally-sep { color: #d0d0d0; font-weight: 400; }
+
+  /* ─── Attention zone — ranked list of what needs action ─── */
+  .attention-zone {
+    padding: 16px 0 20px;
+    margin: 0 0 20px;
+    border-bottom: 1px solid #eee;
+  }
+  .attention-head {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: #991B1B;
+    margin: 0 0 10px;
+  }
+  .attention-head::before {
+    content: '●';
+    color: #DC2626;
+    margin-right: 8px;
+    font-size: 8px;
+    vertical-align: middle;
+  }
+  .attention-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .attention-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 6px 0;
+    border-bottom: 1px dashed #eee;
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.35;
+  }
+  .attention-list li:last-child { border-bottom: none; }
+  .attention-list .att-name {
+    color: #1a1a1a;
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+  }
+  .attention-list .att-section {
+    color: #999;
+    font-size: 12px;
+    font-weight: 400;
+  }
+  .attention-list .att-val {
+    color: #666;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    font-style: italic;
+    font-family: var(--serif);
+    margin-right: 4px;
+  }
+  .attention-list .att-status {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    min-width: 70px;
+    text-align: center;
+  }
+  .attention-list .att-status.at-risk { color: #991B1B; background: #fbe9e9; border-color: #f0c8c8; }
+  .attention-list .att-status.narrow  { color: #92500A; background: #fdf4e1; border-color: #f1dbb0; }
+  .attention-empty {
+    font-family: var(--serif);
+    font-style: italic;
+    color: #16A34A;
+    font-size: 14px;
+    margin: 0;
   }
 
   /* Control bar */
@@ -975,18 +1177,21 @@
   }
 
   /* ─── 7. Pillar — editorial 2-col spread ─── */
+  /* Pillars are demoted — flat, no card chrome. Sections are for
+     exploration, not top-of-page decisions. */
   .pillar {
     display: grid;
     grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
     column-gap: 32px;
     row-gap: 16px;
-    padding: 24px 28px;
-    margin-top: 16px;
-    background: #fafaf7;
-    border: 1px solid #e8e3d9;
-    border-radius: 8px;
+    padding: 24px 0 0;
+    margin-top: 48px;
+    background: transparent;
+    border: none;
+    border-top: 1px solid #eee;
+    border-radius: 0;
   }
-  .pillar:first-of-type { margin-top: 0; }
+  .pillar:first-of-type { margin-top: 24px; }
   .pillar:last-of-type { margin-bottom: 0; }
 
   /* Left column — identity + lagging outcome */
@@ -1436,89 +1641,81 @@
   </div>
 
   <!-- ══════════════════════════════════════════════════
-       2. NAMEPLATE — small wordmark + kicker
+       2. BRAND STRIP — minimal identity header, one line
        ══════════════════════════════════════════════════ -->
-  <div class="nameplate">
-    <span class="nameplate-kicker">leadership scorecard</span>
-    <span class="nameplate-issue">Vol · <span id="nameplate-fy">FY 2026</span> &middot; Issue · <span id="hero-issue">Week 16</span></span>
+  <div class="brand-strip">
+    <span class="brand-kicker" id="wordmark">Austin Fitness Group</span>
+    <span class="brand-meta">Leadership Scorecard · <span id="nameplate-fy">FY 2026</span> · <span id="hero-issue">Week 16</span></span>
   </div>
-  <h1 class="wordmark" id="wordmark">Austin Fitness Group.</h1>
-  <p class="wordmark-tagline" id="wordmark-tagline">High standards. Relentless execution. No shortcuts.</p>
 
   <!-- ══════════════════════════════════════════════════
-       3. VERDICT — the real hero: status at a glance
+       3. TOP BAR — 'Are we ok right now?' NS + tally inline
        ══════════════════════════════════════════════════ -->
-  <section class="verdict" role="list" aria-label="KPI status summary">
-    <p class="verdict-kicker">the tally</p>
-    <div class="verdict-line ribbon">
-      <div class="verdict-cell v-ok ribbon-cell cell-ok" role="listitem">
-        <span class="verdict-label ribbon-label" style="color: var(--teal-600);">on pace</span>
-        <span class="verdict-num ribbon-num" style="color: var(--teal-600);">0</span>
+  <section class="top-bar">
+    <div class="tb-ns">
+      <span class="tb-label">North Star</span>
+      <div class="tb-ns-row">
+        <span class="tb-value" id="ns-ytd">&nbsp;</span>
+        <span class="tb-status" id="ns-status">&nbsp;</span>
       </div>
-      <div class="verdict-cell v-narrow ribbon-cell cell-narrow" role="listitem">
-        <span class="verdict-label ribbon-label" style="color: var(--amber-600);">narrow</span>
-        <span class="verdict-num ribbon-num" style="color: var(--amber-600);">0</span>
-      </div>
-      <div class="verdict-cell v-risk ribbon-cell cell-risk" role="listitem">
-        <span class="verdict-label ribbon-label" style="color: var(--red-600);">at risk</span>
-        <span class="verdict-num ribbon-num" style="color: var(--red-600);">0</span>
-      </div>
+      <span class="tb-sub" id="ns-title">Net recurring members per studio · target <span id="ns-target">&nbsp;</span></span>
+    </div>
+    <div class="tb-tally" role="list" aria-label="KPI status summary">
+      <span class="verdict-cell v-ok" role="listitem">
+        <span class="verdict-num ribbon-num">0</span><span class="verdict-label">on track</span>
+      </span>
+      <span class="tally-sep">·</span>
+      <span class="verdict-cell v-narrow" role="listitem">
+        <span class="verdict-num ribbon-num">0</span><span class="verdict-label">narrow</span>
+      </span>
+      <span class="tally-sep">·</span>
+      <span class="verdict-cell v-risk" role="listitem">
+        <span class="verdict-num ribbon-num">0</span><span class="verdict-label">at risk</span>
+      </span>
     </div>
   </section>
 
   <!-- ══════════════════════════════════════════════════
-       4 + 5. NS + Revenue spread — NS beige panel on the left,
-       Revenue stacked as a sidebar on the right.
+       4. ATTENTION ZONE — ranked list of what's off pace
        ══════════════════════════════════════════════════ -->
-  <div class="ns-feature">
-    <section class="ns-panel">
-      <div class="ns-header">
-        <p class="ns-kicker">the north star</p>
-        <span class="ns-meta">year to date &middot; tracking to EOY</span>
-      </div>
-      <h2 class="ns-title" id="ns-title">Net recurring members per studio, on average.</h2>
-      <div class="ns-hero">
-        <div class="ns-big" id="ns-ytd">&nbsp;</div>
-        <p class="ns-hero-label">members / studio &middot; year to date</p>
-      </div>
-      <div class="ns-side">
-        <div>
-          <p class="ns-side-stat-label">end-of-year target</p>
-          <div class="ns-mid" id="ns-target">&nbsp;</div>
-        </div>
-      </div>
-    </section>
+  <section class="attention-zone">
+    <h3 class="attention-head">Needs Attention</h3>
+    <ul class="attention-list" id="attention-list"></ul>
+    <p class="attention-empty" id="attention-empty" hidden>All tracked KPIs on pace this week.</p>
+  </section>
 
-    <aside class="rev-sidebar">
-      <p class="rev-sidebar-head">revenue &middot; month to date</p>
-      <div class="revenue-row" id="revenue-row">
-        <div class="rev-card" data-kpi="Systemwide revenue">
-          <p class="rev-label">Systemwide</p>
-          <div class="rev-value">&nbsp;</div>
-          <p class="rev-target">&nbsp;</p>
-          <span class="rev-status ontrack">On track</span>
-        </div>
-        <div class="rev-card" data-kpi="Recurring revenue">
-          <p class="rev-label">Recurring</p>
-          <div class="rev-value">&nbsp;</div>
-          <p class="rev-target">&nbsp;</p>
-          <span class="rev-status ontrack">On track</span>
-        </div>
-        <div class="rev-card" data-kpi="Prepaid package revenue">
-          <p class="rev-label">Prepaid package</p>
-          <div class="rev-value">&nbsp;</div>
-          <p class="rev-target">&nbsp;</p>
-          <span class="rev-status ontrack">On track</span>
-        </div>
-        <div class="rev-card" data-kpi="Retail, fees &amp; other">
-          <p class="rev-label">Retail, fees &amp; other</p>
-          <div class="rev-value">&nbsp;</div>
-          <p class="rev-target">&nbsp;</p>
-          <span class="rev-status ontrack">On track</span>
-        </div>
+  <!-- ══════════════════════════════════════════════════
+       5. REVENUE — secondary context, typographic strip
+       ══════════════════════════════════════════════════ -->
+  <aside class="rev-sidebar">
+    <p class="rev-sidebar-head">Revenue · Month to Date</p>
+    <div class="revenue-row" id="revenue-row">
+      <div class="rev-card" data-kpi="Systemwide revenue">
+        <p class="rev-label">Systemwide</p>
+        <div class="rev-value">&nbsp;</div>
+        <p class="rev-target">&nbsp;</p>
+        <span class="rev-status ontrack">On track</span>
       </div>
-    </aside>
-  </div>
+      <div class="rev-card" data-kpi="Recurring revenue">
+        <p class="rev-label">Recurring</p>
+        <div class="rev-value">&nbsp;</div>
+        <p class="rev-target">&nbsp;</p>
+        <span class="rev-status ontrack">On track</span>
+      </div>
+      <div class="rev-card" data-kpi="Prepaid package revenue">
+        <p class="rev-label">Prepaid package</p>
+        <div class="rev-value">&nbsp;</div>
+        <p class="rev-target">&nbsp;</p>
+        <span class="rev-status ontrack">On track</span>
+      </div>
+      <div class="rev-card" data-kpi="Retail, fees &amp; other">
+        <p class="rev-label">Retail, fees &amp; other</p>
+        <div class="rev-value">&nbsp;</div>
+        <p class="rev-target">&nbsp;</p>
+        <span class="rev-status ontrack">On track</span>
+      </div>
+    </div>
+  </aside>
 
 
   <!-- Section 01 — Member Growth -->
@@ -2247,14 +2444,18 @@
     // Verdict kicker: echo the current week
     document.querySelectorAll('.verdict-wk').forEach(el => el.textContent = currentWeekNum);
 
-    // Trajectory caption intentionally dropped — user feedback: the
-    // 'YTD is 117% — exceeded' framing introduced false finality and
-    // conflicted with the weekly-report voice. NS stands on its own
-    // with YTD numeral + EOY target stat only.
+    // NS status pill — label next to the YTD number in the top bar.
+    // Compare YTD to EOY target to label on-track / narrow / at-risk.
+    const nsStatusEl = document.getElementById('ns-status');
+    if (nsStatusEl && typeof nsTarget === 'number' && typeof ytd === 'number') {
+      const ratio = ytd / nsTarget;
+      let status = 'on-track', text = 'On Track';
+      if (ratio < 0.85) { status = 'at-risk'; text = 'At Risk'; }
+      else if (ratio < 0.95) { status = 'narrow'; text = 'Narrow'; }
+      nsStatusEl.textContent = text;
+      nsStatusEl.className = 'tb-status ' + status;
+    }
 
-    // NS sparkline — render up to last 13 weeks of the KPI's weekly values.
-    // Coral polyline, soft filled area underneath, current week dot highlighted,
-    // target line as a dashed horizontal reference.
     renderNSSpark(weeklyRow, nsTarget);
   }
 
@@ -2550,6 +2751,7 @@
     });
 
     updateRibbon(data);
+    renderAttentionZone(data);
     renderRevenueCards(data);
     renderLaggingWeekly(data);
     if (data.settings) applySettings(data.settings);
@@ -2994,6 +3196,132 @@
       ribbonCells[1].textContent = narrow;
       ribbonCells[2].textContent = risk;
     }
+  }
+
+  // Ranked 'needs attention' list — all at-risk items first (by how
+  // badly they miss), then narrow items. Capped at 6. Mirrors the
+  // updateRibbon compute so the counts stay consistent.
+  function renderAttentionZone(data) {
+    const listEl = document.getElementById('attention-list');
+    const emptyEl = document.getElementById('attention-empty');
+    if (!listEl) return;
+
+    const sheet = (data && data.sheet) || {};
+    const configs = data.kpis || data.config || [];
+    const weeklyRows = (sheet.weekly && sheet.weekly.rows) || [];
+    const weekCols = (sheet.weekly && sheet.weekly.columns) || [];
+    const weekMonths = (sheet.weekly && sheet.weekly.months) || [];
+    const targets = sheet.targets || data.targets || [];
+
+    const weeklyByKpi = {};
+    weeklyRows.forEach(r => { weeklyByKpi[normalizeKpi(r.kpi)] = r; });
+    const targetByKpi = {};
+    targets.forEach(t => { targetByKpi[normalizeKpi(t.kpi)] = t; });
+    const adminTargets = buildNormalizedTargetMap(data);
+    const thresholdMap = buildThresholdMap(data);
+    const scopeMap = buildScopeMap(data);
+
+    let weeksElapsed = 0, weeksInMonth = 0, weeksYtd = 0;
+    weekCols.forEach((col, i) => {
+      const wn = parseInt(String(col).replace(/[^0-9]/g, ''), 10);
+      if (weekMonths[i] === currentMonth) {
+        weeksInMonth++;
+        if (wn <= currentWeekNum) weeksElapsed++;
+      }
+      if (wn <= currentWeekNum) weeksYtd++;
+    });
+    const weeksInYear = weekCols.length || 52;
+
+    const issues = [];
+    configs.forEach(cfg => {
+      if (!cfg) return;
+      const kpiName = String(cfg.kpi_name || '').trim();
+      if (!kpiName || kpiName.length < 2) return;
+
+      const nameKey = normalizeKpi(kpiName);
+      let weeklyRow = weeklyByKpi[nameKey] ||
+        weeklyRows.find(r => fuzzyMatchKpi(r.kpi, kpiName));
+      let tgtRow = targetByKpi[nameKey] ||
+        targets.find(r => fuzzyMatchKpi(r.kpi, kpiName));
+
+      const mathType = cfg.math_type || 'avg';
+      const lowerIsBetter = (cfg.goal_direction === 'lower') ||
+        /cost|turnover|cpl|cpb/i.test(kpiName);
+      const scope = scopeMap[nameKey] || 'monthly';
+
+      let mtd = null;
+      if (weeklyRow && weeklyRow.weeks) {
+        const vals = [];
+        weekCols.forEach((col, i) => {
+          if (scope === 'monthly' && weekMonths[i] !== currentMonth) return;
+          const wn = parseInt(String(col).replace(/[^0-9]/g, ''), 10);
+          if (wn > currentWeekNum) return;
+          const v = weeklyRow.weeks[col];
+          if (v !== null && v !== undefined && v !== '') vals.push(Number(v));
+        });
+        if (vals.length) {
+          if (mathType === 'sum') mtd = vals.reduce((a, b) => a + b, 0);
+          else if (mathType === 'latest') mtd = vals[vals.length - 1];
+          else mtd = vals.reduce((a, b) => a + b, 0) / vals.length;
+        }
+      }
+
+      let monthlyTarget = tgtRow && tgtRow.months ? tgtRow.months[currentMonth] : null;
+      if (typeof monthlyTarget !== 'number') {
+        const parsed = parseAdminTarget(adminTargets[nameKey]);
+        if (parsed !== null) monthlyTarget = parsed;
+      }
+      let paceTarget = monthlyTarget;
+      if (typeof monthlyTarget === 'number') {
+        if (scope === 'annual') paceTarget = monthlyTarget * (weeksYtd / weeksInYear);
+        else if (mathType === 'sum' && weeksInMonth > 0) paceTarget = monthlyTarget * (weeksElapsed / weeksInMonth);
+      }
+
+      const thr = thresholdMap[nameKey] || {};
+      const status = computeStatus(mtd, paceTarget, lowerIsBetter, thr.narrow, thr.ontrack);
+      if (status !== 'at-risk' && status !== 'narrow') return;
+
+      const ratio = (typeof mtd === 'number' && typeof paceTarget === 'number' && paceTarget !== 0)
+        ? (lowerIsBetter ? paceTarget / mtd : mtd / paceTarget)
+        : 0;
+
+      issues.push({
+        kpi: kpiName,
+        section: cfg.section || '',
+        status,
+        ratio,
+        mtd,
+        paceTarget,
+        unit: cfg.unit
+      });
+    });
+
+    // Sort: at-risk first, then narrow; within each bucket, worst ratio first.
+    issues.sort((a, b) => {
+      if (a.status !== b.status) return a.status === 'at-risk' ? -1 : 1;
+      return a.ratio - b.ratio;
+    });
+    const top = issues.slice(0, 6);
+
+    listEl.innerHTML = top.map(it => {
+      const statusLabel = it.status === 'at-risk' ? 'At Risk' : 'Narrow';
+      const mtdDisplay = (typeof it.mtd === 'number') ? formatVal(it.mtd, it.unit) : '';
+      return `<li>
+        <span class="att-name">${escapeHtml(it.kpi)}</span>
+        <span class="att-section">${escapeHtml(it.section)}</span>
+        <span class="att-val">${mtdDisplay}</span>
+        <span class="att-status ${it.status}">${statusLabel}</span>
+      </li>`;
+    }).join('');
+
+    if (emptyEl) emptyEl.hidden = top.length > 0;
+    listEl.hidden = top.length === 0;
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 </script>
 

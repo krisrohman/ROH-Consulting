@@ -187,70 +187,17 @@
     margin-left: auto;
   }
 
-  /* ─── Top bar — NS + tally on one line ─── */
-  .top-bar {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 32px;
-    padding: 18px 0 20px;
-    margin: 0 0 4px;
-    border-bottom: 1px solid #eee;
-    flex-wrap: wrap;
-  }
-  .tb-ns { display: flex; flex-direction: column; gap: 4px; min-width: 260px; }
-  .tb-label {
-    font-family: var(--sans);
-    font-size: 10px;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--coral-600);
-    font-weight: 600;
-  }
-  .tb-ns-row {
-    display: flex;
-    align-items: baseline;
-    gap: 14px;
-    margin: 2px 0 2px;
-  }
-  .tb-value {
-    font-family: var(--serif);
-    font-size: 46px;
-    font-weight: 500;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    color: #1a1a1a;
-    font-variant-numeric: tabular-nums;
-  }
-  .tb-status {
-    font-family: var(--sans);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    padding: 4px 10px;
-    border-radius: 3px;
-    border: 1px solid transparent;
-  }
-  .tb-status.on-track { color: #16A34A; background: #e8f5ec; border-color: #c8e6d0; }
-  .tb-status.narrow   { color: #92500A; background: #fdf4e1; border-color: #f1dbb0; }
-  .tb-status.at-risk  { color: #991B1B; background: #fbe9e9; border-color: #f0c8c8; }
-  .tb-sub {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 13px;
-    color: #666;
-    letter-spacing: -0.005em;
-  }
-  .tb-tally {
+  /* ─── Tally strip — single line above NS, quiet but readable ─── */
+  .tally-strip {
     display: flex;
     align-items: baseline;
     gap: 10px;
-    padding-top: 16px;
+    padding: 10px 0 14px;
+    margin: 0;
     font-family: var(--sans);
-    font-size: 14px;
+    border-bottom: 1px solid #eee;
   }
-  .tb-tally .verdict-cell {
+  .tally-strip .verdict-cell {
     display: inline-flex;
     align-items: baseline;
     gap: 6px;
@@ -260,26 +207,107 @@
     border-radius: 0;
     flex-direction: row;
   }
-  .tb-tally .verdict-num {
-    font-family: var(--serif);
-    font-size: 22px;
-    font-weight: 500;
-    letter-spacing: -0.02em;
+  .tally-strip .verdict-num {
+    font-family: var(--sans);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
     line-height: 1;
     font-variant-numeric: tabular-nums;
   }
-  .tb-tally .verdict-label {
+  .tally-strip .verdict-label {
     font-family: var(--sans);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
     text-transform: lowercase;
     color: #666;
   }
-  .tb-tally .v-ok     .verdict-num { color: #16A34A; }
-  .tb-tally .v-narrow .verdict-num { color: #D97706; }
-  .tb-tally .v-risk   .verdict-num { color: #DC2626; }
+  .tally-strip .v-ok     .verdict-num { color: #16A34A; }
+  .tally-strip .v-narrow .verdict-num { color: #D97706; }
+  .tally-strip .v-risk   .verdict-num { color: #DC2626; }
   .tally-sep { color: #d0d0d0; font-weight: 400; }
+
+  /* ─── North Star — dominant hero panel. Stands out via beige fill +
+         left coral rule. All the context: kicker, headline, big YTD
+         with status pill, and EOY target alongside. ─── */
+  .ns-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #f6efe2;
+    border: 1px solid #e8ddc5;
+    border-left: 4px solid var(--coral-400);
+    border-radius: 8px;
+    padding: 22px 28px 24px;
+    margin: 18px 0 24px;
+  }
+  .ns-kicker {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--coral-600);
+    font-weight: 600;
+    margin: 0;
+  }
+  .ns-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.25;
+    color: #1a1a1a;
+    letter-spacing: -0.015em;
+    margin: 0;
+    max-width: 820px;
+  }
+  .ns-stats {
+    display: flex;
+    align-items: flex-end;
+    gap: 56px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+  .ns-stat { display: flex; flex-direction: column; gap: 4px; }
+  .ns-stat-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #777;
+    font-weight: 600;
+  }
+  .ns-stat-row {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .ns-stat-value {
+    font-family: var(--serif);
+    font-size: 72px;
+    line-height: 0.95;
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    color: #1a1a1a;
+    font-variant-numeric: tabular-nums;
+  }
+  .ns-stat-value-secondary {
+    font-size: 40px;
+    color: #555;
+  }
+  .ns-status {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+  }
+  .ns-status.on-track { color: #16A34A; background: #e8f5ec; border-color: #c8e6d0; }
+  .ns-status.narrow   { color: #92500A; background: #fdf4e1; border-color: #f1dbb0; }
+  .ns-status.at-risk  { color: #991B1B; background: #fbe9e9; border-color: #f0c8c8; }
 
   /* ─── Attention zone — ranked list of what needs action ─── */
   .attention-zone {
@@ -1338,7 +1366,7 @@
   /* Driver row — dense single-line format */
   .row {
     display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 2.4fr) auto;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 2.4fr) 96px;
     column-gap: 20px;
     align-items: center;
     padding: 12px 14px;
@@ -1348,53 +1376,60 @@
     border-radius: 4px;
   }
   .row + .row { margin-top: 4px; }
+  .row > *:last-child { text-align: right; }
   .row:last-of-type,
   .row.terminal { border-bottom: 1px solid #f0ece3; }
   .row > *:first-child, .row > *:last-child { padding-top: 0; }
   .row > *:last-child { text-align: right; }
   .mname {
-    font-family: var(--serif);
-    font-size: 18px;
-    font-weight: 500;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
     margin: 0;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.005em;
     color: #111;
-    line-height: 1.2;
+    line-height: 1.25;
   }
   .mdept { display: none; }
+  /* Goal + YTD on driver rows — clear, tabular, not italic. Each on its
+     own line under the metric name with a small caps label prefix. */
   .row .row-goal {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 12px;
-    color: var(--coral-400);
-    margin: 4px 0 0;
-    display: block;
-    line-height: 1.2;
-    letter-spacing: -0.005em;
-    font-variant-numeric: tabular-nums;
-  }
-  .row .row-goal::before {
-    content: 'Goal · ';
     font-family: var(--sans);
     font-style: normal;
-    font-size: 8px;
+    font-size: 13px;
+    color: var(--coral-600);
+    margin: 5px 0 0;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+  .row .row-goal::before {
+    content: 'Goal';
+    font-family: var(--sans);
+    font-style: normal;
+    font-size: 9px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--ink-3);
-    font-weight: 500;
+    color: #999;
+    font-weight: 600;
+    min-width: 34px;
   }
-  .row .row-goal .pct { font-size: 11px; color: inherit; }
-  /* YTD aggregate — sits under the metric goal so the reader can compare
-     this-week / this-month / year-to-date in a single glance per row. */
+  .row .row-goal .pct { font-size: 12px; color: inherit; }
   .row-ytd {
-    display: block;
-    font-family: var(--serif);
-    font-style: italic;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-family: var(--sans);
+    font-style: normal;
     font-size: 13px;
-    color: #555;
-    margin: 4px 0 0;
-    line-height: 1.25;
+    color: #1a1a1a;
+    margin: 3px 0 0;
+    line-height: 1.2;
     font-variant-numeric: tabular-nums;
+    font-weight: 600;
   }
   .row-ytd-label {
     display: inline;
@@ -1404,8 +1439,9 @@
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: #999;
-    font-weight: 500;
-    margin-right: 6px;
+    font-weight: 600;
+    margin-right: 0;
+    min-width: 34px;
   }
   .row-ytd .pct { font-size: 12px; color: inherit; }
 
@@ -1439,14 +1475,14 @@
     margin: 0 0 4px;
   }
   .wk-val {
-    font-family: var(--serif);
-    font-size: 19px;
-    font-weight: 400;
+    font-family: var(--sans);
+    font-size: 17px;
+    font-weight: 600;
     line-height: 1;
     margin: 0;
     font-variant-numeric: tabular-nums;
     color: #111;
-    letter-spacing: -0.005em;
+    letter-spacing: -0.01em;
   }
   .wk-val.empty { color: var(--ink-3); font-weight: 300; }
   .wk.current .wk-label { color: var(--coral-600); font-weight: 600; }
@@ -1457,8 +1493,12 @@
   }
   .wk.future .wk-label { color: var(--ink-3); opacity: 0.5; }
   .wk.future .wk-val {
-    color: var(--ink-3); font-weight: 300; opacity: 0.5;
-    font-size: 17px; font-style: italic;
+    color: var(--ink-3); font-weight: 400; opacity: 0.5;
+    font-size: 15px; font-style: normal;
+  }
+  .wk.current .wk-val {
+    color: var(--coral-700); font-weight: 700;
+    font-style: normal; font-size: 17px;
   }
 
   /* Status as plain colored text — no pills, no dots, no chips.
@@ -1649,43 +1689,45 @@
   </div>
 
   <!-- ══════════════════════════════════════════════════
-       3. TOP BAR — 'Are we ok right now?' NS + tally inline
+       3a. TALLY STRIP — 'Are we okay right now?' in one line
        ══════════════════════════════════════════════════ -->
-  <section class="top-bar">
-    <div class="tb-ns">
-      <span class="tb-label">North Star</span>
-      <div class="tb-ns-row">
-        <span class="tb-value" id="ns-ytd">&nbsp;</span>
-        <span class="tb-status" id="ns-status">&nbsp;</span>
+  <section class="tally-strip" role="list" aria-label="KPI status summary">
+    <span class="verdict-cell v-ok" role="listitem">
+      <span class="verdict-num ribbon-num">0</span><span class="verdict-label">on track</span>
+    </span>
+    <span class="tally-sep">·</span>
+    <span class="verdict-cell v-narrow" role="listitem">
+      <span class="verdict-num ribbon-num">0</span><span class="verdict-label">narrow</span>
+    </span>
+    <span class="tally-sep">·</span>
+    <span class="verdict-cell v-risk" role="listitem">
+      <span class="verdict-num ribbon-num">0</span><span class="verdict-label">at risk</span>
+    </span>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       3b. NORTH STAR — dominant hero panel
+       ══════════════════════════════════════════════════ -->
+  <section class="ns-panel">
+    <span class="ns-kicker">The North Star</span>
+    <h2 class="ns-title" id="ns-title">Net recurring members per studio, on average.</h2>
+    <div class="ns-stats">
+      <div class="ns-stat ns-stat-primary">
+        <span class="ns-stat-label">Year to date</span>
+        <div class="ns-stat-row">
+          <span class="ns-stat-value" id="ns-ytd">&nbsp;</span>
+          <span class="ns-status" id="ns-status">&nbsp;</span>
+        </div>
       </div>
-      <span class="tb-sub" id="ns-title">Net recurring members per studio · target <span id="ns-target">&nbsp;</span></span>
-    </div>
-    <div class="tb-tally" role="list" aria-label="KPI status summary">
-      <span class="verdict-cell v-ok" role="listitem">
-        <span class="verdict-num ribbon-num">0</span><span class="verdict-label">on track</span>
-      </span>
-      <span class="tally-sep">·</span>
-      <span class="verdict-cell v-narrow" role="listitem">
-        <span class="verdict-num ribbon-num">0</span><span class="verdict-label">narrow</span>
-      </span>
-      <span class="tally-sep">·</span>
-      <span class="verdict-cell v-risk" role="listitem">
-        <span class="verdict-num ribbon-num">0</span><span class="verdict-label">at risk</span>
-      </span>
+      <div class="ns-stat ns-stat-secondary">
+        <span class="ns-stat-label">End-of-year target</span>
+        <span class="ns-stat-value ns-stat-value-secondary" id="ns-target">&nbsp;</span>
+      </div>
     </div>
   </section>
 
   <!-- ══════════════════════════════════════════════════
-       4. ATTENTION ZONE — ranked list of what's off pace
-       ══════════════════════════════════════════════════ -->
-  <section class="attention-zone">
-    <h3 class="attention-head">Needs Attention</h3>
-    <ul class="attention-list" id="attention-list"></ul>
-    <p class="attention-empty" id="attention-empty" hidden>All tracked KPIs on pace this week.</p>
-  </section>
-
-  <!-- ══════════════════════════════════════════════════
-       5. REVENUE — secondary context, typographic strip
+       4. REVENUE — secondary context, typographic strip
        ══════════════════════════════════════════════════ -->
   <aside class="rev-sidebar">
     <p class="rev-sidebar-head">Revenue · Month to Date</p>
@@ -2751,7 +2793,6 @@
     });
 
     updateRibbon(data);
-    renderAttentionZone(data);
     renderRevenueCards(data);
     renderLaggingWeekly(data);
     if (data.settings) applySettings(data.settings);

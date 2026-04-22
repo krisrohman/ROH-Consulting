@@ -511,14 +511,15 @@
   }
   .ns-panel {
     position: relative;
-    background: #f4ede0;
-    border: 1px solid #e8ddc5;
+    background: #ffffff;
+    border: 1px solid #e8e3d9;
+    border-left: 3px solid var(--coral-400);
     border-radius: 8px;
-    padding: 24px 32px 28px;
+    padding: 22px 28px 24px;
     margin: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(260px, 1fr);
-    column-gap: 40px;
+    grid-template-columns: minmax(0, 1.4fr) minmax(220px, 1fr);
+    column-gap: 36px;
     row-gap: 0;
     align-items: end;
     text-align: left;
@@ -577,11 +578,11 @@
   }
   .ns-big {
     font-family: var(--serif);
-    font-size: 96px;
+    font-size: 64px;
     line-height: 0.95;
     font-weight: 500;
     color: #1a1a1a;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
     margin: 0;
   }
@@ -623,12 +624,12 @@
   .ns-mid {
     display: block;
     font-family: var(--serif);
-    font-size: 36px;
+    font-size: 26px;
     font-weight: 500;
     color: #1a1a1a;
     font-variant-numeric: tabular-nums;
     font-style: normal;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.02em;
     line-height: 1;
     margin: 0;
     opacity: 1;
@@ -1351,7 +1352,7 @@
     .pillar-left { position: static; }
     .ns-feature { grid-template-columns: 1fr; row-gap: 20px; }
     .ns-panel { grid-template-columns: 1fr; padding: 32px 28px; }
-    .ns-big { font-size: 108px; }
+    .ns-big { font-size: 56px; }
     .ns-side { padding-left: 0; border-left: none; border-top: 0.5px solid rgba(0,0,0,0.18); padding-top: 22px; }
   }
   @media (max-width: 900px) {
@@ -1359,7 +1360,7 @@
     .verdict { padding: 14px 0 14px; margin-bottom: 28px; }
     .verdict-num { font-size: 28px; }
     .ns-title { font-size: 22px; }
-    .ns-big { font-size: 88px; }
+    .ns-big { font-size: 52px; }
     .revenue-row { grid-template-columns: 1fr 1fr; }
     .rev-card { border-right: 0; border-bottom: 0.5px solid var(--rule); padding: 16px 0; }
     .rev-card:nth-child(2n) { border-bottom: 0.5px solid var(--rule); }
@@ -1377,8 +1378,8 @@
     .verdict-cell:last-child { border-bottom: none; padding-bottom: 0; }
     .verdict-num { font-size: 24px; }
     .ns-panel { padding: 26px 20px; }
-    .ns-big { font-size: 72px; }
-    .ns-mid { font-size: 34px; }
+    .ns-big { font-size: 44px; }
+    .ns-mid { font-size: 22px; }
     .ns-title { font-size: 19px; }
     .pillars-lede { grid-template-columns: 1fr; row-gap: 8px; }
     .pillars-lede-text { font-size: 14px; }

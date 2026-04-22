@@ -412,68 +412,66 @@
     letter-spacing: -0.005em;
   }
 
-  /* ─── 3. Verdict — compact status summary. Intentionally smaller than
-         the North Star so it doesn't compete for visual dominance. ─── */
+  /* ─── 3. Tally — quiet editorial metadata, not a KPI widget ───
+     A single inline line: '11 on pace · 5 narrow · 6 at risk'.
+     No borders, no container, small muted gray — should barely register
+     so the North Star below gets all the attention. */
   .verdict {
-    border-top: 1px solid var(--ink);
-    border-bottom: 0.5px solid var(--ink);
-    padding: 16px 0 16px;
-    margin: 0 0 36px;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 6px 0 28px;
+    font-size: 12px;
+    color: #777;
+    letter-spacing: 0.02em;
   }
-  .verdict-kicker {
-    font-family: var(--sans);
-    font-size: 9px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    font-weight: 500;
-    color: var(--ink-3);
-    margin: 0 0 8px;
-  }
+  .verdict-kicker { display: none; }
   .verdict-line {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-    margin: 0;
-    align-items: baseline;
+    display: block;
+    grid-template-columns: none;
+    gap: 0;
+    line-height: 1.4;
   }
   .verdict-cell {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 4px 0;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    padding: 0;
     border: none;
   }
-  .verdict-cell:last-child { padding-right: 0; }
+  .verdict-cell + .verdict-cell::before {
+    content: '·';
+    color: #c9c4b9;
+    margin: 0 10px 0 0;
+    order: 0;
+  }
   .verdict-num {
-    font-family: var(--serif);
-    font-size: 46px;
-    font-weight: 500;
-    line-height: 0.9;
-    letter-spacing: -0.025em;
+    display: inline;
+    order: 1;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: inherit;
+    letter-spacing: 0.02em;
     font-variant-numeric: tabular-nums;
-    order: 2;
+    color: #666 !important;
+    margin: 0;
   }
   .verdict-label {
-    font-family: var(--sans);
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    font-weight: 500;
+    display: inline;
     order: 2;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: inherit;
+    letter-spacing: 0.02em;
+    text-transform: lowercase;
+    color: #888 !important;
+    margin: 0;
   }
-  .verdict-sub {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 11px;
-    color: var(--ink-3);
-    margin: 0 0 0 auto;
-    order: 3;
-    display: none; /* trimmed in compact mode so the row stays one line */
-  }
-  .verdict-cell.v-ok     .verdict-num,  .verdict-cell.v-ok     .verdict-label { color: var(--teal-600); }
-  .verdict-cell.v-narrow .verdict-num,  .verdict-cell.v-narrow .verdict-label { color: var(--amber-600); }
-  .verdict-cell.v-risk   .verdict-num,  .verdict-cell.v-risk   .verdict-label { color: var(--red-600); }
+  .verdict-sub { display: none; }
+  .hero-weeks { display: none; }
 
   /* Hero week chips (sits under the verdict as a temporal anchor) */
   .hero-weeks {

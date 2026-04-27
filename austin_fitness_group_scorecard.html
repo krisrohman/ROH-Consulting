@@ -55,6 +55,7 @@
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
 
   /* Top navigation */
@@ -1618,29 +1619,114 @@
     .rev-card + .rev-card { padding-left: 0; }
     .rev-card:nth-child(2n) { padding-left: 22px; border-left: 0.5px solid var(--rule); }
   }
+
+  /* True mobile / phone — tighter padding, stacked brand strip,
+     dropdowns full-width-ish, touch-friendly tap targets */
+  @media (max-width: 720px) {
+    body { font-size: 14px; }
+    .page {
+      margin: 0;
+      padding: 18px 16px 40px;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      max-width: 100%;
+    }
+    /* Top nav — keep visible but tighter; let nav-links wrap if used */
+    .top-nav { padding: 0 16px; height: 52px; }
+    .nav-company { font-size: 13px; }
+
+    /* Control strip — let it wrap properly; touch-size dropdowns */
+    .control-strip { gap: 10px; padding: 0 0 12px; margin: 0 0 18px; }
+    .control-left { gap: 10px; width: 100%; }
+    .control-right { width: 100%; justify-content: flex-end; }
+    .dropdown { min-height: 36px; padding: 6px 12px; }
+    .sync-btn { min-height: 36px; }
+    .control-date { font-size: 12px; flex-basis: 100%; }
+
+    /* Brand strip — stack the wordmark/tagline block above the meta */
+    .brand-strip {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 0 0 14px;
+    }
+    .wordmark { font-size: 26px; }
+    .wordmark-tagline { font-size: 13px; }
+    .brand-meta { font-size: 10px; letter-spacing: 0.16em; }
+
+    /* Tally — keep 3-up but compact so the line stays one row */
+    .tally-strip { gap: 6px; padding: 8px 0 12px; flex-wrap: wrap; }
+    .tally-strip .verdict-num { font-size: 16px; }
+    .tally-strip .verdict-label { font-size: 12px; }
+    .tally-sep { display: none; }
+
+    /* North Star numbers — readable but not page-dominating on phone */
+    .ns-stats { gap: 28px; }
+    .ns-stat-value { font-size: 56px; }
+    .ns-stat-value-secondary { font-size: 32px; }
+
+    /* Revenue strip — single column on phones (was 1fr 1fr at 900px) */
+    .revenue-row { grid-template-columns: 1fr; gap: 10px; }
+    .rev-card,
+    .rev-card:nth-child(2n) {
+      border: 1px solid #e8e3d9;
+      padding: 14px 16px;
+      border-radius: 8px;
+    }
+
+    /* Pillar stacking — already 1-col by 1100px; tighten spacing on phone */
+    .pillar { row-gap: 14px; padding: 24px 0; }
+    .section-num { font-size: 36px; }
+    .section-title { font-size: 20px; }
+    .leading { padding: 14px 16px; }
+    .leading-name { font-size: 17px !important; }
+
+    /* Driver row — name on its own line, weekly strip below.
+       Allow horizontal scroll on the weekly strip if it overflows
+       (rather than crushing the cells to unreadable). */
+    .row { padding: 14px 0; row-gap: 8px; }
+    .mname { font-size: 17px; }
+    .wks {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .wks::-webkit-scrollbar { display: none; }
+    .wk { padding: 0 8px; min-width: 56px; }
+    .wk-val { font-size: 16px; }
+    .wk-label { font-size: 9px; }
+
+    /* Dropdown menus — full-page-width on mobile so options are tappable */
+    .dropdown-menu { min-width: calc(100vw - 32px); max-width: 360px; }
+    .dropdown-item { padding: 12px 14px; font-size: 14px; }
+  }
+
   @media (max-width: 640px) {
-    .page { padding: 1.25rem 1rem; margin: 0; }
+    .page { padding: 16px 14px 36px; }
     .wordmark { font-size: 24px; }
-    .wordmark-tagline { font-size: 13px; margin-bottom: 20px; }
+    .wordmark-tagline { font-size: 13px; margin-bottom: 16px; }
     .verdict { padding: 12px 0; margin-bottom: 22px; }
     .verdict-line { grid-template-columns: 1fr; gap: 8px; }
     .verdict-cell { border-right: none; border-bottom: 0.5px solid var(--rule); padding: 0 0 8px; }
     .verdict-cell:last-child { border-bottom: none; padding-bottom: 0; }
     .verdict-num { font-size: 24px; }
-    .ns-panel { padding: 26px 20px; }
+    .ns-panel { padding: 22px 18px; }
+    .ns-stat-value { font-size: 48px; }
+    .ns-stat-value-secondary { font-size: 28px; }
     .ns-big { font-size: 44px; }
     .ns-mid { font-size: 22px; }
     .ns-title { font-size: 19px; }
     .pillars-lede { grid-template-columns: 1fr; row-gap: 8px; }
     .pillars-lede-text { font-size: 14px; }
-    .section-num { font-size: 42px; }
-    .section-title { font-size: 22px; }
-    .leading-name { font-size: 18px !important; }
-    .row { grid-template-columns: 1fr; row-gap: 10px; padding: 16px 0; }
+    .section-num { font-size: 32px; }
+    .section-title { font-size: 19px; }
+    .leading-name { font-size: 16px !important; }
+    .row { grid-template-columns: 1fr; row-gap: 10px; padding: 14px 0; }
     .row > *:last-child { text-align: left; }
     .wks { min-width: 0; }
     .revenue-row { grid-template-columns: 1fr; }
-    .rev-card, .rev-card:nth-child(2n) { padding: 14px 0; border-left: 0; border-right: 0; }
+    .rev-card, .rev-card:nth-child(2n) { padding: 14px 16px; border-left: 1px solid #e8e3d9; border-right: 1px solid #e8e3d9; }
   }
 </style>
 </head>
